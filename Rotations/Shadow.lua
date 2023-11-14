@@ -14,10 +14,10 @@ local Target = Caffeine.UnitManager:Get('target')
 local None = Caffeine.UnitManager:Get('none')
 
 -- Spells
-local Spells = Rotation.Spells
+local spells = Rotation.Spells
 
 -- items
-local Items = Rotation.Items
+local items = Rotation.Items
 
 -- APLs
 local PreCombatAPL = Caffeine.APL:New('precombat')
@@ -116,7 +116,7 @@ local VampireTouchTarget = Caffeine.UnitManager:CreateCustomUnit('vampireTouch',
 
         if not unit:IsDead()
             and Player:CanSee(unit)
-            and not unit:GetAuras():FindMy(Spells.vampiricTouch):IsUp() then
+            and not unit:GetAuras():FindMy(spells.vampiricTouch):IsUp() then
             vampiricTouch = unit
         end
     end)
@@ -154,8 +154,8 @@ local ShadowWordPainTarget = Caffeine.UnitManager:CreateCustomUnit('shadowWordPa
 
         if not unit:IsDead()
             and Player:CanSee(unit)
-            and not unit:GetAuras():FindMy(Spells.shadowWordPain):IsUp()
-            and Player:GetAuras():FindMy(Spells.shadowWeaving):GetCount() == 5 then
+            and not unit:GetAuras():FindMy(spells.shadowWordPain):IsUp()
+            and Player:GetAuras():FindMy(spells.shadowWeaving):GetCount() == 5 then
             shadowWordPain = unit
         end
     end)
@@ -171,7 +171,7 @@ function GetEnemiesWithVampiricTouch(range)
     local count = 0
     Caffeine.UnitManager:EnumEnemies(function(unit)
         if not Target:IsUnit(unit) and Target:IsWithinCombatDistance(unit, range) and unit:IsAlive() and Target:CanSee(unit) and
-            unit:IsEnemy() and unit:GetAuras():FindMy(Spells.vampiricTouch):IsUp() then
+            unit:IsEnemy() and unit:GetAuras():FindMy(spells.vampiricTouch):IsUp() then
             count = count + 1
         end
     end)
@@ -181,7 +181,7 @@ end
 function Caffeine.Unit:IsDungeonBoss()
     if UnitClassification(self:GetOMToken()) == "elite"
         and UnitLevel(self:GetOMToken()) == 82
-        and Player:GetAuras():FindMy(Spells.luckoftheDraw):IsUp() then
+        and Player:GetAuras():FindMy(spells.luckoftheDraw):IsUp() then
         return true
     end
     return false
@@ -189,37 +189,37 @@ end
 
 -- PreCombatAPL
 PreCombatAPL:AddSpell(
-    Spells.shadowform:CastableIf(function(self)
+    spells.shadowform:CastableIf(function(self)
         return self:IsKnownAndUsable()
-            and not Player:GetAuras():FindMy(Spells.shadowform):IsUp()
+            and not Player:GetAuras():FindMy(spells.shadowform):IsUp()
     end):SetTarget(Player)
 )
 
 PreCombatAPL:AddSpell(
-    Spells.innerFire:CastableIf(function(self)
+    spells.innerFire:CastableIf(function(self)
         return self:IsKnownAndUsable()
-            and not Player:GetAuras():FindMy(Spells.innerFire):IsUp()
+            and not Player:GetAuras():FindMy(spells.innerFire):IsUp()
     end):SetTarget(Player)
 )
 
 PreCombatAPL:AddSpell(
-    Spells.vampiricEmbrace:CastableIf(function(self)
+    spells.vampiricEmbrace:CastableIf(function(self)
         return self:IsKnownAndUsable()
-            and not Player:GetAuras():FindMy(Spells.vampiricEmbrace):IsUp()
+            and not Player:GetAuras():FindMy(spells.vampiricEmbrace):IsUp()
     end):SetTarget(Player)
 )
 
 -- Mind Flay (Web Wrap)
 DefaultAPL:AddSpell(
-    Spells.devouringPlague:CastableIf(function(self)
+    spells.devouringPlague:CastableIf(function(self)
         return DungeonLogicTarget:Exists()
     end):SetTarget(DungeonLogicTarget)
 )
 
 -- Mind Sear (AoE)
 DefaultAPL:AddSpell(
-    Spells.mindSear:CastableIf(function(self)
-        local isAoeEnabled = Rotation.Settings.config:Read("toggleAoe", true)
+    spells.mindSear:CastableIf(function(self)
+        local isAoeEnabled = Rotation.Config:Read("toggleAoe", true)
         return isAoeEnabled
             and self:IsKnownAndUsable()
             and Target:Exists()
@@ -230,7 +230,7 @@ DefaultAPL:AddSpell(
 
 -- Mind Sear (AoE)
 DefaultAPL:AddSpell(
-    Spells.mindSear:CastableIf(function(self)
+    spells.mindSear:CastableIf(function(self)
         return self:IsKnownAndUsable()
             and Target:Exists()
             and Target:IsHostile()
@@ -240,32 +240,34 @@ DefaultAPL:AddSpell(
 
 -- Vampiric Touch (AoE)
 DefaultAPL:AddSpell(
-    Spells.vampiricTouch:CastableIf(function(self)
-        local isAoeEnabled = Rotation.Settings.config:Read("toggleAoe", true)
+    spells.vampiricTouch:CastableIf(function(self)
+        local isAoeEnabled = Rotation.Config:Read("toggleAoe", true)
         return isAoeEnabled
             and self:IsKnownAndUsable()
             and VampireTouchTarget:Exists()
             and VampireTouchTarget:IsHostile()
-            and not VampireTouchTarget:GetAuras():FindMy(Spells.vampiricTouch):IsUp()
+            and (Target:GetAuras():FindMy(spells.vampiricTouch):GetRemainingTime() < spells.vampiricTouch:GetCastLength() / 1000
+                or not Target:GetAuras():FindMy(spells.vampiricTouch):IsUp())
+            and print("aoe")
     end):SetTarget(VampireTouchTarget)
 )
 
 -- Shadow Word: Pain (AoE)
 DefaultAPL:AddSpell(
-    Spells.shadowWordPain:CastableIf(function(self)
-        local isAoeEnabled = Rotation.Settings.config:Read("toggleAoe", true)
+    spells.shadowWordPain:CastableIf(function(self)
+        local isAoeEnabled = Rotation.Config:Read("toggleAoe", true)
         return isAoeEnabled
             and self:IsKnownAndUsable()
             and ShadowWordPainTarget:Exists()
             and ShadowWordPainTarget:IsHostile()
-            and not ShadowWordPainTarget:GetAuras():FindMy(Spells.shadowWordPain):IsUp()
-            and Player:GetAuras():FindMy(Spells.shadowWeaving):GetCount() == 5
+            and not ShadowWordPainTarget:GetAuras():FindMy(spells.shadowWordPain):IsUp()
+            and Player:GetAuras():FindMy(spells.shadowWeaving):GetCount() == 5
     end):SetTarget(ShadowWordPainTarget)
 )
 
 -- Engineering Gloves
 DefaultAPL:AddItem(
-    Items.inventorySlotGloves:UsableIf(function(self)
+    items.inventorySlotGloves:UsableIf(function(self)
         return self:IsEquippedAndUsable()
             and Target:Exists()
             and (Target:IsBoss() or Target:IsDungeonBoss())
@@ -276,17 +278,18 @@ DefaultAPL:AddItem(
 
 -- Vampiric Touch
 DefaultAPL:AddSpell(
-    Spells.vampiricTouch:CastableIf(function(self)
+    spells.vampiricTouch:CastableIf(function(self)
         return self:IsKnownAndUsable()
             and Target:Exists()
             and Target:IsHostile()
-            and Target:GetAuras():FindMy(Spells.vampiricTouch):GetRemainingTime() < 2
+            and (Target:GetAuras():FindMy(spells.vampiricTouch):GetRemainingTime() < spells.vampiricTouch:GetCastLength() / 1000
+                or not Target:GetAuras():FindMy(spells.vampiricTouch):IsUp())
     end):SetTarget(Target)
 )
 
 -- Shadowfiend
 DefaultAPL:AddSpell(
-    Spells.shadowfiend:CastableIf(function(self)
+    spells.shadowfiend:CastableIf(function(self)
         return self:IsKnownAndUsable()
             and Target:Exists()
             and (Target:IsBoss() or Target:IsDungeonBoss())
@@ -296,7 +299,7 @@ DefaultAPL:AddSpell(
 
 -- Trinket
 DefaultAPL:AddItem(
-    Items.inventorySlotTrinket0:UsableIf(function(self)
+    items.inventorySlotTrinket0:UsableIf(function(self)
         return self:IsEquippedAndUsable()
             and Target:Exists()
             and (Target:IsBoss() or Target:IsDungeonBoss())
@@ -307,7 +310,7 @@ DefaultAPL:AddItem(
 
 -- Trinket
 DefaultAPL:AddItem(
-    Items.inventorySlotTrinket1:UsableIf(function(self)
+    items.inventorySlotTrinket1:UsableIf(function(self)
         return self:IsEquippedAndUsable()
             and Target:Exists()
             and (Target:IsBoss() or Target:IsDungeonBoss())
@@ -318,7 +321,7 @@ DefaultAPL:AddItem(
 
 -- Potion of Speed
 DefaultAPL:AddItem(
-    Items.potionOfSpeed:UsableIf(function(self)
+    items.potionOfSpeed:UsableIf(function(self)
         return self:IsUsable()
             and Target:Exists()
             and Target:IsBoss()
@@ -330,7 +333,7 @@ DefaultAPL:AddItem(
 
 -- Saronite Bomb
 DefaultAPL:AddItem(
-    Items.saroniteBomb:UsableIf(function(self)
+    items.saroniteBomb:UsableIf(function(self)
         return self:IsUsable()
             and Target:Exists()
             and Target:IsBoss()
@@ -346,47 +349,47 @@ DefaultAPL:AddItem(
 
 -- Devouring Plague
 DefaultAPL:AddSpell(
-    Spells.devouringPlague:CastableIf(function(self)
+    spells.devouringPlague:CastableIf(function(self)
         return self:IsKnownAndUsable()
             and Target:Exists()
             and Target:IsHostile()
-            and (Target:GetAuras():FindMy(Spells.devouringPlague):GetRemainingTime() < 2
-                or not Target:GetAuras():FindMy(Spells.devouringPlague):IsUp())
+            and (Target:GetAuras():FindMy(spells.devouringPlague):GetRemainingTime() < 2
+                or not Target:GetAuras():FindMy(spells.devouringPlague):IsUp())
     end):SetTarget(Target)
 )
 
 -- Shadow Word: Pain
 DefaultAPL:AddSpell(
-    Spells.shadowWordPain:CastableIf(function(self)
+    spells.shadowWordPain:CastableIf(function(self)
         return self:IsKnownAndUsable()
             and Target:Exists()
             and Target:IsHostile()
-            and not Target:GetAuras():FindMy(Spells.shadowWordPain):IsUp()
-            and Player:GetAuras():FindMy(Spells.shadowWeaving):GetCount() == 5
+            and not Target:GetAuras():FindMy(spells.shadowWordPain):IsUp()
+            and Player:GetAuras():FindMy(spells.shadowWeaving):GetCount() == 5
     end):SetTarget(Target)
 )
 
 -- Mind Blast
 DefaultAPL:AddSpell(
-    Spells.mindBlast:CastableIf(function(self)
+    spells.mindBlast:CastableIf(function(self)
         return self:IsKnownAndUsable()
             and Target:Exists()
             and Target:IsHostile()
-            and Player:GetAuras():FindAny(Spells.replenishment):GetRemainingTime() < 5
+            and Player:GetAuras():FindAny(spells.replenishment):GetRemainingTime() < 5
     end):SetTarget(Target)
 )
 
 -- Mind Flay
 DefaultAPL:AddSpell(
-    Spells.mindFlay:CastableIf(function(self)
+    spells.mindFlay:CastableIf(function(self)
         return self:IsKnownAndUsable()
             and Target:IsHostile()
             and Target:Exists()
     end):SetTarget(Target):PreCast(function()
-        if Spells.innerFocus:IsKnownAndUsable()
-            and Player:GetAuras():FindMy(Spells.shadowWeaving):GetCount() == 5
+        if spells.innerFocus:IsKnownAndUsable()
+            and Player:GetAuras():FindMy(spells.shadowWeaving):GetCount() == 5
             and (Target:IsBoss() or Target:IsDungeonBoss()) then
-            Spells.innerFocus:ForceCast(None)
+            spells.innerFocus:ForceCast(None)
         end
     end)
 )
@@ -401,7 +404,7 @@ Module:Sync(function()
     end
 
     -- Auto target
-    local isAutoTargetEnabled = Rotation.Settings.config:Read("toggleAutoTarget", true)
+    local isAutoTargetEnabled = Rotation.Config:Read("toggleAutoTarget", true)
     if isAutoTargetEnabled then
         TargetUnit(LowestEnemy:GetGUID())
     end
