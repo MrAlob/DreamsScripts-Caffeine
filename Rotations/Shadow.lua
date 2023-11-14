@@ -246,9 +246,9 @@ DefaultAPL:AddSpell(
             and self:IsKnownAndUsable()
             and VampireTouchTarget:Exists()
             and VampireTouchTarget:IsHostile()
-            and (Target:GetAuras():FindMy(spells.vampiricTouch):GetRemainingTime() < spells.vampiricTouch:GetCastLength() / 1000
-                or not Target:GetAuras():FindMy(spells.vampiricTouch):IsUp())
-            and print("aoe")
+            and
+            (VampireTouchTarget:GetAuras():FindMy(spells.vampiricTouch):GetRemainingTime() < spells.vampiricTouch:GetCastLength() / 1000
+                or not VampireTouchTarget:GetAuras():FindMy(spells.vampiricTouch):IsUp())
     end):SetTarget(VampireTouchTarget)
 )
 
@@ -271,6 +271,7 @@ DefaultAPL:AddItem(
         return self:IsEquippedAndUsable()
             and Target:Exists()
             and (Target:IsBoss() or Target:IsDungeonBoss())
+            and Target:IsHostile()
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(None)
@@ -375,7 +376,6 @@ DefaultAPL:AddSpell(
         return self:IsKnownAndUsable()
             and Target:Exists()
             and Target:IsHostile()
-            and Player:GetAuras():FindAny(spells.replenishment):GetRemainingTime() < 5
     end):SetTarget(Target)
 )
 
@@ -385,6 +385,7 @@ DefaultAPL:AddSpell(
         return self:IsKnownAndUsable()
             and Target:IsHostile()
             and Target:Exists()
+            and not Player:IsMoving()
     end):SetTarget(Target):PreCast(function()
         if spells.innerFocus:IsKnownAndUsable()
             and Player:GetAuras():FindMy(spells.shadowWeaving):GetCount() == 5
