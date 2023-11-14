@@ -1,0 +1,13 @@
+{
+  "order": [
+    "Loader/Loader",
+    "Interface/Disc",
+    "Interface/Shadow",
+    "Spells/Disc",
+    "Spells/Shadow",
+    "Items/Disc",
+    "Items/Shadow",
+    "Rotations/Disc",
+    "Rotations/Shadow"
+  ]
+}
