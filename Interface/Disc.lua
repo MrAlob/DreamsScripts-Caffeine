@@ -232,13 +232,11 @@ Rotation.Category:Slider({
     step = 5,
 })
 
--- Utility
-Rotation.Category:AddSubsection("|cffFFFFFFToggles")
 Rotation.Category:Checkbox({
-    category = "utility",
-    var = "engineeringGloves",
-    name = "Engineering Gloves",
-    tooltip = "Enable or disable the use of Engineering Gloves in the rotation. Requires Target.",
+    category = "spells",
+    var = "powerInfustion",
+    name = "Power Infusion",
+    tooltip = "Enable or disable the use of Power Infusion in the rotation. Set your unit as Focus Target.",
     default = true,
     disabled = false
 })
@@ -258,7 +256,7 @@ Rotation.Category:Checkbox({
     category = "items",
     var = "saroniteBomb",
     name = "Saronite Bomb",
-    tooltip = "Enable or disable the use of Saronite Bomb in the rotation.",
+    tooltip = "Enable or disable the use of Saronite Bomb in the rotation. Requires Target.",
     default = true,
     disabled = false
 })
@@ -268,6 +266,15 @@ Rotation.Category:Checkbox({
     var = "trinkets",
     name = "Trinkets",
     tooltip = "Enable or disable the use of Trinkets in the rotation. Requires Target.",
+    default = true,
+    disabled = false
+})
+
+Rotation.Category:Checkbox({
+    category = "items",
+    var = "potionOfSpeed",
+    name = "Potion of Speed",
+    tooltip = "Enable or disable the use of Potion of Speed in the rotation.",
     default = true,
     disabled = false
 })
@@ -293,7 +300,5 @@ Rotation.Category:Slider({
     max = 100,
     step = 5,
 })
-
-
 
 Rotation.Category:Register()

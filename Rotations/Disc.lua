@@ -208,7 +208,7 @@ PreCombatAPL:AddSpell(
     end):SetTarget(Player)
 )
 
--- Web Wrap & Mirror Image
+-- DungeonLogic: Web Wrap & Mirror Image
 DefaultAPL:AddSpell(
     spells.devouringPlague:CastableIf(function(self)
         return DungeonLogic:Exists()
@@ -219,9 +219,9 @@ DefaultAPL:AddSpell(
 DefaultAPL:AddItem(
     items.inventorySlotGloves:UsableIf(function(self)
         local useEngineeringGloves = Rotation.Config:Read("items_engineeringGloves", true)
-        return engineeringGloves
+        return useEngineeringGloves
             and Target:Exists()
-            and self:IsUsable()
+            and self:IsEquippedAndUsable()
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and Target:IsHostile()
             and not Player:IsMoving()
@@ -235,7 +235,7 @@ DefaultAPL:AddItem(
         local trinkets = Rotation.Config:Read("items_trinkets", true)
         return trinkets
             and Target:Exists()
-            and self:IsEquippedAndUsable()
+            and self:IsUsable()
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and Target:IsHostile()
             and not Player:IsMoving()
@@ -249,7 +249,7 @@ DefaultAPL:AddItem(
         local trinkets = Rotation.Config:Read("items_trinkets", true)
         return trinkets
             and Target:Exists()
-            and self:IsEquippedAndUsable()
+            and self:IsUsable()
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and Target:IsHostile()
             and not Player:IsMoving()
@@ -257,15 +257,16 @@ DefaultAPL:AddItem(
     end):SetTarget(None)
 )
 
+-- Saronite Bomb
 DefaultAPL:AddItem(
     items.saroniteBomb:UsableIf(function(self)
         local saroniteBomb = Rotation.Config:Read("items_saroniteBomb", true)
         return saroniteBomb
-            and self:IsUsable()
+            and not self:IsOnCooldown()
             and Target:Exists()
             and Target:IsBoss()
             and Target:IsHostile()
-            and Player:GetDistance(Target) < 30
+            and Player:GetDistance(Target) < 28
             and not Target:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(None):PreUse(function(self)
@@ -277,7 +278,7 @@ DefaultAPL:AddItem(
 -- Runic Mana Injector
 DefaultAPL:AddItem(
     items.manaInjector:UsableIf(function(self)
-        return self:IsUsable()
+        return not self:IsOnCooldown()
             and Player:GetPP() < Rotation.Config:Read("items_runicManaInjector", 10)
             and not Player:IsCastingOrChanneling()
     end):SetTarget(None)
@@ -290,22 +291,6 @@ DefaultAPL:AddItem(
             and Player:GetPP() < Rotation.Config:Read("items_runicManaPotion", 10)
             and not Player:IsCastingOrChanneling()
     end):SetTarget(None)
-)
-
--- Saronite Bomb
-DefaultAPL:AddItem(
-    items.saroniteBomb:UsableIf(function(self)
-        return Target:Exists()
-            and self:IsUsable()
-            and Target:IsBoss()
-            and Target:IsHostile()
-            and Player:GetDistance(Target) < 30
-            and not Target:IsMoving()
-            and not Player:IsCastingOrChanneling()
-    end):SetTarget(None):PreUse(function(self)
-        local targetPosition = Target:GetPosition()
-        self:Click(targetPosition)
-    end)
 )
 
 -- Shadowfiend
@@ -362,11 +347,12 @@ DefaultAPL:AddSpell(
     end):SetTarget(Tank)
 )
 
-
 -- Power Infusion
 DefaultAPL:AddSpell(
     spells.powerInfusion:CastableIf(function(self)
-        return Focus:Exists()
+        local usePowerInfusion = Rotation.Config:Read("spells_powerInfusion", true)
+        return usePowerInfusion
+            and Focus:Exists()
             and self:IsKnownAndUsable()
             and Focus:IsAffectingCombat()
             and (Target:IsBoss() or Target:IsDungeonBoss())

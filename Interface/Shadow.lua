@@ -82,4 +82,53 @@ Hotbar:AddButton({
     end,
 })
 
+-- Spells
+Rotation.Category:AddSubsection("|cffFFFFFFSpells")
+Rotation.Category:Checkbox({
+    category = "spells",
+    var = "mindBlast",
+    name = "Mind Blast",
+    tooltip = "Enable or disable the use of Mind Blast in the rotation. Tip: Turn off if you have T10 4 Piece.",
+    default = true,
+    disabled = false
+})
+
+-- Items
+Rotation.Category:AddSubsection("|cffFFFFFFItems")
+Rotation.Category:Checkbox({
+    category = "items",
+    var = "engineeringGloves",
+    name = "Engineering Gloves",
+    tooltip = "Enable or disable the use of Engineering Gloves in the rotation. Requires Target.",
+    default = true,
+    disabled = false
+})
+
+Rotation.Category:Checkbox({
+    category = "items",
+    var = "saroniteBomb",
+    name = "Saronite Bomb",
+    tooltip = "Enable or disable the use of Saronite Bomb in the rotation. Requires Target.",
+    default = true,
+    disabled = false
+})
+
+Rotation.Category:Checkbox({
+    category = "items",
+    var = "trinkets",
+    name = "Trinkets",
+    tooltip = "Enable or disable the use of Trinkets in the rotation. Requires Target.",
+    default = true,
+    disabled = false
+})
+
+Rotation.Category:Checkbox({
+    category = "items",
+    var = "potionOfSpeed",
+    name = "Potion of Speed",
+    tooltip = "Enable or disable the use of Potion of Speed in the rotation.",
+    default = true,
+    disabled = false
+})
+
 Rotation.Category:Register()

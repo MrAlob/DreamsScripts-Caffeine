@@ -209,7 +209,7 @@ PreCombatAPL:AddSpell(
     end):SetTarget(Player)
 )
 
--- Mind Flay (Web Wrap)
+-- DungeonLogic: Web Wrap and Mirror Images
 DefaultAPL:AddSpell(
     spells.devouringPlague:CastableIf(function(self)
         return DungeonLogicTarget:Exists()
@@ -268,7 +268,9 @@ DefaultAPL:AddSpell(
 -- Engineering Gloves
 DefaultAPL:AddItem(
     items.inventorySlotGloves:UsableIf(function(self)
-        return self:IsEquippedAndUsable()
+        local useEngineeringGloves = Rotation.Config:Read("items_engineeringGloves", true)
+        return useEngineeringGloves
+            and self:IsEquippedAndUsable()
             and Target:Exists()
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and Target:IsHostile()
@@ -301,7 +303,9 @@ DefaultAPL:AddSpell(
 -- Trinket
 DefaultAPL:AddItem(
     items.inventorySlotTrinket0:UsableIf(function(self)
-        return self:IsEquippedAndUsable()
+        local useTrinkets = Rotation.Config:Read("items_trinkets", true)
+        return useTrinkets
+            and self:IsUsable()
             and Target:Exists()
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and not Player:IsMoving()
@@ -312,7 +316,9 @@ DefaultAPL:AddItem(
 -- Trinket
 DefaultAPL:AddItem(
     items.inventorySlotTrinket1:UsableIf(function(self)
-        return self:IsEquippedAndUsable()
+        local useTrinkets = Rotation.Config:Read("items_trinkets", true)
+        return useTrinkets
+            and self:IsUsable()
             and Target:Exists()
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and not Player:IsMoving()
@@ -323,7 +329,9 @@ DefaultAPL:AddItem(
 -- Potion of Speed
 DefaultAPL:AddItem(
     items.potionOfSpeed:UsableIf(function(self)
-        return self:IsUsable()
+        local usePotionOfSpeed = Rotation.Config:Read("items_potionOfSpeed", true)
+        return usePotionOfSpeed
+            and not self:IsOnCooldown()
             and Target:Exists()
             and Target:IsBoss()
             and Player:GetDistance(Target) < 36
@@ -335,11 +343,13 @@ DefaultAPL:AddItem(
 -- Saronite Bomb
 DefaultAPL:AddItem(
     items.saroniteBomb:UsableIf(function(self)
-        return self:IsUsable()
+        local useSaroniteBomb = Rotation.Config:Read("items_saroniteBomb", true)
+        return useSaroniteBomb
+            and not self:IsOnCooldown()
             and Target:Exists()
             and Target:IsBoss()
             and Target:IsHostile()
-            and Player:GetDistance(Target) < 30
+            and Player:GetDistance(Target) < 28
             and not Target:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(None):PreUse(function(self)
@@ -373,7 +383,9 @@ DefaultAPL:AddSpell(
 -- Mind Blast
 DefaultAPL:AddSpell(
     spells.mindBlast:CastableIf(function(self)
-        return self:IsKnownAndUsable()
+        local useMindBlast = Rotation.Config:Read("spells_mindBlast", true)
+        return useMindBlast
+            and self:IsKnownAndUsable()
             and Target:Exists()
             and Target:IsHostile()
     end):SetTarget(Target)
