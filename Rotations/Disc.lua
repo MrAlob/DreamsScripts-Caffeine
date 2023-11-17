@@ -229,34 +229,6 @@ DefaultAPL:AddItem(
     end):SetTarget(None)
 )
 
--- Trinket
-DefaultAPL:AddItem(
-    items.inventorySlotTrinket0:UsableIf(function(self)
-        local trinkets = Rotation.Config:Read("items_trinkets", true)
-        return trinkets
-            and Target:Exists()
-            and self:IsUsable()
-            and (Target:IsBoss() or Target:IsDungeonBoss())
-            and Target:IsHostile()
-            and not Player:IsMoving()
-            and not Player:IsCastingOrChanneling()
-    end):SetTarget(None)
-)
-
--- Trinket
-DefaultAPL:AddItem(
-    items.inventorySlotTrinket1:UsableIf(function(self)
-        local trinkets = Rotation.Config:Read("items_trinkets", true)
-        return trinkets
-            and Target:Exists()
-            and self:IsUsable()
-            and (Target:IsBoss() or Target:IsDungeonBoss())
-            and Target:IsHostile()
-            and not Player:IsMoving()
-            and not Player:IsCastingOrChanneling()
-    end):SetTarget(None)
-)
-
 -- Saronite Bomb
 DefaultAPL:AddItem(
     items.saroniteBomb:UsableIf(function(self)
@@ -273,24 +245,6 @@ DefaultAPL:AddItem(
         local targetPosition = Target:GetPosition()
         self:Click(targetPosition)
     end)
-)
-
--- Runic Mana Injector
-DefaultAPL:AddItem(
-    items.manaInjector:UsableIf(function(self)
-        return not self:IsOnCooldown()
-            and Player:GetPP() < Rotation.Config:Read("items_runicManaInjector", 10)
-            and not Player:IsCastingOrChanneling()
-    end):SetTarget(None)
-)
-
--- Runic Mana Potion
-DefaultAPL:AddItem(
-    items.runicManaPotion:UsableIf(function(self)
-        return self:IsUsable()
-            and Player:GetPP() < Rotation.Config:Read("items_runicManaPotion", 10)
-            and not Player:IsCastingOrChanneling()
-    end):SetTarget(None)
 )
 
 -- Shadowfiend

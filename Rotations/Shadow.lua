@@ -29,23 +29,27 @@ local LowestEnemy = Caffeine.UnitManager:CreateCustomUnit('lowest', function(uni
 
     Caffeine.UnitManager:EnumEnemies(function(unit)
         if unit:IsDead() then
-            return
+            return false
         end
 
         if Player:GetDistance(unit) > 36 then
-            return
+            return false
         end
 
         if not Player:CanSee(unit) then
-            return
+            return false
         end
 
         if not unit:IsAffectingCombat() then
-            return
+            return false
+        end
+
+        if not unit:IsEnemy() then
+            return false
         end
 
         if not unit:IsHostile() then
-            return
+            return false
         end
 
         local hp = unit:GetHP()
@@ -67,15 +71,27 @@ local DungeonLogicTarget = Caffeine.UnitManager:CreateCustomUnit('dungeonLogic',
 
     Caffeine.UnitManager:EnumUnits(function(unit)
         if unit:IsDead() then
-            return
+            return false
         end
 
         if Player:GetDistance(unit) > 36 then
-            return
+            return false
+        end
+
+        if not unit:IsAffectingCombat() then
+            return false
+        end
+
+        if not unit:IsEnemy() then
+            return false
+        end
+
+        if not unit:IsHostile() then
+            return false
         end
 
         if not unit:GetID() == 28619 or not unit:GetName() == "Mirror Image" then
-            return
+            return false
         end
 
         if unit:GetID() == 28619 or unit:GetName() == "Mirror Image" then
@@ -95,28 +111,30 @@ local VampireTouchTarget = Caffeine.UnitManager:CreateCustomUnit('vampireTouch',
 
     Caffeine.UnitManager:EnumEnemies(function(unit)
         if unit:IsDead() then
-            return
+            return false
         end
 
         if Player:GetDistance(unit) > 36 then
-            return
+            return false
         end
 
         if not Player:CanSee(unit) then
-            return
+            return false
         end
 
         if not unit:IsAffectingCombat() then
-            return
+            return false
+        end
+
+        if not unit:IsEnemy() then
+            return false
         end
 
         if not unit:IsHostile() then
-            return
+            return false
         end
 
-        if not unit:IsDead()
-            and Player:CanSee(unit)
-            and not unit:GetAuras():FindMy(spells.vampiricTouch):IsUp() then
+        if not unit:IsDead() and unit:IsEnemy() and Player:CanSee(unit) and not unit:GetAuras():FindMy(spells.vampiricTouch):IsUp() then
             vampiricTouch = unit
         end
     end)
@@ -133,27 +151,30 @@ local ShadowWordPainTarget = Caffeine.UnitManager:CreateCustomUnit('shadowWordPa
 
     Caffeine.UnitManager:EnumEnemies(function(unit)
         if unit:IsDead() then
-            return
+            return false
         end
 
         if Player:GetDistance(unit) > 36 then
-            return
+            return false
         end
 
         if not Player:CanSee(unit) then
-            return
+            return false
         end
 
         if not unit:IsAffectingCombat() then
-            return
+            return false
+        end
+
+        if not unit:IsEnemy() then
+            return false
         end
 
         if not unit:IsHostile() then
-            return
+            return false
         end
 
-        if not unit:IsDead()
-            and Player:CanSee(unit)
+        if not unit:IsDead() and Player:CanSee(unit) and unit:IsEnemy()
             and not unit:GetAuras():FindMy(spells.shadowWordPain):IsUp()
             and Player:GetAuras():FindMy(spells.shadowWeaving):GetCount() == 5 then
             shadowWordPain = unit
@@ -176,6 +197,12 @@ function GetEnemiesWithVampiricTouch(range)
         end
     end)
     return count
+end
+
+local function Randomizer(number, multiply)
+    if not multiply then multiply = 4 end
+    local randomValue = 0.2 + (math.random() * (0.8 - 0.2)) -- This generates a random number between 0.2 and 0.8
+    return number + (randomValue * multiply)
 end
 
 function Caffeine.Unit:IsDungeonBoss()
@@ -282,8 +309,8 @@ DefaultAPL:AddItem(
 -- Vampiric Touch
 DefaultAPL:AddSpell(
     spells.vampiricTouch:CastableIf(function(self)
-        return self:IsKnownAndUsable()
-            and Target:Exists()
+        return Target:Exists()
+            and self:IsKnownAndUsable()
             and Target:IsHostile()
             and (Target:GetAuras():FindMy(spells.vampiricTouch):GetRemainingTime() < spells.vampiricTouch:GetCastLength() / 1000
                 or not Target:GetAuras():FindMy(spells.vampiricTouch):IsUp())
@@ -298,46 +325,6 @@ DefaultAPL:AddSpell(
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and Target:IsHostile()
     end):SetTarget(Target)
-)
-
--- Trinket
-DefaultAPL:AddItem(
-    items.inventorySlotTrinket0:UsableIf(function(self)
-        local useTrinkets = Rotation.Config:Read("items_trinkets", true)
-        return useTrinkets
-            and self:IsUsable()
-            and Target:Exists()
-            and (Target:IsBoss() or Target:IsDungeonBoss())
-            and not Player:IsMoving()
-            and not Player:IsCastingOrChanneling()
-    end):SetTarget(None)
-)
-
--- Trinket
-DefaultAPL:AddItem(
-    items.inventorySlotTrinket1:UsableIf(function(self)
-        local useTrinkets = Rotation.Config:Read("items_trinkets", true)
-        return useTrinkets
-            and self:IsUsable()
-            and Target:Exists()
-            and (Target:IsBoss() or Target:IsDungeonBoss())
-            and not Player:IsMoving()
-            and not Player:IsCastingOrChanneling()
-    end):SetTarget(None)
-)
-
--- Potion of Speed
-DefaultAPL:AddItem(
-    items.potionOfSpeed:UsableIf(function(self)
-        local usePotionOfSpeed = Rotation.Config:Read("items_potionOfSpeed", true)
-        return usePotionOfSpeed
-            and not self:IsOnCooldown()
-            and Target:Exists()
-            and Target:IsBoss()
-            and Player:GetDistance(Target) < 36
-            and not Player:IsMoving()
-            and not Player:IsCastingOrChanneling()
-    end):SetTarget(None)
 )
 
 -- Saronite Bomb
@@ -383,8 +370,10 @@ DefaultAPL:AddSpell(
 -- Mind Blast
 DefaultAPL:AddSpell(
     spells.mindBlast:CastableIf(function(self)
+        local delay = math.random(20, 100) / 100 -- Random delay between 0.2 and 1.0 seconds
         local useMindBlast = Rotation.Config:Read("spells_mindBlast", true)
-        return useMindBlast
+        return delay
+            and useMindBlast
             and self:IsKnownAndUsable()
             and Target:Exists()
             and Target:IsHostile()

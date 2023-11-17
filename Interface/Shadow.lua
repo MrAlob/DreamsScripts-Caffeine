@@ -113,22 +113,4 @@ Rotation.Category:Checkbox({
     disabled = false
 })
 
-Rotation.Category:Checkbox({
-    category = "items",
-    var = "trinkets",
-    name = "Trinkets",
-    tooltip = "Enable or disable the use of Trinkets in the rotation. Requires Target.",
-    default = true,
-    disabled = false
-})
-
-Rotation.Category:Checkbox({
-    category = "items",
-    var = "potionOfSpeed",
-    name = "Potion of Speed",
-    tooltip = "Enable or disable the use of Potion of Speed in the rotation.",
-    default = true,
-    disabled = false
-})
-
 Rotation.Category:Register()

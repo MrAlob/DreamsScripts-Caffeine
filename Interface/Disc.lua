@@ -261,44 +261,5 @@ Rotation.Category:Checkbox({
     disabled = false
 })
 
-Rotation.Category:Checkbox({
-    category = "items",
-    var = "trinkets",
-    name = "Trinkets",
-    tooltip = "Enable or disable the use of Trinkets in the rotation. Requires Target.",
-    default = true,
-    disabled = false
-})
-
-Rotation.Category:Checkbox({
-    category = "items",
-    var = "potionOfSpeed",
-    name = "Potion of Speed",
-    tooltip = "Enable or disable the use of Potion of Speed in the rotation.",
-    default = true,
-    disabled = false
-})
-
-Rotation.Category:Slider({
-    category = "items",
-    var = "runicManaInjector",
-    name = "Runic Mana Injector",
-    tooltip = "Use Runic Mana Injector if you below Mana Percentage.",
-    default = 10,
-    min = 0,
-    max = 100,
-    step = 5,
-})
-
-Rotation.Category:Slider({
-    category = "items",
-    var = "runicManaPotion",
-    name = "Runic Mana Potion",
-    tooltip = "Use Runic Mana Potion if you below Mana Percentage.",
-    default = 10,
-    min = 0,
-    max = 100,
-    step = 5,
-})
 
 Rotation.Category:Register()
