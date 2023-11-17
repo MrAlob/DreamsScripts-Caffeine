@@ -419,6 +419,19 @@ DefaultAPL:AddSpell(
     end):SetTarget(PreShield)
 )
 
+local waitingForDelay = false
+local endTime = 0
+local function RandomDelay(apl, minDelayMs, maxDelayMs)
+    if not waitingForDelay then
+        local delay = math.random(minDelayMs, maxDelayMs) / 1000
+        endTime = GetTime() + delay
+        waitingForDelay = true
+    elseif GetTime() >= endTime then
+        apl:Execute()
+        waitingForDelay = false
+    end
+end
+
 -- Sync
 Module:Sync(function()
     if Player:IsMounted() then
@@ -435,7 +448,7 @@ Module:Sync(function()
 
     local isOutOfCombatEnabled = Rotation.Config:Read("outOfCombat", true)
     if isOutOfCombatEnabled or Player:IsAffectingCombat() or Target:IsAffectingCombat() then
-        DefaultAPL:Execute()
+        RandomDelay(DefaultAPL, 10, 150) -- Execute with a delay between 10 and 100 milliseconds
     end
 end)
 

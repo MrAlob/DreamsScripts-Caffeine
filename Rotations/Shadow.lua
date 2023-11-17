@@ -370,10 +370,8 @@ DefaultAPL:AddSpell(
 -- Mind Blast
 DefaultAPL:AddSpell(
     spells.mindBlast:CastableIf(function(self)
-        local delay = math.random(20, 100) / 100 -- Random delay between 0.2 and 1.0 seconds
         local useMindBlast = Rotation.Config:Read("spells_mindBlast", true)
-        return delay
-            and useMindBlast
+        return useMindBlast
             and self:IsKnownAndUsable()
             and Target:Exists()
             and Target:IsHostile()
@@ -396,6 +394,19 @@ DefaultAPL:AddSpell(
     end)
 )
 
+local waitingForDelay = false
+local endTime = 0
+local function RandomDelay(apl, minDelayMs, maxDelayMs)
+    if not waitingForDelay then
+        local delay = math.random(minDelayMs, maxDelayMs) / 1000
+        endTime = GetTime() + delay
+        waitingForDelay = true
+    elseif GetTime() >= endTime then
+        apl:Execute()
+        waitingForDelay = false
+    end
+end
+
 -- Sync
 Module:Sync(function()
     if Player:IsMounted() then
@@ -405,15 +416,16 @@ Module:Sync(function()
         return
     end
 
-    -- Auto target
+    -- Auto Target
     local isAutoTargetEnabled = Rotation.Config:Read("toggleAutoTarget", true)
-    if isAutoTargetEnabled then
+    if isAutoTargetEnabled and (not Target:Exists() or Target:IsDead()) then
         TargetUnit(LowestEnemy:GetGUID())
     end
 
     PreCombatAPL:Execute()
+
     if Player:IsAffectingCombat() or Target:IsAffectingCombat() then
-        DefaultAPL:Execute()
+        RandomDelay(DefaultAPL, 10, 150) -- Execute with a delay between 10 and 100 milliseconds
     end
 end)
 
