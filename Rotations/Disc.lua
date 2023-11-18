@@ -412,6 +412,16 @@ DefaultAPL:AddSpell(
     end):SetTarget(Lowest)
 )
 
+-- Renew (Tank)
+DefaultAPL:AddSpell(
+    spells.renew:CastableIf(function(self)
+        return Tank:Exists()
+            and self:IsKnownAndUsable()
+            and not Tank:GetAuras():FindMy(spells.renew):IsUp()
+            and not Player:IsCastingOrChanneling()
+    end):SetTarget(Tank)
+)
+
 -- Power Word: Shield (Pre-Shield)
 DefaultAPL:AddSpell(
     spells.powerWordShield:CastableIf(function(self)
