@@ -78,10 +78,6 @@ local DungeonLogicTarget = Caffeine.UnitManager:CreateCustomUnit('dungeonLogic',
             return false
         end
 
-        if not unit:IsAffectingCombat() then
-            return false
-        end
-
         if not unit:IsEnemy() then
             return false
         end
@@ -199,12 +195,6 @@ function GetEnemiesWithVampiricTouch(range)
     return count
 end
 
-local function Randomizer(number, multiply)
-    if not multiply then multiply = 4 end
-    local randomValue = 0.2 + (math.random() * (0.8 - 0.2)) -- This generates a random number between 0.2 and 0.8
-    return number + (randomValue * multiply)
-end
-
 function Caffeine.Unit:IsDungeonBoss()
     if UnitClassification(self:GetOMToken()) == "elite"
         and UnitLevel(self:GetOMToken()) == 82
@@ -276,6 +266,7 @@ DefaultAPL:AddSpell(
             and
             (VampireTouchTarget:GetAuras():FindMy(spells.vampiricTouch):GetRemainingTime() < spells.vampiricTouch:GetCastLength() / 1000
                 or not VampireTouchTarget:GetAuras():FindMy(spells.vampiricTouch):IsUp())
+            and not Player:IsMoving()
     end):SetTarget(VampireTouchTarget)
 )
 
@@ -297,7 +288,8 @@ DefaultAPL:AddItem(
     items.inventorySlotGloves:UsableIf(function(self)
         local useEngineeringGloves = Rotation.Config:Read("items_engineeringGloves", true)
         return useEngineeringGloves
-            and self:IsEquippedAndUsable()
+            and self:IsUsable()
+            and not self:IsOnCooldown()
             and Target:Exists()
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and Target:IsHostile()
@@ -314,6 +306,7 @@ DefaultAPL:AddSpell(
             and Target:IsHostile()
             and (Target:GetAuras():FindMy(spells.vampiricTouch):GetRemainingTime() < spells.vampiricTouch:GetCastLength() / 1000
                 or not Target:GetAuras():FindMy(spells.vampiricTouch):IsUp())
+            and not Player:IsMoving()
     end):SetTarget(Target)
 )
 
@@ -332,6 +325,7 @@ DefaultAPL:AddItem(
     items.saroniteBomb:UsableIf(function(self)
         local useSaroniteBomb = Rotation.Config:Read("items_saroniteBomb", true)
         return useSaroniteBomb
+            and self:IsUsable()
             and not self:IsOnCooldown()
             and Target:Exists()
             and Target:IsBoss()
@@ -375,6 +369,7 @@ DefaultAPL:AddSpell(
             and self:IsKnownAndUsable()
             and Target:Exists()
             and Target:IsHostile()
+            and not Player:IsMoving()
     end):SetTarget(Target)
 )
 
@@ -409,6 +404,9 @@ end
 
 -- Sync
 Module:Sync(function()
+    if Player:IsDead() then
+        return
+    end
     if Player:IsMounted() then
         return
     end
@@ -425,7 +423,7 @@ Module:Sync(function()
     PreCombatAPL:Execute()
 
     if Player:IsAffectingCombat() or Target:IsAffectingCombat() then
-        RandomDelay(DefaultAPL, 10, 150) -- Execute with a delay between 10 and 100 milliseconds
+        RandomDelay(DefaultAPL, 10, 250) -- Execute with a delay between 10 and 100 milliseconds
     end
 end)
 

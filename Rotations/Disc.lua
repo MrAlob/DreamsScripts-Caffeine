@@ -65,11 +65,11 @@ local Tank = Caffeine.UnitManager:CreateCustomUnit('tank', function(unit)
             return false
         end
 
-        if not Player:CanSee(unit) then
+        if Player:GetDistance(unit) > 40 then
             return false
         end
 
-        if Player:GetDistance(unit) > 40 then
+        if not Player:CanSee(unit) then
             return false
         end
 
@@ -98,7 +98,7 @@ local PreShield = Caffeine.UnitManager:CreateCustomUnit('preShield', function(un
             return false
         end
 
-        if unit:IsTank() then
+        if Player:GetDistance(unit) > 40 then
             return false
         end
 
@@ -106,7 +106,7 @@ local PreShield = Caffeine.UnitManager:CreateCustomUnit('preShield', function(un
             return false
         end
 
-        if Player:GetDistance(unit) > 40 then
+        if unit:IsTank() then
             return false
         end
 
@@ -134,11 +134,11 @@ local Dispel = Caffeine.UnitManager:CreateCustomUnit('dispel', function(unit)
             return false
         end
 
-        if not Player:CanSee(unit) then
+        if Player:GetDistance(unit) > 40 then
             return false
         end
 
-        if Player:GetDistance(unit) > 40 then
+        if not Player:CanSee(unit) then
             return false
         end
 
@@ -210,8 +210,20 @@ PreCombatAPL:AddSpell(
 
 -- DungeonLogic: Web Wrap & Mirror Image
 DefaultAPL:AddSpell(
-    spells.devouringPlague:CastableIf(function(self)
-        return DungeonLogic:Exists()
+    spells.holyFire:CastableIf(function(self)
+        local useDungeonLogic = Rotation.Config:Read("toggles_dungeonLogic", true)
+        return useDungeonLogic
+            and self:IsKnownAndUsable()
+            and DungeonLogic:Exists()
+    end):SetTarget(DungeonLogic)
+)
+
+DefaultAPL:AddSpell(
+    spells.mindBlast:CastableIf(function(self)
+        local useDungeonLogic = Rotation.Config:Read("toggles_dungeonLogic", true)
+        return useDungeonLogic
+            and self:IsKnownAndUsable()
+            and DungeonLogic:Exists()
     end):SetTarget(DungeonLogic)
 )
 
@@ -220,8 +232,9 @@ DefaultAPL:AddItem(
     items.inventorySlotGloves:UsableIf(function(self)
         local useEngineeringGloves = Rotation.Config:Read("items_engineeringGloves", true)
         return useEngineeringGloves
+            and self:IsUsable()
+            and not self:IsOnCooldown()
             and Target:Exists()
-            and self:IsEquippedAndUsable()
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and Target:IsHostile()
             and not Player:IsMoving()
@@ -234,6 +247,7 @@ DefaultAPL:AddItem(
     items.saroniteBomb:UsableIf(function(self)
         local saroniteBomb = Rotation.Config:Read("items_saroniteBomb", true)
         return saroniteBomb
+            and self:IsUsable()
             and not self:IsOnCooldown()
             and Target:Exists()
             and Target:IsBoss()
@@ -301,18 +315,14 @@ DefaultAPL:AddSpell(
     end):SetTarget(Tank)
 )
 
--- Power Infusion
+-- Prayer of Mending (Tank)
 DefaultAPL:AddSpell(
-    spells.powerInfusion:CastableIf(function(self)
-        local usePowerInfusion = Rotation.Config:Read("spells_powerInfusion", true)
-        return usePowerInfusion
-            and Focus:Exists()
+    spells.prayerOfMending:CastableIf(function(self)
+        return Tank:Exists()
             and self:IsKnownAndUsable()
-            and Focus:IsAffectingCombat()
-            and (Target:IsBoss() or Target:IsDungeonBoss())
-            and not Focus:IsMoving()
+            and not Tank:GetAuras():FindMy(spells.prayerOfMendingAura):IsUp()
             and not Player:IsCastingOrChanneling()
-    end):SetTarget(Focus)
+    end):SetTarget(Tank)
 )
 
 -- Power Word: Shield (Safe)
@@ -338,14 +348,18 @@ DefaultAPL:AddSpell(
     end):SetTarget(Lowest)
 )
 
--- Prayer of Mending (Tank)
+-- Power Infusion
 DefaultAPL:AddSpell(
-    spells.prayerOfMending:CastableIf(function(self)
-        return Tank:Exists()
+    spells.powerInfusion:CastableIf(function(self)
+        local usePowerInfusion = Rotation.Config:Read("spells_powerInfusion", true)
+        return usePowerInfusion
+            and Focus:Exists()
             and self:IsKnownAndUsable()
-            and not Tank:GetAuras():FindMy(spells.prayerOfMendingAura):IsUp()
+            and Focus:IsAffectingCombat()
+            and (Target:IsBoss() or Target:IsDungeonBoss())
+            and not Focus:IsMoving()
             and not Player:IsCastingOrChanneling()
-    end):SetTarget(Tank)
+    end):SetTarget(Focus)
 )
 
 -- Dispel Magic
@@ -379,6 +393,7 @@ DefaultAPL:AddSpell(
             and self:IsKnownAndUsable()
             and Lowest:GetHP() < Rotation.Config:Read("spells_bindingHeal", 60)
             and Player:GetHP() < Rotation.Config:Read("spells_bindingHeal", 60)
+            and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Lowest)
 )
@@ -392,18 +407,9 @@ DefaultAPL:AddSpell(
             and self:IsKnownAndUsable()
             and Lowest:GetHP() < Rotation.Config:Read("spells_flashHeal", 80)
             and spells.penance:OnCooldown()
+            and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Lowest)
-)
-
--- Renew (Tank)
-DefaultAPL:AddSpell(
-    spells.renew:CastableIf(function(self)
-        return Tank:Exists()
-            and self:IsKnownAndUsable()
-            and not Tank:GetAuras():FindMy(spells.renew):IsUp()
-            and not Player:IsCastingOrChanneling()
-    end):SetTarget(Tank)
 )
 
 -- Power Word: Shield (Pre-Shield)
@@ -434,6 +440,9 @@ end
 
 -- Sync
 Module:Sync(function()
+    if Player:IsDead() then
+        return
+    end
     if Player:IsMounted() then
         return
     end
@@ -448,7 +457,7 @@ Module:Sync(function()
 
     local isOutOfCombatEnabled = Rotation.Config:Read("outOfCombat", true)
     if isOutOfCombatEnabled or Player:IsAffectingCombat() or Target:IsAffectingCombat() then
-        RandomDelay(DefaultAPL, 10, 150) -- Execute with a delay between 10 and 100 milliseconds
+        RandomDelay(DefaultAPL, 10, 250) -- Execute with a delay between 10 and 100 milliseconds
     end
 end)
 

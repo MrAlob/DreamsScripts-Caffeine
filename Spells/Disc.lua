@@ -27,7 +27,8 @@ Rotation.Spells = {
     despratePrayer = SpellBook:GetSpell(48173),
 
     -- Damage
-    devouringPlague = SpellBook:GetSpell(48300),
+    holyFire = SpellBook:GetSpell(48135),
+    mindBlast = SpellBook:GetSpell(48127),
 
     -- Utility
     dispelMagic = SpellBook:GetSpell(988),

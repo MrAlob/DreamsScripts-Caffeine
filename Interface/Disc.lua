@@ -49,7 +49,7 @@ Hotbar:AddButton({
 Hotbar:AddButton({
     name = "Toggle Pre-Shield",
     texture = "Interface\\ICONS\\Spell_Holy_PowerWordShield",
-    tooltip = "Enable Pre-Shield. Pre-Shield the entire Raid.",
+    tooltip = "Pre-Shield the entire Raid.",
     toggle = true,
     onClick = function()
         local getSetting = Rotation.Config:Read("preShield", false)
@@ -67,7 +67,7 @@ Hotbar:AddButton({
 Hotbar:AddButton({
     name = "Toggle Dispel",
     texture = "Interface\\ICONS\\SPELL_HOLY_DISPELMAGIC",
-    tooltip = "Enable Dispel. Use Dispel or Cure Disease if any Debuff is up.",
+    tooltip = "Use Dispel or Cure Disease if any Debuff is up.",
     toggle = true,
     onClick = function()
         local getSetting = Rotation.Config:Read("dispel", false)
@@ -85,7 +85,7 @@ Hotbar:AddButton({
 Hotbar:AddButton({
     name = "Toggle Flash Heal",
     texture = "Interface\\ICONS\\Spell_Holy_FlashHeal",
-    tooltip = "Enable Flash Heal. Tip: You dont use Flash Heal in 25man.",
+    tooltip = "Use Flash Heal. Tip: You dont use Flash Heal in 25man normally.",
     toggle = true,
     onClick = function()
         local getSetting = Rotation.Config:Read("flashHeal", false)
@@ -103,7 +103,7 @@ Hotbar:AddButton({
 Hotbar:AddButton({
     name = "Toggle Out of Combat",
     texture = "Interface\\ICONS\\Ability_Vanish",
-    tooltip = "Enable Out of Combat. Use Spells Out of Combat.",
+    tooltip = "Use Spells Out of Combat.",
     toggle = true,
     onClick = function()
         local getSetting = Rotation.Config:Read("outOfCombat", false)
@@ -232,14 +232,26 @@ Rotation.Category:Slider({
     step = 5,
 })
 
+-- Toggles
+Rotation.Category:AddSubsection("|cffFFFFFFToggles")
 Rotation.Category:Checkbox({
-    category = "spells",
+    category = "toggles",
     var = "powerInfustion",
     name = "Power Infusion",
     tooltip = "Enable or disable the use of Power Infusion in the rotation. Set your unit as Focus Target.",
     default = true,
     disabled = false
 })
+
+Rotation.Category:Checkbox({
+    category = "toggles",
+    var = "dungeonLogic",
+    name = "Dungeon Logic (Gamma)",
+    tooltip = "Use of Dungeon Logic in Gamma Dungeons. This will use Holy Fire and Mind Blast at Mirror Images and Web Wraps.",
+    default = true,
+    disabled = false
+})
+
 
 -- Items
 Rotation.Category:AddSubsection("|cffFFFFFFItems")
