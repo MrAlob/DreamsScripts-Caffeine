@@ -78,6 +78,10 @@ local DungeonLogicTarget = Caffeine.UnitManager:CreateCustomUnit('dungeonLogic',
             return false
         end
 
+        if not Player:CanSee(unit) then
+            return false
+        end
+
         if not unit:IsEnemy() then
             return false
         end
@@ -230,6 +234,7 @@ PreCombatAPL:AddSpell(
 DefaultAPL:AddSpell(
     spells.devouringPlague:CastableIf(function(self)
         return DungeonLogicTarget:Exists()
+            and self:IsKnownAndUsable()
     end):SetTarget(DungeonLogicTarget)
 )
 

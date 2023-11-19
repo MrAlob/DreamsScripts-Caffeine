@@ -173,6 +173,10 @@ local DungeonLogic = Caffeine.UnitManager:CreateCustomUnit('dungeonLogic', funct
             return false
         end
 
+        if not Player:CanSee(unit) then
+            return false
+        end
+
         if not (unit:GetID() == 28619 or unit:GetName() == "Mirror Image") then
             return false
         end
@@ -215,6 +219,7 @@ DefaultAPL:AddSpell(
         return useDungeonLogic
             and self:IsKnownAndUsable()
             and DungeonLogic:Exists()
+            and not Player:IsMoving()
     end):SetTarget(DungeonLogic)
 )
 
@@ -224,6 +229,7 @@ DefaultAPL:AddSpell(
         return useDungeonLogic
             and self:IsKnownAndUsable()
             and DungeonLogic:Exists()
+            and not Player:IsMoving()
     end):SetTarget(DungeonLogic)
 )
 
