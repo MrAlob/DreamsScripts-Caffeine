@@ -28,4 +28,5 @@ Rotation.Spells = {
     shadowWeaving   = SpellBook:GetSpell(15258),
     replenishment   = SpellBook:GetSpell(57669),
     luckoftheDraw   = SpellBook:GetSpell(72221),
+    refreshmentAuras = SpellBook:GetList(43183, 57073)
 }

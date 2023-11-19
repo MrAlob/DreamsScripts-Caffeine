@@ -459,7 +459,7 @@ Module:Sync(function()
     if Player:IsCastingOrChanneling() then
         return
     end
-    if Player:GetAuras():FindMy(spells.drinkAuras):IsUp() then
+    if Player:GetAuras():FindAnyOfMy(spells.refreshmentAuras):IsUp() then
         return
     end
 

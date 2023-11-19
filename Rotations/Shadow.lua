@@ -413,6 +413,9 @@ Module:Sync(function()
     if Player:IsMounted() then
         return
     end
+    if Player:GetAuras():FindAnyOfMy(spells.refreshmentAuras):IsUp() then
+        return
+    end
 
     -- Auto Target
     local isAutoTargetEnabled = Rotation.Config:Read("toggleAutoTarget", true)

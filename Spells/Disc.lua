@@ -41,5 +41,5 @@ Rotation.Spells = {
     weakenedSoul = SpellBook:GetSpell(6788),
     prayerOfMendingAura = SpellBook:GetSpell(41635),
     luckoftheDraw = SpellBook:GetSpell(72221),
-    drinkAuras = SpellBook:GetSpell(43183, 43182)
+    refreshmentAuras = SpellBook:GetList(43183, 57073)
 }
