@@ -407,10 +407,10 @@ Module:Sync(function()
     if Player:IsDead() then
         return
     end
-    if Player:IsMounted() then
+    if Player:IsCastingOrChanneling() then
         return
     end
-    if Player:IsCastingOrChanneling() then
+    if Player:IsMounted() then
         return
     end
 

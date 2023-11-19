@@ -456,10 +456,10 @@ Module:Sync(function()
     if Player:IsMounted() then
         return
     end
-    if Player:GetAuras():FindMy(spells.drinkAuras):IsUp() then
+    if Player:IsCastingOrChanneling() then
         return
     end
-    if Player:IsCastingOrChanneling() then
+    if Player:GetAuras():FindMy(spells.drinkAuras):IsUp() then
         return
     end
 
