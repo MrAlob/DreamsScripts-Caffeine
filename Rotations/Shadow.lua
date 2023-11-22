@@ -66,7 +66,7 @@ local LowestEnemy = Caffeine.UnitManager:CreateCustomUnit('lowest', function(uni
     return lowest
 end)
 
-local DungeonLogicTarget = Caffeine.UnitManager:CreateCustomUnit('dungeonLogic', function(unit)
+local DungeonLogic = Caffeine.UnitManager:CreateCustomUnit('dungeonLogic', function(unit)
     local dungeonLogic = nil
 
     Caffeine.UnitManager:EnumUnits(function(unit)
@@ -94,7 +94,7 @@ local DungeonLogicTarget = Caffeine.UnitManager:CreateCustomUnit('dungeonLogic',
             return false
         end
 
-        if unit:GetID() == 28619 or unit:GetName() == "Mirror Image" then
+        if Player:CanSee(unit) and Player:IsFacing(unit) and (unit:GetID() == 28619 or unit:GetName() == "Mirror Image") then
             dungeonLogic = unit
         end
     end)
@@ -232,10 +232,12 @@ PreCombatAPL:AddSpell(
 
 -- DungeonLogic: Web Wrap and Mirror Images
 DefaultAPL:AddSpell(
-    spells.devouringPlague:CastableIf(function(self)
-        return DungeonLogicTarget:Exists()
+    spells.mindFlay:CastableIf(function(self)
+        return DungeonLogic:Exists()
             and self:IsKnownAndUsable()
-    end):SetTarget(DungeonLogicTarget)
+            and Player:IsFacing(DungeonLogic)
+            and not Player:IsMoving()
+    end):SetTarget(DungeonLogic)
 )
 
 -- Mind Sear (AoE)
@@ -415,7 +417,10 @@ Module:Sync(function()
     if Player:IsCastingOrChanneling() then
         return
     end
-    if Player:IsMounted() then
+    if IsMounted() then
+        return
+    end
+    if UnitInVehicle("player") then
         return
     end
     if Player:GetAuras():FindAnyOfMy(spells.refreshmentAuras):IsUp() then
@@ -431,7 +436,7 @@ Module:Sync(function()
     PreCombatAPL:Execute()
 
     if Player:IsAffectingCombat() or Target:IsAffectingCombat() then
-        RandomDelay(DefaultAPL, 10, 250) -- Execute with a delay between 10 and 100 milliseconds
+        RandomDelay(DefaultAPL, 1, 100) -- Execute with a delay between 10 and 100 milliseconds
     end
 end)
 

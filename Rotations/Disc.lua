@@ -177,13 +177,20 @@ local DungeonLogic = Caffeine.UnitManager:CreateCustomUnit('dungeonLogic', funct
             return false
         end
 
-        if not (unit:GetID() == 28619 or unit:GetName() == "Mirror Image") then
+        if not unit:IsEnemy() then
             return false
         end
 
-        if unit:GetID() == 28619 or unit:GetName() == "Mirror Image" then
+        if not unit:IsHostile() then
+            return false
+        end
+
+        if not unit:GetID() == 28619 or not unit:GetName() == "Mirror Image" then
+            return false
+        end
+
+        if Player:CanSee(unit) and Player:IsFacing(unit) and (unit:GetID() == 28619 or unit:GetName() == "Mirror Image") then
             dungeonLogic = unit
-            return true
         end
     end)
 
@@ -219,6 +226,7 @@ DefaultAPL:AddSpell(
         return useDungeonLogic
             and self:IsKnownAndUsable()
             and DungeonLogic:Exists()
+            and Player:IsFacing(DungeonLogic)
             and not Player:IsMoving()
     end):SetTarget(DungeonLogic)
 )
@@ -229,6 +237,7 @@ DefaultAPL:AddSpell(
         return useDungeonLogic
             and self:IsKnownAndUsable()
             and DungeonLogic:Exists()
+            and Player:IsFacing(DungeonLogic)
             and not Player:IsMoving()
     end):SetTarget(DungeonLogic)
 )
@@ -459,7 +468,10 @@ Module:Sync(function()
     if Player:IsDead() then
         return
     end
-    if Player:IsMounted() then
+    if IsMounted() then
+        return
+    end
+    if UnitInVehicle("player") then
         return
     end
     if Player:IsCastingOrChanneling() then
@@ -473,7 +485,7 @@ Module:Sync(function()
 
     local isOutOfCombatEnabled = Rotation.Config:Read("outOfCombat", true)
     if isOutOfCombatEnabled or Player:IsAffectingCombat() or Target:IsAffectingCombat() then
-        RandomDelay(DefaultAPL, 10, 250) -- Execute with a delay between 10 and 100 milliseconds
+        RandomDelay(DefaultAPL, 1, 100) -- Execute with a delay between 10 and 100 milliseconds
     end
 end)
 
