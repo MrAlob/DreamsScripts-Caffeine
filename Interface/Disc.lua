@@ -5,6 +5,10 @@ if Rotation.GetSpec() ~= 1 then
     return
 end
 
+if Rotation.GetClass() ~= "PRIEST" then
+    return
+end
+
 -- Category
 Rotation.Category = Caffeine.Interface.Category:New("|cffffffffDreams|cff00B5FFScripts|cffffffff: Disc")
 

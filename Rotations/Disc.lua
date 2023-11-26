@@ -5,6 +5,10 @@ if Rotation.GetSpec() ~= 1 then
     return
 end
 
+if Rotation.GetClass() ~= "PRIEST" then
+    return
+end
+
 -- Module
 local Module = Caffeine.Module:New('disc')
 
@@ -450,19 +454,6 @@ DefaultAPL:AddSpell(
     end):SetTarget(PreShield)
 )
 
-local waitingForDelay = false
-local endTime = 0
-local function RandomDelay(apl, minDelayMs, maxDelayMs)
-    if not waitingForDelay then
-        local delay = math.random(minDelayMs, maxDelayMs) / 1000
-        endTime = GetTime() + delay
-        waitingForDelay = true
-    elseif GetTime() >= endTime then
-        apl:Execute()
-        waitingForDelay = false
-    end
-end
-
 -- Sync
 Module:Sync(function()
     if Player:IsDead() then
@@ -485,7 +476,7 @@ Module:Sync(function()
 
     local isOutOfCombatEnabled = Rotation.Config:Read("outOfCombat", true)
     if isOutOfCombatEnabled or Player:IsAffectingCombat() or Target:IsAffectingCombat() then
-        RandomDelay(DefaultAPL, 1, 100) -- Execute with a delay between 10 and 100 milliseconds
+        DefaultAPL:Execute()
     end
 end)
 

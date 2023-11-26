@@ -3,11 +3,15 @@
     "Loader/Loader",
     "Interface/Disc",
     "Interface/Shadow",
+    "Interface/Fire",
     "Spells/Disc",
     "Spells/Shadow",
+    "Spells/Fire",
     "Items/Disc",
     "Items/Shadow",
+    "Items/Fire",
     "Rotations/Disc",
-    "Rotations/Shadow"
+    "Rotations/Shadow",
+    "Rotations/Fire"
   ]
 }

@@ -19,3 +19,10 @@ function Rotation.GetSpec()
 
     return talentIndex
 end
+
+-- Function to determine the class of the player.
+---@return string className of the player.
+function Rotation.GetClass()
+    local _, className = UnitClass("player")
+    return className
+end

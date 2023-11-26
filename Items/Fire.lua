@@ -1,11 +1,11 @@
 local Unlocker, Caffeine, Rotation = ...
 
 -- Loader
-if Rotation.GetSpec() ~= 3 then
+if Rotation.GetSpec() ~= 2 then
     return
 end
 
-if Rotation.GetClass() ~= "PRIEST" then
+if Rotation.GetClass() ~= "MAGE" then
     return
 end
 
@@ -18,8 +18,6 @@ end
 -- Items 
 Rotation.Items = {
     inventorySlotGloves = Caffeine.Globals.ItemBook:GetItem(getItemID(10)),
-    inventorySlotTrinket0 = Caffeine.Globals.ItemBook:GetItem(getItemID(13)),
-    inventorySlotTrinket1 = Caffeine.Globals.ItemBook:GetItem(getItemID(14)),
-    potionOfSpeed = Caffeine.Globals.ItemBook:GetItem(40211),
+    manaGem = Caffeine.Globals.ItemBook:GetItem(33312),
     saroniteBomb = Caffeine.Globals.ItemBook:GetItem(41119)
 }

@@ -1,16 +1,16 @@
 local Unlocker, Caffeine, Rotation = ...
 
 -- Loader
-if Rotation.GetSpec() ~= 3 then
+if Rotation.GetSpec() ~= 2 then
     return
 end
 
-if Rotation.GetClass() ~= "PRIEST" then
+if Rotation.GetClass() ~= "MAGE" then
     return
 end
 
 -- Category
-Rotation.Category = Caffeine.Interface.Category:New("|cffffffffDreams|cff00B5FFScripts|cffffffff: Shadow")
+Rotation.Category = Caffeine.Interface.Category:New("|cffffffffDreams|cff00B5FFScripts|cffffffff: Fire")
 
 -- Config
 Rotation.Config = Rotation.Category.config
@@ -20,7 +20,7 @@ Rotation.Config:Write("aoe", false)
 Rotation.Config:Write("autoTarget", false)
 
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Hello! Rotation successfully initialized.")
-Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Version: 2.0.3")
+Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Version: 1.0.0")
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - If you need any help or have suggestions.")
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Discord: |cffeb6ee9https://discord.gg/dJ2upysMcW")
 
@@ -33,17 +33,17 @@ Hotbar = Caffeine.Interface.Hotbar:New({
 
 Hotbar:AddButton({
     name = "Toggle Rotation",
-    texture = "Interface\\ICONS\\Ability_Parry",
+    texture = "Interface\\ICONS\\Ability_Rogue_FindWeakness",
     tooltip = "Enable Rotation",
     toggle = true,
     onClick = function()
-        Module = Caffeine:FindModule("shadow")
+        Module = Caffeine:FindModule("fire")
         if Module then
             Module.enabled = not Module.enabled
             if Module.enabled then
-                Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Shadow Enabled")
+                Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Fire Enabled")
             else
-                Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Shadow Disabled")
+                Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Fire Disabled")
             end
         end
     end,
@@ -51,7 +51,7 @@ Hotbar:AddButton({
 
 Hotbar:AddButton({
     name = "Toggle AoE",
-    texture = "Interface\\ICONS\\Spell_Shadow_MindShear",
+    texture = "Interface\\ICONS\\Ability_Mage_LivingBomb",
     tooltip =
     "Use Mind Sear, Vampiric Touch, Shadow Word: Pain on nearby Enemies, Rotation adapts itself too the amount of Enemies",
     toggle = true,

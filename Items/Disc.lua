@@ -5,6 +5,11 @@ if Rotation.GetSpec() ~= 1 then
     return
 end
 
+if Rotation.GetClass() ~= "PRIEST" then
+    return
+end
+
+
 local ItemBook = Caffeine.Globals.ItemBook
 
 -- Get ItemID from Inventory Slot

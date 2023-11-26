@@ -5,6 +5,10 @@ if Rotation.GetSpec() ~= 1 then
     return
 end
 
+if Rotation.GetClass() ~= "PRIEST" then
+    return
+end
+
 local SpellBook = Caffeine.Globals.SpellBook
 
 Rotation.Spells = {
