@@ -437,7 +437,7 @@ Module:Sync(function()
     end
 
     -- Auto Target
-    local isAutoTargetEnabled = Rotation.Config:Read("toggleAutoTarget", true)
+    local isAutoTargetEnabled = Rotation.Config:Read("autoTarget", true)
     if isAutoTargetEnabled and (not Target:Exists() or Target:IsDead()) then
         TargetUnit(LowestEnemy:GetGUID())
     end
