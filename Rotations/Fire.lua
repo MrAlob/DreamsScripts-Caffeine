@@ -134,8 +134,11 @@ local LivingBomb = Caffeine.UnitManager:CreateCustomUnit('livingBomb', function(
             return false
         end
 
-        if not unit:IsHostile() then
-            return false
+        -- Lich King
+        -- Drudge Ghoul: 37695
+        -- Shambling Horror: 37698
+        if unit:GetID() == 37695 or unit:GetID() == 37698 then
+            return
         end
 
         if not unit:IsDead() and unit:IsEnemy() and Player:CanSee(unit) and not unit:GetAuras():FindMy(spells.livingBomb):IsUp() then
@@ -149,6 +152,69 @@ local LivingBomb = Caffeine.UnitManager:CreateCustomUnit('livingBomb', function(
 
     return livingBomb
 end)
+
+-- Decurse
+local Decurse = Caffeine.UnitManager:CreateCustomUnit('decurse', function(unit)
+    local decurse = nil
+
+    Caffeine.UnitManager:EnumFriends(function(unit)
+        if unit:IsDead() then
+            return false
+        end
+
+        if Player:GetDistance(unit) > 40 then
+            return false
+        end
+
+        if not Player:CanSee(unit) then
+            return false
+        end
+
+        if not unit:IsDead() and Player:CanSee(unit) and unit:GetAuras():HasAnyDispelableAura(spells.removeCurse) then
+            decurse = unit
+        end
+    end)
+
+    if decurse == nil then
+        decurse = None
+    end
+
+    return decurse
+end)
+
+-- Spellsteal
+local Spellsteal = Caffeine.UnitManager:CreateCustomUnit('spellsteal', function(unit)
+    local spellsteal = nil
+
+    Caffeine.UnitManager:EnumEnemies(function(unit)
+        if unit:IsDead() then
+            return false
+        end
+
+        if Player:GetDistance(unit) > 30 then
+            return false
+        end
+
+        if not Player:CanSee(unit) then
+            return false
+        end
+
+        if not unit:GetAuras():HasAnyStealableAura() then
+            return
+        end
+
+        if not unit:IsDead() and Player:CanSee(unit) and unit:GetAuras():HasAnyStealableAura() then
+            spellsteal = unit
+        end
+    end)
+
+    if spellsteal == nil then
+        spellsteal = None
+    end
+
+    return spellsteal
+end)
+
 
 function Caffeine.Unit:IsDungeonBoss()
     if UnitClassification(self:GetOMToken()) == "elite"
@@ -175,6 +241,7 @@ PreCombatAPL:AddSpell(
             and items.manaGem:GetCharges() < 2
             and not Player:IsAffectingCombat()
             and not Player:IsCastingOrChanneling()
+            and not Player:IsMoving()
     end):SetTarget(Player)
 )
 
@@ -184,7 +251,8 @@ DefaultAPL:AddItem(
         return self:IsUsable()
             and not self:IsOnCooldown()
             and items.manaGem:GetCharges() > 0
-            and Player:GetPP() < 60
+            and Player:GetPP() < Rotation.Config:Read("items_manaGem", 60)
+            and Player:IsAffectingCombat()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(None)
 )
@@ -192,7 +260,10 @@ DefaultAPL:AddItem(
 -- DungeonLogic: Web Wrap and Mirror Images
 DefaultAPL:AddSpell(
     spells.iceLance:CastableIf(function(self)
+        local useDungeonLogic = Rotation.Config:Read("options_dungeonLogic", true)
         return self:IsKnownAndUsable()
+            and self:IsInRange(DungeonLogic)
+            and useDungeonLogic
             and DungeonLogic:Exists()
             and Player:IsFacing(DungeonLogic)
     end):SetTarget(DungeonLogic)
@@ -205,8 +276,24 @@ DefaultAPL:AddSpell(
             and Target:Exists()
             and Target:IsHostile()
             and (Target:IsBoss() or Target:IsDungeonBoss())
+            and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(None)
+)
+
+-- Scorch
+DefaultAPL:AddSpell(
+    spells.scorch:CastableIf(function(self)
+        return self:IsKnownAndUsable()
+            and self:IsInRange(Target)
+            and Target:Exists()
+            and Target:IsHostile()
+            and (Target:IsBoss() or Target:IsDungeonBoss())
+            and not (Target:GetAuras():FindAny(spells.improvedScorchAura):IsUp()
+                or Target:GetAuras():FindAny(spells.shadowMasteryAura):IsUp())
+            and not Player:IsMoving()
+            and not Player:IsCastingOrChanneling()
+    end):SetTarget(Target)
 )
 
 -- Combustion
@@ -217,17 +304,23 @@ DefaultAPL:AddSpell(
             and Target:Exists()
             and Target:IsHostile()
             and (Target:IsBoss() or Target:IsDungeonBoss())
+            and (Target:GetAuras():FindAny(spells.improvedScorchAura):IsUp()
+                or Target:GetAuras():FindAny(spells.shadowMasteryAura):IsUp())
+            and not Player:GetAuras():FindAny(spells.combustionAura):IsUp()
+            and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
-    end):SetTarget(None)
+    end):SetTarget(Player)
 )
+
+-- Flame Cap
 
 -- Engineering Gloves
 DefaultAPL:AddItem(
     items.inventorySlotGloves:UsableIf(function(self)
         local useEngineeringGloves = Rotation.Config:Read("items_engineeringGloves", true)
-        return useEngineeringGloves
-            and self:IsUsable()
+        return self:IsUsable()
             and not self:IsOnCooldown()
+            and useEngineeringGloves
             and Target:Exists()
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and Target:IsHostile()
@@ -240,9 +333,9 @@ DefaultAPL:AddItem(
 DefaultAPL:AddItem(
     items.saroniteBomb:UsableIf(function(self)
         local useSaroniteBomb = Rotation.Config:Read("items_saroniteBomb", true)
-        return useSaroniteBomb
-            and self:IsUsable()
+        return self:IsUsable()
             and not self:IsOnCooldown()
+            and useSaroniteBomb
             and Target:Exists()
             and Target:IsHostile()
             and Target:IsBoss()
@@ -255,26 +348,11 @@ DefaultAPL:AddItem(
     end)
 )
 
--- Flame Cap
-
--- Scorch
-DefaultAPL:AddSpell(
-    spells.scorch:CastableIf(function(self)
-        return self:IsKnownAndUsable()
-            and Target:Exists()
-            and Target:IsHostile()
-            and (Target:IsBoss() or Target:IsDungeonBoss())
-            and
-            not (Target:GetAuras():FindAny(spells.improvedScorchAura):IsUp() or Target:GetAuras():FindAny(spells.shadowMasteryAura):IsUp()) -- Shadow Bolt crit aura
-            and not Player:IsMoving()
-            and not Player:IsCastingOrChanneling()
-    end):SetTarget(Target)
-)
-
 -- Pyro Blast (Hot Streak)
 DefaultAPL:AddSpell(
     spells.pyroblast:CastableIf(function(self)
         return self:IsKnownAndUsable()
+            and self:IsInRange(Target)
             and Target:Exists()
             and Target:IsHostile()
             and Player:GetAuras():FindMy(spells.hotStreakAura):IsUp()
@@ -282,10 +360,37 @@ DefaultAPL:AddSpell(
     end):SetTarget(Target)
 )
 
+-- Remove Curse
+DefaultAPL:AddSpell(
+    spells.removeCurse:CastableIf(function(self)
+        local useDecurse = Rotation.Config:Read("decurse", true)
+        return self:IsKnownAndUsable()
+            and self:IsInRange(Decurse)
+            and useDecurse
+            and Decurse:Exists()
+            and Decurse:GetAuras():HasAnyDispelableAura(spells.removeCurse)
+            and not Player:IsCastingOrChanneling()
+    end):SetTarget(Decurse)
+)
+
+-- Spellsteal
+DefaultAPL:AddSpell(
+    spells.spellsteal:CastableIf(function(self)
+        local useSpellsteal = Rotation.Config:Read("spellsteal", true)
+        return self:IsKnownAndUsable()
+            and self:IsInRange(Spellsteal)
+            and useSpellsteal
+            and Spellsteal:Exists()
+            and Spellsteal:GetAuras():HasAnyStealableAura()
+            and not Player:IsCastingOrChanneling()
+    end):SetTarget(Spellsteal)
+)
+
 -- Living Bomb
 DefaultAPL:AddSpell(
     spells.livingBomb:CastableIf(function(self)
         return self:IsKnownAndUsable()
+            and self:IsInRange(Target)
             and Target:Exists()
             and Target:IsHostile()
             and not Target:GetAuras():FindMy(spells.livingBomb):IsUp()
@@ -298,6 +403,7 @@ DefaultAPL:AddSpell(
     spells.livingBomb:CastableIf(function(self)
         local useAoe = Rotation.Config:Read("aoe", true)
         return self:IsKnownAndUsable()
+            and self:IsInRange(LivingBomb)
             and useAoe
             and LivingBomb:Exists()
             and LivingBomb:IsHostile()
@@ -310,6 +416,7 @@ DefaultAPL:AddSpell(
 DefaultAPL:AddSpell(
     spells.fireBlast:CastableIf(function(self)
         return self:IsKnownAndUsable()
+            and self:IsInRange(Target)
             and Target:Exists()
             and Target:IsHostile()
             and Player:IsMoving()
@@ -321,6 +428,7 @@ DefaultAPL:AddSpell(
 DefaultAPL:AddSpell(
     spells.fireball:CastableIf(function(self)
         return self:IsKnownAndUsable()
+            and self:IsInRange(Target)
             and Target:Exists()
             and Target:IsHostile()
             and not Player:IsCastingOrChanneling()
@@ -347,8 +455,8 @@ Module:Sync(function()
     end
 
     -- Auto Target
-    local isAutoTargetEnabled = Rotation.Config:Read("autoTarget", true)
-    if isAutoTargetEnabled and (not Target:Exists() or Target:IsDead()) then
+    local useAutoTarget = Rotation.Config:Read("autoTarget", true)
+    if useAutoTarget and (not Target:Exists() or Target:IsDead()) then
         TargetUnit(LowestEnemy:GetGUID())
     end
 

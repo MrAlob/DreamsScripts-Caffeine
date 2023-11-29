@@ -18,6 +18,8 @@ Rotation.Config = Rotation.Category.config
 -- Initialize the Hotbar Toggle too false
 Rotation.Config:Write("aoe", false)
 Rotation.Config:Write("autoTarget", false)
+Rotation.Config:Write("decurse", false)
+Rotation.Config:Write("spellsteal", false)
 
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Hello! Rotation successfully initialized.")
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Version: 1.0.0")
@@ -53,7 +55,7 @@ Hotbar:AddButton({
     name = "Toggle AoE",
     texture = "Interface\\ICONS\\Ability_Mage_LivingBomb",
     tooltip =
-    "Use Mind Sear, Vampiric Touch, Shadow Word: Pain on nearby Enemies, Rotation adapts itself too the amount of Enemies",
+    "Use Living Bomb on enemies which are not your Target",
     toggle = true,
     onClick = function()
         local getSetting = Rotation.Config:Read("aoe", false)
@@ -69,9 +71,45 @@ Hotbar:AddButton({
 })
 
 Hotbar:AddButton({
+    name = "Toggle Remove Curse",
+    texture = "Interface\\ICONS\\Spell_Nature_RemoveCurse",
+    tooltip = "Use Remove Curse if anyone has a Curse active",
+    toggle = true,
+    onClick = function()
+        local getSetting = Rotation.Config:Read("decurse", false)
+        local setting = not getSetting
+        Rotation.Config:Write("decurse", setting)
+
+        if setting then
+            Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Remove Curse Enabled")
+        else
+            Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Remove Curse Disabled")
+        end
+    end,
+})
+
+Hotbar:AddButton({
+    name = "Toggle Spellsteal",
+    texture = "Interface\\ICONS\\Spell_Arcane_Arcane02",
+    tooltip = "Use Spellsteal too steal buffs from nearby enemies",
+    toggle = true,
+    onClick = function()
+        local getSetting = Rotation.Config:Read("spellsteal", false)
+        local setting = not getSetting
+        Rotation.Config:Write("spellsteal", setting)
+
+        if setting then
+            Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Spellsteal Enabled")
+        else
+            Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Spellsteal Disabled")
+        end
+    end,
+})
+
+Hotbar:AddButton({
     name = "Toggle Auto Target",
     texture = "Interface\\ICONS\\Ability_Hunter_MarkedForDeath",
-    tooltip = "Use Auto Target, it will automatically Auto Target the lowest enemy nearby",
+    tooltip = "Use Auto Target, it will automatically Auto Target the lowest enemie nearby",
     toggle = true,
     onClick = function()
         local getSetting = Rotation.Config:Read("autoTarget", false)
@@ -86,24 +124,24 @@ Hotbar:AddButton({
     end,
 })
 
--- Spells
-Rotation.Category:AddSubsection("|cffFFFFFFSpells")
-Rotation.Category:Checkbox({
-    category = "spells",
-    var = "mindBlast",
-    name = "Mind Blast",
-    tooltip = "Enable or disable the use of Mind Blast in the rotation. Tip: Turn off if you have T10 4 Piece.",
-    default = true,
-    disabled = false
-})
-
 -- Items
 Rotation.Category:AddSubsection("|cffFFFFFFItems")
+Rotation.Category:Slider({
+    category = "items",
+    var = "manaGem",
+    name = "Mana Gem",
+    tooltip = "Use Mana Gem if you below Mana Percentage",
+    default = 60,
+    min = 0,
+    max = 100,
+    step = 5,
+})
+
 Rotation.Category:Checkbox({
     category = "items",
     var = "engineeringGloves",
     name = "Engineering Gloves",
-    tooltip = "Enable or disable the use of Engineering Gloves in the rotation. Requires Target.",
+    tooltip = "Use of Engineering Gloves in the rotation. Requires Target",
     default = true,
     disabled = false
 })
@@ -112,7 +150,18 @@ Rotation.Category:Checkbox({
     category = "items",
     var = "saroniteBomb",
     name = "Saronite Bomb",
-    tooltip = "Enable or disable the use of Saronite Bomb in the rotation. Requires Target.",
+    tooltip = "Enable or disable the use of Saronite Bomb in the rotation. Requires Target",
+    default = true,
+    disabled = false
+})
+
+-- Options
+Rotation.Category:AddSubsection("|cffFFFFFFOptions")
+Rotation.Category:Checkbox({
+    category = "options",
+    var = "dungeonLogic",
+    name = "Dungeon Logic (Gamma)",
+    tooltip = "Use of Dungeon Logic in Gamma Dungeons. This will use Ice Lance at Mirror Images and Web Wraps",
     default = true,
     disabled = false
 })
