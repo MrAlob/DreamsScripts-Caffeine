@@ -133,6 +133,11 @@ local VampireTouchTarget = Caffeine.UnitManager:CreateCustomUnit('vampireTouch',
             return
         end
 
+        -- Lady Deathwhisper
+        if unit:GetAuras():FindMy(spells.shroudOfTheOccult):IsUp() then
+            return
+        end
+
         if unit:GetAuras():FindMy(spells.vampiricTouch):IsUp() then
             return
         end
@@ -177,6 +182,11 @@ local ShadowWordPainTarget = Caffeine.UnitManager:CreateCustomUnit('shadowWordPa
         -- Drudge Ghoul: 37695
         -- Shambling Horror: 37698
         if unit:GetID() == 37695 or unit:GetID() == 37698 then
+            return
+        end
+
+        -- Lady Deathwhisper
+        if unit:GetAuras():FindMy(spells.shroudOfTheOccult):IsUp() then
             return
         end
 
@@ -248,6 +258,7 @@ DefaultAPL:AddSpell(
     spells.mindFlay:CastableIf(function(self)
         return DungeonLogic:Exists()
             and self:IsKnownAndUsable()
+            and self:IsInRange(DungeonLogic)
             and Player:IsFacing(DungeonLogic)
             and not Player:IsMoving()
     end):SetTarget(DungeonLogic)
@@ -259,6 +270,7 @@ DefaultAPL:AddSpell(
         local isAoeEnabled = Rotation.Config:Read("aoe", true)
         return isAoeEnabled
             and self:IsKnownAndUsable()
+            and self:IsInRange(Target)
             and Target:Exists()
             and Target:IsAffectingCombat()
             and Target:GetEnemies(12) >= 8
@@ -271,6 +283,7 @@ DefaultAPL:AddSpell(
 DefaultAPL:AddSpell(
     spells.mindSear:CastableIf(function(self)
         return self:IsKnownAndUsable()
+            and self:IsInRange(Target)
             and Target:Exists()
             and Target:IsAffectingCombat()
             and GetEnemiesWithVampiricTouch(12) >= 4
@@ -285,6 +298,7 @@ DefaultAPL:AddSpell(
         local isAoeEnabled = Rotation.Config:Read("aoe", true)
         return isAoeEnabled
             and self:IsKnownAndUsable()
+            and self:IsInRange(VampireTouchTarget)
             and VampireTouchTarget:Exists()
             and VampireTouchTarget:IsAffectingCombat()
             and
@@ -298,9 +312,12 @@ DefaultAPL:AddSpell(
 -- Shadow Word: Pain (AoE)
 DefaultAPL:AddSpell(
     spells.shadowWordPain:CastableIf(function(self)
-        local isAoeEnabled = Rotation.Config:Read("aoe", true)
-        return isAoeEnabled
+        local useAoe = Rotation.Config:Read("aoe", true)
+        local useShadowWordPain = Rotation.Config:Read("spells_shadowWordPain", true)
+        return useAoe
+            and useShadowWordPain
             and self:IsKnownAndUsable()
+            and self:IsInRange(ShadowWordPainTarget)
             and ShadowWordPainTarget:Exists()
             and ShadowWordPainTarget:IsAffectingCombat()
             and not ShadowWordPainTarget:GetAuras():FindMy(spells.shadowWordPain):IsUp()
@@ -329,6 +346,7 @@ DefaultAPL:AddSpell(
     spells.vampiricTouch:CastableIf(function(self)
         return Target:Exists()
             and self:IsKnownAndUsable()
+            and self:IsInRange(Target)
             and Target:IsAffectingCombat()
             and (Target:GetAuras():FindMy(spells.vampiricTouch):GetRemainingTime() < spells.vampiricTouch:GetCastLength() / 1000
                 or not Target:GetAuras():FindMy(spells.vampiricTouch):IsUp())
@@ -341,6 +359,7 @@ DefaultAPL:AddSpell(
 DefaultAPL:AddSpell(
     spells.shadowfiend:CastableIf(function(self)
         return self:IsKnownAndUsable()
+            and self:IsInRange(Target)
             and Target:Exists()
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and Target:IsAffectingCombat()
@@ -371,6 +390,7 @@ DefaultAPL:AddItem(
 DefaultAPL:AddSpell(
     spells.devouringPlague:CastableIf(function(self)
         return self:IsKnownAndUsable()
+            and self:IsInRange(Target)
             and Target:Exists()
             and Target:IsAffectingCombat()
             and (Target:GetAuras():FindMy(spells.devouringPlague):GetRemainingTime() < 2
@@ -383,6 +403,7 @@ DefaultAPL:AddSpell(
 DefaultAPL:AddSpell(
     spells.shadowWordPain:CastableIf(function(self)
         return self:IsKnownAndUsable()
+            and self:IsInRange(Target)
             and Target:Exists()
             and Target:IsAffectingCombat()
             and not Target:GetAuras():FindMy(spells.shadowWordPain):IsUp()
@@ -396,6 +417,7 @@ DefaultAPL:AddSpell(
     spells.mindBlast:CastableIf(function(self)
         local useMindBlast = Rotation.Config:Read("spells_mindBlast", true)
         return useMindBlast
+            and self:IsInRange(Target)
             and self:IsKnownAndUsable()
             and Target:Exists()
             and Target:IsAffectingCombat()
@@ -408,6 +430,7 @@ DefaultAPL:AddSpell(
 DefaultAPL:AddSpell(
     spells.mindFlay:CastableIf(function(self)
         return self:IsKnownAndUsable()
+            and self:IsInRange(Target)
             and Target:IsAffectingCombat()
             and Target:Exists()
             and not Player:IsMoving()

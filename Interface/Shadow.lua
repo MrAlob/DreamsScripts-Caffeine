@@ -20,7 +20,7 @@ Rotation.Config:Write("aoe", false)
 Rotation.Config:Write("autoTarget", false)
 
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Hello! Rotation successfully initialized.")
-Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Version: 2.0.3")
+Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Version: 2.0.4")
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - If you need any help or have suggestions.")
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Discord: |cffeb6ee9https://discord.gg/dJ2upysMcW")
 
@@ -33,7 +33,7 @@ Hotbar = Caffeine.Interface.Hotbar:New({
 
 Hotbar:AddButton({
     name = "Toggle Rotation",
-    texture = "Interface\\ICONS\\Ability_Parry",
+    texture = "Interface\\ICONS\\Ability_Rogue_FindWeakness",
     tooltip = "Enable Rotation",
     toggle = true,
     onClick = function()
@@ -92,7 +92,16 @@ Rotation.Category:Checkbox({
     category = "spells",
     var = "mindBlast",
     name = "Mind Blast",
-    tooltip = "Enable or disable the use of Mind Blast in the rotation. Tip: Turn off if you have T10 4 Piece.",
+    tooltip = "Use of Mind Blast in the rotation. Tip: Turn off if you have T10 4 Piece.",
+    default = true,
+    disabled = false
+})
+
+Rotation.Category:Checkbox({
+    category = "spells",
+    var = "shadowWordPain",
+    name = "Shadow Word: Pain (AoE)",
+    tooltip = "Use Shadow Word: Pain in the aoe rotation.",
     default = true,
     disabled = false
 })
@@ -103,7 +112,7 @@ Rotation.Category:Checkbox({
     category = "items",
     var = "engineeringGloves",
     name = "Engineering Gloves",
-    tooltip = "Enable or disable the use of Engineering Gloves in the rotation. Requires Target.",
+    tooltip = "Use Engineering Gloves in the rotation. Requires Target.",
     default = true,
     disabled = false
 })
@@ -112,7 +121,7 @@ Rotation.Category:Checkbox({
     category = "items",
     var = "saroniteBomb",
     name = "Saronite Bomb",
-    tooltip = "Enable or disable the use of Saronite Bomb in the rotation. Requires Target.",
+    tooltip = "Use Saronite Bomb in the rotation. Requires Target.",
     default = true,
     disabled = false
 })

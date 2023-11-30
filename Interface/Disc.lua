@@ -22,7 +22,7 @@ Rotation.Config:Write("dispel", false)
 Rotation.Config:Write("outOfCombat", false)
 
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Hello! Rotation successfully initialized.")
-Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Version: 2.0.2")
+Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Version: 2.0.3")
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - If you need any help or have suggestions.")
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Discord: |cffeb6ee9https://discord.gg/dJ2upysMcW")
 
@@ -35,7 +35,7 @@ Hotbar = Caffeine.Interface.Hotbar:New({
 
 Hotbar:AddButton({
     name = "Toggle Rotation",
-    texture = "Interface\\ICONS\\Ability_Parry",
+    texture = "Interface\\ICONS\\Ability_Rogue_FindWeakness",
     tooltip = "Enable Rotation",
     toggle = true,
     onClick = function()
