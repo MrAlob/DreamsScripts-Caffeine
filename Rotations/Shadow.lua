@@ -134,7 +134,7 @@ local VampireTouchTarget = Caffeine.UnitManager:CreateCustomUnit('vampireTouch',
         end
 
         -- Lady Deathwhisper
-        if unit:GetAuras():FindMy(spells.shroudOfTheOccult):IsUp() then
+        if unit:GetAuras():FindAny(spells.shroudOfTheOccult):IsUp() then
             return
         end
 
@@ -186,7 +186,7 @@ local ShadowWordPainTarget = Caffeine.UnitManager:CreateCustomUnit('shadowWordPa
         end
 
         -- Lady Deathwhisper
-        if unit:GetAuras():FindMy(spells.shroudOfTheOccult):IsUp() then
+        if unit:GetAuras():FindAny(spells.shroudOfTheOccult):IsUp() then
             return
         end
 
