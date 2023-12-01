@@ -220,7 +220,6 @@ local Spellsteal = Caffeine.UnitManager:CreateCustomUnit('spellsteal', function(
     return spellsteal
 end)
 
-
 function Caffeine.Unit:IsDungeonBoss()
     if UnitClassification(self:GetOMToken()) == "elite"
         and UnitLevel(self:GetOMToken()) == 82
@@ -272,6 +271,15 @@ DefaultAPL:AddSpell(
             and DungeonLogic:Exists()
             and Player:IsFacing(DungeonLogic)
     end):SetTarget(DungeonLogic)
+)
+
+-- Ice Block
+-- Deathbringer Saurfang
+DefaultAPL:AddSpell(
+    spells.iceBlock:CastableIf(function(self)
+        return self:IsKnownAndUsable()
+            and Player:GetAuras():FindAny(spells.bloodBoilAura):IsUp()
+    end):SetTarget(Player)
 )
 
 -- Mirror Image
@@ -466,6 +474,7 @@ Module:Sync(function()
     end
 
     PreCombatAPL:Execute()
+    DefaultAPL:Execute()
 
     if Player:IsAffectingCombat() or Target:IsAffectingCombat() then
         DefaultAPL:Execute()

@@ -41,7 +41,8 @@ Rotation.Spells = {
     improvedScorchAura = SpellBook:GetSpell(22959),
     shadowMasteryAura  = SpellBook:GetSpell(17800),
     combustionAura     = SpellBook:GetSpell(28682),
-    shroudOfTheOccult = SpellBook:GetSpell(70768),
+    shroudOfTheOccult  = SpellBook:GetSpell(70768),
+    bloodBoilAura      = SpellBook:GetSpell(72385),
     luckoftheDraw      = SpellBook:GetSpell(72221),
     refreshmentAuras   = SpellBook:GetList(43183, 57073)
 }
