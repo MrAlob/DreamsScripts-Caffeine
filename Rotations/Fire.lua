@@ -141,6 +141,11 @@ local LivingBomb = Caffeine.UnitManager:CreateCustomUnit('livingBomb', function(
             return
         end
 
+        -- Lady Deathwhisper
+        if unit:GetAuras():FindAny(spells.shroudOfTheOccult):IsUp() then
+            return
+        end
+
         if not unit:IsDead() and unit:IsEnemy() and Player:CanSee(unit) and not unit:GetAuras():FindMy(spells.livingBomb):IsUp() then
             livingBomb = unit
         end
