@@ -272,7 +272,7 @@ DefaultAPL:AddSpell(
             and self:IsKnownAndUsable()
             and self:IsInRange(Target)
             and Target:Exists()
-            and Target:Hostile()
+            and Target:IsHostile()
             and Target:GetEnemies(12) >= 8
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
@@ -285,7 +285,7 @@ DefaultAPL:AddSpell(
         return self:IsKnownAndUsable()
             and self:IsInRange(Target)
             and Target:Exists()
-            and Target:Hostile()
+            and Target:IsHostile()
             and GetEnemiesWithVampiricTouch(12) >= 4
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
@@ -300,7 +300,7 @@ DefaultAPL:AddSpell(
             and self:IsKnownAndUsable()
             and self:IsInRange(VampireTouchTarget)
             and VampireTouchTarget:Exists()
-            and VampireTouchTarget:Hostile()
+            and VampireTouchTarget:IsHostile()
             and
             (VampireTouchTarget:GetAuras():FindMy(spells.vampiricTouch):GetRemainingTime() < spells.vampiricTouch:GetCastLength() / 1000
                 or not VampireTouchTarget:GetAuras():FindMy(spells.vampiricTouch):IsUp())
@@ -319,7 +319,7 @@ DefaultAPL:AddSpell(
             and self:IsKnownAndUsable()
             and self:IsInRange(ShadowWordPainTarget)
             and ShadowWordPainTarget:Exists()
-            and ShadowWordPainTarget:Hostile()
+            and ShadowWordPainTarget:IsHostile()
             and not ShadowWordPainTarget:GetAuras():FindMy(spells.shadowWordPain):IsUp()
             and Player:GetAuras():FindMy(spells.shadowWeaving):GetCount() == 5
             and not Player:IsCastingOrChanneling()
@@ -335,7 +335,7 @@ DefaultAPL:AddItem(
             and not self:IsOnCooldown()
             and Target:Exists()
             and (Target:IsBoss() or Target:IsDungeonBoss())
-            and Target:Hostile()
+            and Target:IsHostile()
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(None)
@@ -347,7 +347,7 @@ DefaultAPL:AddSpell(
         return Target:Exists()
             and self:IsKnownAndUsable()
             and self:IsInRange(Target)
-            and Target:Hostile()
+            and Target:IsHostile()
             and (Target:GetAuras():FindMy(spells.vampiricTouch):GetRemainingTime() < spells.vampiricTouch:GetCastLength() / 1000
                 or not Target:GetAuras():FindMy(spells.vampiricTouch):IsUp())
             and not Player:IsMoving()
@@ -362,7 +362,7 @@ DefaultAPL:AddSpell(
             and self:IsInRange(Target)
             and Target:Exists()
             and (Target:IsBoss() or Target:IsDungeonBoss())
-            and Target:Hostile()
+            and Target:IsHostile()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Target)
 )
@@ -376,7 +376,7 @@ DefaultAPL:AddItem(
             and not self:IsOnCooldown()
             and Target:Exists()
             and Target:IsBoss()
-            and Target:Hostile()
+            and Target:IsHostile()
             and Player:GetDistance(Target) < 28
             and not Target:IsMoving()
             and not Player:IsCastingOrChanneling()
@@ -392,7 +392,7 @@ DefaultAPL:AddSpell(
         return self:IsKnownAndUsable()
             and self:IsInRange(Target)
             and Target:Exists()
-            and Target:Hostile()
+            and Target:IsHostile()
             and (Target:GetAuras():FindMy(spells.devouringPlague):GetRemainingTime() < 2
                 or not Target:GetAuras():FindMy(spells.devouringPlague):IsUp())
             and not Player:IsCastingOrChanneling()
@@ -405,7 +405,7 @@ DefaultAPL:AddSpell(
         return self:IsKnownAndUsable()
             and self:IsInRange(Target)
             and Target:Exists()
-            and Target:Hostile()
+            and Target:IsHostile()
             and not Target:GetAuras():FindMy(spells.shadowWordPain):IsUp()
             and Player:GetAuras():FindMy(spells.shadowWeaving):GetCount() == 5
             and not Player:IsCastingOrChanneling()
@@ -420,7 +420,7 @@ DefaultAPL:AddSpell(
             and self:IsInRange(Target)
             and self:IsKnownAndUsable()
             and Target:Exists()
-            and Target:Hostile()
+            and Target:IsHostile()
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Target)
@@ -431,7 +431,7 @@ DefaultAPL:AddSpell(
     spells.mindFlay:CastableIf(function(self)
         return self:IsKnownAndUsable()
             and self:IsInRange(Target)
-            and Target:Hostile()
+            and Target:IsHostile()
             and Target:Exists()
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
