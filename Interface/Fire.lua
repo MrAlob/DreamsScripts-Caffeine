@@ -131,7 +131,7 @@ Rotation.Category:Slider({
     var = "manaGem",
     name = "Mana Gem",
     tooltip = "Use Mana Gem if you below Mana Percentage",
-    default = 60,
+    default = 90,
     min = 0,
     max = 100,
     step = 5,

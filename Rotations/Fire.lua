@@ -255,7 +255,7 @@ DefaultAPL:AddItem(
         return self:IsUsable()
             and not self:IsOnCooldown()
             and items.manaGem:GetCharges() > 0
-            and Player:GetPP() < Rotation.Config:Read("items_manaGem", 60)
+            and Player:GetPP() < Rotation.Config:Read("items_manaGem", 90)
             and Player:IsAffectingCombat()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(None)
@@ -324,8 +324,6 @@ DefaultAPL:AddSpell(
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Player)
 )
-
--- Flame Cap
 
 -- Engineering Gloves
 DefaultAPL:AddItem(
@@ -474,7 +472,6 @@ Module:Sync(function()
     end
 
     PreCombatAPL:Execute()
-    DefaultAPL:Execute()
 
     if Player:IsAffectingCombat() or Target:IsAffectingCombat() then
         DefaultAPL:Execute()
