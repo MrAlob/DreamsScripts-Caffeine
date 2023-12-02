@@ -126,6 +126,10 @@ local VampireTouchTarget = Caffeine.UnitManager:CreateCustomUnit('vampireTouch',
             return false
         end
 
+        if unit:CustomTimeToDie() < 10 then
+            return
+        end
+
         -- Lich King
         -- Drudge Ghoul: 37695
         -- Shambling Horror: 37698
@@ -178,6 +182,10 @@ local ShadowWordPainTarget = Caffeine.UnitManager:CreateCustomUnit('shadowWordPa
             return false
         end
 
+        if unit:CustomTimeToDie() < 10 then
+            return
+        end
+
         -- Lich King
         -- Drudge Ghoul: 37695
         -- Shambling Horror: 37698
@@ -207,6 +215,17 @@ local ShadowWordPainTarget = Caffeine.UnitManager:CreateCustomUnit('shadowWordPa
 
     return shadowWordPain
 end)
+
+function Caffeine.Unit:CustomTimeToDie()
+    local timeToDie = self:TimeToDie()
+    local healthPercent = self:GetHP()
+
+    if timeToDie == 0 and healthPercent > 10 then
+        return 200
+    else
+        return timeToDie
+    end
+end
 
 function GetEnemiesWithVampiricTouch(range)
     local count = 0
@@ -301,6 +320,7 @@ DefaultAPL:AddSpell(
             and self:IsInRange(VampireTouchTarget)
             and VampireTouchTarget:Exists()
             and VampireTouchTarget:IsHostile()
+            and VampireTouchTarget:CustomTimeToDie() > 10
             and
             (VampireTouchTarget:GetAuras():FindMy(spells.vampiricTouch):GetRemainingTime() < spells.vampiricTouch:GetCastLength() / 1000
                 or not VampireTouchTarget:GetAuras():FindMy(spells.vampiricTouch):IsUp())
@@ -320,6 +340,7 @@ DefaultAPL:AddSpell(
             and self:IsInRange(ShadowWordPainTarget)
             and ShadowWordPainTarget:Exists()
             and ShadowWordPainTarget:IsHostile()
+            and ShadowWordPainTarget:CustomTimeToDie() > 10
             and not ShadowWordPainTarget:GetAuras():FindMy(spells.shadowWordPain):IsUp()
             and Player:GetAuras():FindMy(spells.shadowWeaving):GetCount() == 5
             and not Player:IsCastingOrChanneling()
@@ -348,6 +369,7 @@ DefaultAPL:AddSpell(
             and self:IsKnownAndUsable()
             and self:IsInRange(Target)
             and Target:IsHostile()
+            and Target:CustomTimeToDie() > 10
             and (Target:GetAuras():FindMy(spells.vampiricTouch):GetRemainingTime() < spells.vampiricTouch:GetCastLength() / 1000
                 or not Target:GetAuras():FindMy(spells.vampiricTouch):IsUp())
             and not Player:IsMoving()
@@ -393,6 +415,7 @@ DefaultAPL:AddSpell(
             and self:IsInRange(Target)
             and Target:Exists()
             and Target:IsHostile()
+            and Target:CustomTimeToDie() > 10
             and (Target:GetAuras():FindMy(spells.devouringPlague):GetRemainingTime() < 2
                 or not Target:GetAuras():FindMy(spells.devouringPlague):IsUp())
             and not Player:IsCastingOrChanneling()
@@ -406,6 +429,7 @@ DefaultAPL:AddSpell(
             and self:IsInRange(Target)
             and Target:Exists()
             and Target:IsHostile()
+            and Target:CustomTimeToDie() > 10
             and not Target:GetAuras():FindMy(spells.shadowWordPain):IsUp()
             and Player:GetAuras():FindMy(spells.shadowWeaving):GetCount() == 5
             and not Player:IsCastingOrChanneling()
