@@ -134,6 +134,10 @@ local LivingBomb = Caffeine.UnitManager:CreateCustomUnit('livingBomb', function(
             return false
         end
 
+        if unit:CustomTimeToDie() < 12 then
+            return
+        end
+
         -- Lich King
         -- Drudge Ghoul: 37695
         -- Shambling Horror: 37698
@@ -220,6 +224,17 @@ local Spellsteal = Caffeine.UnitManager:CreateCustomUnit('spellsteal', function(
     return spellsteal
 end)
 
+function Caffeine.Unit:CustomTimeToDie()
+    local timeToDie = self:TimeToDie()
+    local healthPercent = self:GetHP()
+
+    if timeToDie == 0 and healthPercent > 10 then
+        return 200
+    else
+        return timeToDie
+    end
+end
+
 function Caffeine.Unit:IsDungeonBoss()
     if UnitClassification(self:GetOMToken()) == "elite"
         and UnitLevel(self:GetOMToken()) == 82
@@ -301,6 +316,7 @@ DefaultAPL:AddSpell(
             and self:IsInRange(Target)
             and Target:Exists()
             and Target:IsHostile()
+            and spells.scorch:GetTimeSinceLastCast() > 4
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and not (Target:GetAuras():FindAny(spells.improvedScorchAura):IsUp()
                 or Target:GetAuras():FindAny(spells.shadowMasteryAura):IsUp())
@@ -316,10 +332,10 @@ DefaultAPL:AddSpell(
             and not self:IsOnCooldown()
             and Target:Exists()
             and Target:IsHostile()
+            and spells.combustion:GetTimeSinceLastCast() > 60
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and (Target:GetAuras():FindAny(spells.improvedScorchAura):IsUp()
                 or Target:GetAuras():FindAny(spells.shadowMasteryAura):IsUp())
-            and not Player:GetAuras():FindAny(spells.combustionAura):IsUp()
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Player)
@@ -397,6 +413,18 @@ DefaultAPL:AddSpell(
     end):SetTarget(Spellsteal)
 )
 
+-- Fire Blast
+DefaultAPL:AddSpell(
+    spells.fireBlast:CastableIf(function(self)
+        return self:IsKnownAndUsable()
+            and self:IsInRange(Target)
+            and Target:Exists()
+            and Target:IsHostile()
+            and Player:IsMoving()
+            and not Player:IsCastingOrChanneling()
+    end):SetTarget(Target)
+)
+
 -- Living Bomb
 DefaultAPL:AddSpell(
     spells.livingBomb:CastableIf(function(self)
@@ -404,6 +432,7 @@ DefaultAPL:AddSpell(
             and self:IsInRange(Target)
             and Target:Exists()
             and Target:IsHostile()
+            and Target:CustomTimeToDie() > 12
             and not Target:GetAuras():FindMy(spells.livingBomb):IsUp()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Target)
@@ -418,21 +447,28 @@ DefaultAPL:AddSpell(
             and useAoe
             and LivingBomb:Exists()
             and LivingBomb:IsHostile()
+            and LivingBomb:CustomTimeToDie() > 12
             and not LivingBomb:GetAuras():FindMy(spells.livingBomb):IsUp()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(LivingBomb)
 )
 
--- Fire Blast
+-- Flamestrike
 DefaultAPL:AddSpell(
-    spells.fireBlast:CastableIf(function(self)
+    spells.flamestrike:CastableIf(function(self)
+        local useAoe = Rotation.Config:Read("aoe", true)
         return self:IsKnownAndUsable()
-            and self:IsInRange(Target)
+            and useAoe
             and Target:Exists()
             and Target:IsHostile()
-            and Player:IsMoving()
+            and spells.flamestrike:GetTimeSinceLastCast() > 8
+            and Target:GetEnemies(15) >= 2
+            and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
-    end):SetTarget(Target)
+    end):SetTarget(None):OnCast(function(self)
+        local position = Caffeine.UnitManager:FindEnemiesCentroid(8, 30)
+        self:Click(position)
+    end)
 )
 
 -- Fire Ball
