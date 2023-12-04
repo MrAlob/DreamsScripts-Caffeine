@@ -134,7 +134,7 @@ local LivingBomb = Caffeine.UnitManager:CreateCustomUnit('livingBomb', function(
             return false
         end
 
-        if unit:CustomTimeToDie() < 12 then
+        if unit:CustomTimeToDie() < 16 then
             return
         end
 
@@ -325,6 +325,25 @@ DefaultAPL:AddSpell(
     end):SetTarget(Target)
 )
 
+-- Saronite Bomb
+DefaultAPL:AddItem(
+    items.saroniteBomb:UsableIf(function(self)
+        local useSaroniteBomb = Rotation.Config:Read("items_saroniteBomb", true)
+        return self:IsUsable()
+            and not self:IsOnCooldown()
+            and useSaroniteBomb
+            and Target:Exists()
+            and Target:IsHostile()
+            and Target:IsBoss()
+            and Player:GetDistance(Target) < 28
+            and not Target:IsMoving()
+            and not Player:IsCastingOrChanneling()
+    end):SetTarget(None):PreUse(function(self)
+        local targetPosition = Target:GetPosition()
+        self:Click(targetPosition)
+    end)
+)
+
 -- Combustion
 DefaultAPL:AddSpell(
     spells.combustion:CastableIf(function(self)
@@ -332,7 +351,7 @@ DefaultAPL:AddSpell(
             and not self:IsOnCooldown()
             and Target:Exists()
             and Target:IsHostile()
-            and spells.combustion:GetTimeSinceLastCast() > 60
+            and spells.combustion:GetTimeSinceLastCast() > 120
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and (Target:GetAuras():FindAny(spells.improvedScorchAura):IsUp()
                 or Target:GetAuras():FindAny(spells.shadowMasteryAura):IsUp())
@@ -354,25 +373,6 @@ DefaultAPL:AddItem(
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(None)
-)
-
--- Saronite Bomb
-DefaultAPL:AddItem(
-    items.saroniteBomb:UsableIf(function(self)
-        local useSaroniteBomb = Rotation.Config:Read("items_saroniteBomb", true)
-        return self:IsUsable()
-            and not self:IsOnCooldown()
-            and useSaroniteBomb
-            and Target:Exists()
-            and Target:IsHostile()
-            and Target:IsBoss()
-            and Player:GetDistance(Target) < 28
-            and not Target:IsMoving()
-            and not Player:IsCastingOrChanneling()
-    end):SetTarget(None):PreUse(function(self)
-        local targetPosition = Target:GetPosition()
-        self:Click(targetPosition)
-    end)
 )
 
 -- Pyro Blast (Hot Streak)
@@ -432,7 +432,7 @@ DefaultAPL:AddSpell(
             and self:IsInRange(Target)
             and Target:Exists()
             and Target:IsHostile()
-            and Target:CustomTimeToDie() > 12
+            and Target:CustomTimeToDie() > 16
             and not Target:GetAuras():FindMy(spells.livingBomb):IsUp()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Target)
@@ -447,7 +447,7 @@ DefaultAPL:AddSpell(
             and useAoe
             and LivingBomb:Exists()
             and LivingBomb:IsHostile()
-            and LivingBomb:CustomTimeToDie() > 12
+            and LivingBomb:CustomTimeToDie() > 16
             and not LivingBomb:GetAuras():FindMy(spells.livingBomb):IsUp()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(LivingBomb)
@@ -462,11 +462,11 @@ DefaultAPL:AddSpell(
             and Target:Exists()
             and Target:IsHostile()
             and spells.flamestrike:GetTimeSinceLastCast() > 8
-            and Target:GetEnemies(15) >= 2
+            and Target:GetEnemies(30) >= 2
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(None):OnCast(function(self)
-        local position = Caffeine.UnitManager:FindEnemiesCentroid(8, 30)
+        local position = Caffeine.UnitManager:FindEnemiesCentroid(10, 30)
         self:Click(position)
     end)
 )
