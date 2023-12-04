@@ -36,7 +36,7 @@ local LowestEnemy = Caffeine.UnitManager:CreateCustomUnit('lowest', function(uni
             return false
         end
 
-        if Player:GetDistance(unit) > 36 then
+        if Player:GetDistance(unit) > 41 then
             return false
         end
 
@@ -118,7 +118,7 @@ local LivingBomb = Caffeine.UnitManager:CreateCustomUnit('livingBomb', function(
             return false
         end
 
-        if Player:GetDistance(unit) > 35 then
+        if Player:GetDistance(unit) > 41 then
             return false
         end
 
