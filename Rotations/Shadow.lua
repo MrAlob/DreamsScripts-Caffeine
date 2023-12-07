@@ -102,6 +102,19 @@ local DungeonLogic = Caffeine.UnitManager:CreateCustomUnit('dungeonLogic', funct
     return dungeonLogic
 end)
 
+local wasCasting = {}
+function WasCastingCheck()
+    local time = GetTime()
+    if Player:IsCasting() then
+        wasCasting[Player:GetCastingOrChannelingSpell()] = time
+    end
+    for spell, when in pairs(wasCasting) do
+        if time - when > 0.100 + 0.1 then
+            wasCasting[spell] = nil
+        end
+    end
+end
+
 local VampireTouchTarget = Caffeine.UnitManager:CreateCustomUnit('vampireTouch', function(unit)
     local vampiricTouch = nil
 
@@ -127,23 +140,26 @@ local VampireTouchTarget = Caffeine.UnitManager:CreateCustomUnit('vampireTouch',
         end
 
         if unit:CustomTimeToDie() < 10 then
-            return
+            return false
         end
 
         -- Lich King
-        -- Drudge Ghoul: 37695
-        -- Shambling Horror: 37698
+        -- Drudge Ghoul: 37695, Shambling Horror: 37698
         if unit:GetID() == 37695 or unit:GetID() == 37698 then
-            return
+            return false
         end
 
         -- Lady Deathwhisper
         if unit:GetAuras():FindAny(spells.shroudOfTheOccult):IsUp() then
-            return
+            return false
         end
 
         if unit:GetAuras():FindMy(spells.vampiricTouch):IsUp() then
-            return
+            return false
+        end
+
+        if wasCasting[spells.vampiricTouch] then
+            return false
         end
 
         if not unit:IsDead() and unit:IsEnemy() and Player:CanSee(unit) and not unit:GetAuras():FindMy(spells.vampiricTouch):IsUp() then
@@ -384,6 +400,9 @@ DefaultAPL:AddItem(
 -- Vampiric Touch
 DefaultAPL:AddSpell(
     spells.vampiricTouch:CastableIf(function(self)
+        if wasCasting[spells.vampiricTouch] then
+            return false
+        end
         return Target:Exists()
             and self:IsKnownAndUsable()
             and self:IsInRange(Target)
@@ -505,6 +524,7 @@ Module:Sync(function()
     PreCombatAPL:Execute()
 
     if Player:IsAffectingCombat() or Target:IsAffectingCombat() then
+        WasCastingCheck()
         DefaultAPL:Execute()
     end
 end)
