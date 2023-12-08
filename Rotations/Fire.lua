@@ -134,7 +134,7 @@ local LivingBomb = Caffeine.UnitManager:CreateCustomUnit('livingBomb', function(
             return false
         end
 
-        if unit:CustomTimeToDie() < 16 then
+        if unit:CustomTimeToDie() < 12 then
             return
         end
 
@@ -147,6 +147,10 @@ local LivingBomb = Caffeine.UnitManager:CreateCustomUnit('livingBomb', function(
 
         -- Lady Deathwhisper
         if unit:GetAuras():FindAny(spells.shroudOfTheOccult):IsUp() then
+            return
+        end
+
+        if unit:isCritter() then
             return
         end
 
@@ -239,6 +243,13 @@ function Caffeine.Unit:IsDungeonBoss()
     if UnitClassification(self:GetOMToken()) == "elite"
         and UnitLevel(self:GetOMToken()) == 82
         and Player:GetAuras():FindMy(spells.luckoftheDraw):IsUp() then
+        return true
+    end
+    return false
+end
+
+function Caffeine.Unit:IsCritter()
+    if UnitCreatureType(self:GetOMToken()) == "Critter" then
         return true
     end
     return false
@@ -431,8 +442,7 @@ DefaultAPL:AddSpell(
         return self:IsKnownAndUsable()
             and self:IsInRange(Target)
             and Target:Exists()
-            and Target:IsHostile()
-            and Target:CustomTimeToDie() > 16
+            and Target:CustomTimeToDie() > 12
             and not Target:GetAuras():FindMy(spells.livingBomb):IsUp()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Target)
@@ -447,7 +457,7 @@ DefaultAPL:AddSpell(
             and useAoe
             and LivingBomb:Exists()
             and LivingBomb:IsHostile()
-            and LivingBomb:CustomTimeToDie() > 16
+            and LivingBomb:CustomTimeToDie() > 12
             and not LivingBomb:GetAuras():FindMy(spells.livingBomb):IsUp()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(LivingBomb)

@@ -102,19 +102,6 @@ local DungeonLogic = Caffeine.UnitManager:CreateCustomUnit('dungeonLogic', funct
     return dungeonLogic
 end)
 
-local wasCasting = {}
-function WasCastingCheck()
-    local time = GetTime()
-    if Player:IsCasting() then
-        wasCasting[Player:GetCastingOrChannelingSpell()] = time
-    end
-    for spell, when in pairs(wasCasting) do
-        if time - when > 0.100 + 0.1 then
-            wasCasting[spell] = nil
-        end
-    end
-end
-
 local VampireTouchTarget = Caffeine.UnitManager:CreateCustomUnit('vampireTouch', function(unit)
     local vampiricTouch = nil
 
@@ -154,11 +141,11 @@ local VampireTouchTarget = Caffeine.UnitManager:CreateCustomUnit('vampireTouch',
             return false
         end
 
-        if unit:GetAuras():FindMy(spells.vampiricTouch):IsUp() then
+        if unit:IsCritter() then
             return false
         end
 
-        if wasCasting[spells.vampiricTouch] then
+        if unit:GetAuras():FindMy(spells.vampiricTouch):IsUp() then
             return false
         end
 
@@ -190,32 +177,27 @@ local ShadowWordPainTarget = Caffeine.UnitManager:CreateCustomUnit('shadowWordPa
             return false
         end
 
-        if not unit:IsAffectingCombat() then
-            return false
-        end
-
         if not unit:IsEnemy() then
             return false
         end
 
         if unit:CustomTimeToDie() < 10 then
-            return
+            return false
         end
 
         -- Lich King
-        -- Drudge Ghoul: 37695
-        -- Shambling Horror: 37698
+        -- Drudge Ghoul: 37695, Shambling Horror: 37698
         if unit:GetID() == 37695 or unit:GetID() == 37698 then
-            return
+            return false
         end
 
         -- Lady Deathwhisper
         if unit:GetAuras():FindAny(spells.shroudOfTheOccult):IsUp() then
-            return
+            return false
         end
 
         if unit:GetAuras():FindMy(spells.shadowWordPain):IsUp() then
-            return
+            return false
         end
 
         if not unit:IsDead() and Player:CanSee(unit) and unit:IsEnemy()
@@ -261,6 +243,26 @@ function Caffeine.Unit:IsDungeonBoss()
         return true
     end
     return false
+end
+
+function Caffeine.Unit:IsCritter()
+    if UnitCreatureType(self:GetOMToken()) == "Critter" then
+        return true
+    end
+    return false
+end
+
+local wasCasting = {}
+function WasCastingCheck()
+    local time = GetTime()
+    if Player:IsCasting() then
+        wasCasting[Player:GetCastingOrChannelingSpell()] = time
+    end
+    for spell, when in pairs(wasCasting) do
+        if time - when > 0.100 + 0.1 then
+            wasCasting[spell] = nil
+        end
+    end
 end
 
 -- PreCombatAPL
@@ -335,7 +337,6 @@ DefaultAPL:AddSpell(
             and self:IsKnownAndUsable()
             and self:IsInRange(VampireTouchTarget)
             and VampireTouchTarget:Exists()
-            and VampireTouchTarget:IsHostile()
             and VampireTouchTarget:CustomTimeToDie() > 10
             and
             (VampireTouchTarget:GetAuras():FindMy(spells.vampiricTouch):GetRemainingTime() < spells.vampiricTouch:GetCastLength() / 1000
@@ -355,7 +356,6 @@ DefaultAPL:AddSpell(
             and self:IsKnownAndUsable()
             and self:IsInRange(ShadowWordPainTarget)
             and ShadowWordPainTarget:Exists()
-            and ShadowWordPainTarget:IsHostile()
             and ShadowWordPainTarget:CustomTimeToDie() > 10
             and not ShadowWordPainTarget:GetAuras():FindMy(spells.shadowWordPain):IsUp()
             and Player:GetAuras():FindMy(spells.shadowWeaving):GetCount() == 5
@@ -435,7 +435,7 @@ DefaultAPL:AddSpell(
             and Target:Exists()
             and Target:IsHostile()
             and Target:CustomTimeToDie() > 10
-            and (Target:GetAuras():FindMy(spells.devouringPlague):GetRemainingTime() < 0.2
+            and (Target:GetAuras():FindMy(spells.devouringPlague):GetRemainingTime() < 1.75
                 or not Target:GetAuras():FindMy(spells.devouringPlague):IsUp())
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Target)
