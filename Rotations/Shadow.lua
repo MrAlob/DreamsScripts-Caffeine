@@ -141,6 +141,10 @@ local VampireTouchTarget = Caffeine.UnitManager:CreateCustomUnit('vampireTouch',
             return false
         end
 
+        if unit:IsCreatureType("Critter") then
+            return false
+        end
+
         if unit:GetAuras():FindMy(spells.vampiricTouch):IsUp() then
             return false
         end
@@ -192,6 +196,10 @@ local ShadowWordPainTarget = Caffeine.UnitManager:CreateCustomUnit('shadowWordPa
             return false
         end
 
+        if unit:IsCreatureType("Critter") then
+            return false
+        end
+
         if unit:GetAuras():FindMy(spells.shadowWordPain):IsUp() then
             return false
         end
@@ -239,6 +247,11 @@ function Caffeine.Unit:IsDungeonBoss()
         return true
     end
     return false
+end
+
+function Caffeine.Unit:IsCreatureType(creatureType)
+    local unitCreatureType = UnitCreatureType(self:GetOMToken())
+    return unitCreatureType == creatureType
 end
 
 local wasCasting = {}

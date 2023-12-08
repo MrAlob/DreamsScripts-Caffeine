@@ -135,19 +135,23 @@ local LivingBomb = Caffeine.UnitManager:CreateCustomUnit('livingBomb', function(
         end
 
         if unit:CustomTimeToDie() < 12 then
-            return
+            return false
         end
 
         -- Lich King
         -- Drudge Ghoul: 37695
         -- Shambling Horror: 37698
         if unit:GetID() == 37695 or unit:GetID() == 37698 then
-            return
+            return false
         end
 
         -- Lady Deathwhisper
         if unit:GetAuras():FindAny(spells.shroudOfTheOccult):IsUp() then
-            return
+            return false
+        end
+
+        if unit:IsCreatureType("Critter") then
+            return false
         end
 
         if not unit:IsDead() and unit:IsEnemy() and Player:CanSee(unit) and not unit:GetAuras():FindMy(spells.livingBomb):IsUp() then
@@ -209,7 +213,7 @@ local Spellsteal = Caffeine.UnitManager:CreateCustomUnit('spellsteal', function(
         end
 
         if not unit:GetAuras():HasAnyStealableAura() then
-            return
+            return false
         end
 
         if not unit:IsDead() and Player:CanSee(unit) and unit:GetAuras():HasAnyStealableAura() then
@@ -242,6 +246,11 @@ function Caffeine.Unit:IsDungeonBoss()
         return true
     end
     return false
+end
+
+function Caffeine.Unit:IsCreatureType(creatureType)
+    local unitCreatureType = UnitCreatureType(self:GetOMToken())
+    return unitCreatureType == creatureType
 end
 
 -- Molten Fire
