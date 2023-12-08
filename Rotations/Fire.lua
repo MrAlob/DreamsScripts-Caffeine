@@ -150,10 +150,6 @@ local LivingBomb = Caffeine.UnitManager:CreateCustomUnit('livingBomb', function(
             return
         end
 
-        if unit:isCritter() then
-            return
-        end
-
         if not unit:IsDead() and unit:IsEnemy() and Player:CanSee(unit) and not unit:GetAuras():FindMy(spells.livingBomb):IsUp() then
             livingBomb = unit
         end
@@ -243,13 +239,6 @@ function Caffeine.Unit:IsDungeonBoss()
     if UnitClassification(self:GetOMToken()) == "elite"
         and UnitLevel(self:GetOMToken()) == 82
         and Player:GetAuras():FindMy(spells.luckoftheDraw):IsUp() then
-        return true
-    end
-    return false
-end
-
-function Caffeine.Unit:IsCritter()
-    if UnitCreatureType(self:GetOMToken()) == "Critter" then
         return true
     end
     return false
