@@ -331,40 +331,6 @@ DefaultAPL:AddSpell(
     end):SetTarget(Target)
 )
 
--- Vampiric Touch (AoE)
-DefaultAPL:AddSpell(
-    spells.vampiricTouch:CastableIf(function(self)
-        local isAoeEnabled = Rotation.Config:Read("aoe", true)
-        return isAoeEnabled
-            and self:IsKnownAndUsable()
-            and self:IsInRange(VampireTouchTarget)
-            and VampireTouchTarget:Exists()
-            and VampireTouchTarget:CustomTimeToDie() > 10
-            and
-            (VampireTouchTarget:GetAuras():FindMy(spells.vampiricTouch):GetRemainingTime() < spells.vampiricTouch:GetCastLength() / 1000
-                or not VampireTouchTarget:GetAuras():FindMy(spells.vampiricTouch):IsUp())
-            and not Player:IsMoving()
-            and not Player:IsCastingOrChanneling()
-    end):SetTarget(VampireTouchTarget)
-)
-
--- Shadow Word: Pain (AoE)
-DefaultAPL:AddSpell(
-    spells.shadowWordPain:CastableIf(function(self)
-        local useAoe = Rotation.Config:Read("aoe", true)
-        local useShadowWordPain = Rotation.Config:Read("spells_shadowWordPain", true)
-        return useAoe
-            and useShadowWordPain
-            and self:IsKnownAndUsable()
-            and self:IsInRange(ShadowWordPainTarget)
-            and ShadowWordPainTarget:Exists()
-            and ShadowWordPainTarget:CustomTimeToDie() > 10
-            and not ShadowWordPainTarget:GetAuras():FindMy(spells.shadowWordPain):IsUp()
-            and Player:GetAuras():FindMy(spells.shadowWeaving):GetCount() == 5
-            and not Player:IsCastingOrChanneling()
-    end):SetTarget(ShadowWordPainTarget)
-)
-
 -- Saronite Bomb
 DefaultAPL:AddItem(
     items.saroniteBomb:UsableIf(function(self)
@@ -405,9 +371,9 @@ DefaultAPL:AddSpell(
         if wasCasting[spells.vampiricTouch] then
             return false
         end
-        return Target:Exists()
-            and self:IsKnownAndUsable()
+        return self:IsKnownAndUsable()
             and self:IsInRange(Target)
+            and Target:Exists()
             and Target:IsHostile()
             and Target:CustomTimeToDie() > 10
             and (Target:GetAuras():FindMy(spells.vampiricTouch):GetRemainingTime() < spells.vampiricTouch:GetCastLength() / 1000
@@ -415,6 +381,23 @@ DefaultAPL:AddSpell(
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Target)
+)
+
+-- Vampiric Touch (AoE)
+DefaultAPL:AddSpell(
+    spells.vampiricTouch:CastableIf(function(self)
+        local isAoeEnabled = Rotation.Config:Read("aoe", true)
+        return self:IsKnownAndUsable()
+            and self:IsInRange(VampireTouchTarget)
+            and isAoeEnabled
+            and VampireTouchTarget:Exists()
+            and VampireTouchTarget:CustomTimeToDie() > 10
+            and
+            (VampireTouchTarget:GetAuras():FindMy(spells.vampiricTouch):GetRemainingTime() < spells.vampiricTouch:GetCastLength() / 1000
+                or not VampireTouchTarget:GetAuras():FindMy(spells.vampiricTouch):IsUp())
+            and not Player:IsMoving()
+            and not Player:IsCastingOrChanneling()
+    end):SetTarget(VampireTouchTarget)
 )
 
 -- Shadowfiend
@@ -455,6 +438,23 @@ DefaultAPL:AddSpell(
             and Player:GetAuras():FindMy(spells.shadowWeaving):GetCount() == 5
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Target)
+)
+
+-- Shadow Word: Pain (AoE)
+DefaultAPL:AddSpell(
+    spells.shadowWordPain:CastableIf(function(self)
+        local useAoe = Rotation.Config:Read("aoe", true)
+        local useShadowWordPain = Rotation.Config:Read("spells_shadowWordPain", true)
+        return useAoe
+            and useShadowWordPain
+            and self:IsKnownAndUsable()
+            and self:IsInRange(ShadowWordPainTarget)
+            and ShadowWordPainTarget:Exists()
+            and ShadowWordPainTarget:CustomTimeToDie() > 10
+            and not ShadowWordPainTarget:GetAuras():FindMy(spells.shadowWordPain):IsUp()
+            and Player:GetAuras():FindMy(spells.shadowWeaving):GetCount() == 5
+            and not Player:IsCastingOrChanneling()
+    end):SetTarget(ShadowWordPainTarget)
 )
 
 -- Shadow Word: Death
