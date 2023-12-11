@@ -476,7 +476,7 @@ DefaultAPL:AddSpell(
 -- Flamestrike
 DefaultAPL:AddSpell(
     spells.flamestrike:CastableIf(function(self)
-        local useFlamestrike = Rotation.Config:Read("flamestrike", true)
+        local useFlamestrike = Rotation.Config:Read("spells_flamestrike", true)
         local useAoe = Rotation.Config:Read("aoe", true)
         return self:IsKnownAndUsable()
             and useFlamestrike
