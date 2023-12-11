@@ -369,6 +369,18 @@ DefaultAPL:AddSpell(
     end):SetTarget(Player)
 )
 
+-- Beserking
+DefaultAPL:AddSpell(
+    spells.beserking:CastableIf(function(self)
+        return self:IsKnownAndUsable()
+            and Target:Exists()
+            and Target:IsHostile()
+            and (Target:IsBoss() or Target:IsDungeonBoss())
+            and not Player:IsMoving()
+            and not Player:IsCastingOrChanneling()
+    end):SetTarget(None)
+)
+
 -- Engineering Gloves
 DefaultAPL:AddItem(
     items.inventorySlotGloves:UsableIf(function(self)

@@ -34,7 +34,10 @@ Rotation.Spells = {
     mirrorImage        = SpellBook:GetSpell(55342),
     evocation          = SpellBook:GetSpell(12051),
     spellsteal         = SpellBook:GetSpell(30449),
-    removeCurse        = SpellBook:GetSpell(475),
+    removeCurse    = SpellBook:GetSpell(475),
+
+    -- Racials
+    beserking          = SpellBook:GetSpell(26297),
 
     -- Auras
     hotStreakAura      = SpellBook:GetSpell(48108),
