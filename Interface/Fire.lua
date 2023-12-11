@@ -124,6 +124,17 @@ Hotbar:AddButton({
     end,
 })
 
+-- Spells
+Rotation.Category:AddSubsection("|cffFFFFFFSpells")
+Rotation.Category:Checkbox({
+    category = "spells",
+    var = "flamestrike",
+    name = "Flamestrike",
+    tooltip = "Use of Flamestrike in the aoe rotation. Beta feature use with caution, disable it if you have problems",
+    default = false,
+    disabled = false
+})
+
 -- Items
 Rotation.Category:AddSubsection("|cffFFFFFFItems")
 Rotation.Category:Slider({
