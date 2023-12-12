@@ -27,6 +27,14 @@ local items = Rotation.Items
 local PreCombatAPL = Caffeine.APL:New('precombat')
 local DefaultAPL = Caffeine.APL:New('default')
 
+local npcBlacklistByID = {
+    [37695] = true, -- Lichking, Drudge Ghoul: 37695
+    [37698] = true, -- Shambling Horror: 37698
+    [28926] = true, -- Spark of lonar: 28926
+    [28584] = true, -- Unbound Firestorm: 28584
+    [27737] = true, -- Risen Zombie: 27737
+}
+
 local LowestEnemy = Caffeine.UnitManager:CreateCustomUnit('lowest', function(unit)
     local lowest = nil
     local lowestHP = math.huge
@@ -138,10 +146,7 @@ local LivingBomb = Caffeine.UnitManager:CreateCustomUnit('livingBomb', function(
             return false
         end
 
-        -- Lich King
-        -- Drudge Ghoul: 37695
-        -- Shambling Horror: 37698
-        if unit:GetID() == 37695 or unit:GetID() == 37698 then
+        if npcBlacklistByID[unit:GetID()] then
             return false
         end
 
@@ -508,19 +513,22 @@ DefaultAPL:AddSpell(
 -- Sync
 Module:Sync(function()
     if Player:IsDead() then
-        return
+        return false
     end
     if Player:IsCastingOrChanneling() then
-        return
+        return false
     end
     if IsMounted() then
-        return
+        return false
     end
     if UnitInVehicle("player") then
-        return
+        return false
     end
     if Player:GetAuras():FindAnyOfMy(spells.refreshmentAuras):IsUp() then
-        return
+        return false
+    end
+    if npcBlacklistByID[Target:GetID()] then
+        return false
     end
 
     -- Auto Target
