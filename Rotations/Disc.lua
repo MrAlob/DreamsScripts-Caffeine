@@ -235,6 +235,7 @@ DefaultAPL:AddSpell(
     end):SetTarget(DungeonLogic)
 )
 
+-- DungeonLogic: Web Wrap & Mirror Image
 DefaultAPL:AddSpell(
     spells.mindBlast:CastableIf(function(self)
         local useDungeonLogic = Rotation.Config:Read("toggles_dungeonLogic", true)

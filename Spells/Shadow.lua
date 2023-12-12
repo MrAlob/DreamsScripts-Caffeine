@@ -28,6 +28,9 @@ Rotation.Spells = {
     shadowfiend       = SpellBook:GetSpell(34433),
     shadowWordDeath   = SpellBook:GetSpell(48158),
 
+    -- Racials
+    beserking         = SpellBook:GetSpell(26297),
+
     -- Auras
     shadowWeaving     = SpellBook:GetSpell(15258),
     shroudOfTheOccult = SpellBook:GetSpell(70768),

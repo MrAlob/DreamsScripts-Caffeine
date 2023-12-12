@@ -331,25 +331,6 @@ DefaultAPL:AddSpell(
     end):SetTarget(Target)
 )
 
--- Saronite Bomb
-DefaultAPL:AddItem(
-    items.saroniteBomb:UsableIf(function(self)
-        local useSaroniteBomb = Rotation.Config:Read("items_saroniteBomb", true)
-        return useSaroniteBomb
-            and self:IsUsable()
-            and not self:IsOnCooldown()
-            and Target:Exists()
-            and Target:IsBoss()
-            and Target:IsHostile()
-            and Player:GetDistance(Target) < 28
-            and not Target:IsMoving()
-            and not Player:IsCastingOrChanneling()
-    end):SetTarget(None):PreUse(function(self)
-        local targetPosition = Target:GetPosition()
-        self:Click(targetPosition)
-    end)
-)
-
 -- Engineering Gloves
 DefaultAPL:AddItem(
     items.inventorySlotGloves:UsableIf(function(self)
@@ -383,23 +364,6 @@ DefaultAPL:AddSpell(
     end):SetTarget(Target)
 )
 
--- Vampiric Touch (AoE)
-DefaultAPL:AddSpell(
-    spells.vampiricTouch:CastableIf(function(self)
-        local isAoeEnabled = Rotation.Config:Read("aoe", true)
-        return self:IsKnownAndUsable()
-            and self:IsInRange(VampireTouchTarget)
-            and isAoeEnabled
-            and VampireTouchTarget:Exists()
-            and VampireTouchTarget:CustomTimeToDie() > 10
-            and
-            (VampireTouchTarget:GetAuras():FindMy(spells.vampiricTouch):GetRemainingTime() < spells.vampiricTouch:GetCastLength() / 1000
-                or not VampireTouchTarget:GetAuras():FindMy(spells.vampiricTouch):IsUp())
-            and not Player:IsMoving()
-            and not Player:IsCastingOrChanneling()
-    end):SetTarget(VampireTouchTarget)
-)
-
 -- Shadowfiend
 DefaultAPL:AddSpell(
     spells.shadowfiend:CastableIf(function(self)
@@ -410,6 +374,37 @@ DefaultAPL:AddSpell(
             and Target:IsHostile()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Target)
+)
+
+-- Beserking
+DefaultAPL:AddSpell(
+    spells.beserking:CastableIf(function(self)
+        return self:IsKnownAndUsable()
+            and Target:Exists()
+            and Target:IsHostile()
+            and (Target:IsBoss() or Target:IsDungeonBoss())
+            and not Player:IsMoving()
+            and not Player:IsCastingOrChanneling()
+    end):SetTarget(None)
+)
+
+-- Saronite Bomb
+DefaultAPL:AddItem(
+    items.saroniteBomb:UsableIf(function(self)
+        local useSaroniteBomb = Rotation.Config:Read("items_saroniteBomb", true)
+        return useSaroniteBomb
+            and self:IsUsable()
+            and not self:IsOnCooldown()
+            and Target:Exists()
+            and Target:IsBoss()
+            and Target:IsHostile()
+            and Player:GetDistance(Target) < 28
+            and not Target:IsMoving()
+            and not Player:IsCastingOrChanneling()
+    end):SetTarget(None):PreUse(function(self)
+        local targetPosition = Target:GetPosition()
+        self:Click(targetPosition)
+    end)
 )
 
 -- Devouring Plague
@@ -438,6 +433,23 @@ DefaultAPL:AddSpell(
             and Player:GetAuras():FindMy(spells.shadowWeaving):GetCount() == 5
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Target)
+)
+
+-- Vampiric Touch (AoE)
+DefaultAPL:AddSpell(
+    spells.vampiricTouch:CastableIf(function(self)
+        local isAoeEnabled = Rotation.Config:Read("aoe", true)
+        return self:IsKnownAndUsable()
+            and self:IsInRange(VampireTouchTarget)
+            and isAoeEnabled
+            and VampireTouchTarget:Exists()
+            and VampireTouchTarget:CustomTimeToDie() > 10
+            and
+            (VampireTouchTarget:GetAuras():FindMy(spells.vampiricTouch):GetRemainingTime() < spells.vampiricTouch:GetCastLength() / 1000
+                or not VampireTouchTarget:GetAuras():FindMy(spells.vampiricTouch):IsUp())
+            and not Player:IsMoving()
+            and not Player:IsCastingOrChanneling()
+    end):SetTarget(VampireTouchTarget)
 )
 
 -- Shadow Word: Pain (AoE)
