@@ -47,5 +47,7 @@ Rotation.Spells = {
     shroudOfTheOccult  = SpellBook:GetSpell(70768),
     bloodBoilAura      = SpellBook:GetSpell(72385),
     luckoftheDraw      = SpellBook:GetSpell(72221),
-    refreshmentAuras   = SpellBook:GetList(43183, 57073)
+    refreshmentAuras   = SpellBook:GetList(43183, 57073),
+    inoculatedAura     = SpellBook:GetSpell(69291),
+    pungentBlight      = SpellBook:GetSpell(69195),
 }

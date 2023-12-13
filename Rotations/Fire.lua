@@ -311,6 +311,16 @@ DefaultAPL:AddSpell(
     end):SetTarget(Player)
 )
 
+-- Ice Block
+-- Festergut
+DefaultAPL:AddSpell(
+    spells.iceBlock:CastableIf(function(self)
+        return self:IsKnownAndUsable()
+            and Target:GetCastingOrChannelingSpell() == spells.pungentBlight
+            and not Player:GetAuras():FindAny(spells.inoculatedAura):GetCount() == 3
+    end):SetTarget(Player)
+)
+
 -- Mirror Image
 DefaultAPL:AddSpell(
     spells.mirrorImage:CastableIf(function(self)
@@ -513,9 +523,6 @@ DefaultAPL:AddSpell(
 -- Sync
 Module:Sync(function()
     if Player:IsDead() then
-        return false
-    end
-    if Player:IsCastingOrChanneling() then
         return false
     end
     if IsMounted() then
