@@ -135,6 +135,15 @@ Rotation.Category:Checkbox({
     disabled = false
 })
 
+Rotation.Category:Checkbox({
+    category = "spells",
+    var = "scorch",
+    name = "Scorch",
+    tooltip = "Use of Scorch in the rotation too apply Crit Debuff. Use it only if you have not a Warlock in Raid.",
+    default = true,
+    disabled = false
+})
+
 -- Items
 Rotation.Category:AddSubsection("|cffFFFFFFItems")
 Rotation.Category:Slider({

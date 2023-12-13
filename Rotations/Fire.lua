@@ -336,8 +336,10 @@ DefaultAPL:AddSpell(
 -- Scorch
 DefaultAPL:AddSpell(
     spells.scorch:CastableIf(function(self)
+        local useScorch = Rotation.Config:Read("spells_scorch", true)
         return self:IsKnownAndUsable()
             and self:IsInRange(Target)
+            and useScorch
             and Target:Exists()
             and Target:IsHostile()
             and spells.scorch:GetTimeSinceLastCast() > 4
