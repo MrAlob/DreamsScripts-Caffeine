@@ -19,5 +19,6 @@ end
 Rotation.Items = {
     inventorySlotGloves = Caffeine.Globals.ItemBook:GetItem(getItemID(10)),
     manaGem = Caffeine.Globals.ItemBook:GetItem(33312),
-    saroniteBomb = Caffeine.Globals.ItemBook:GetItem(41119)
+    saroniteBomb = Caffeine.Globals.ItemBook:GetItem(41119),
+    shardIfTheCrystalHeart = Caffeine.Globals.ItemBook:GetItem(48722)
 }

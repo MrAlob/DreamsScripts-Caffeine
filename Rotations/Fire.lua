@@ -384,6 +384,19 @@ DefaultAPL:AddSpell(
     end):SetTarget(Player)
 )
 
+-- Shard of the Crystal Heart
+DefaultAPL:AddItem(
+    items.shardIfTheCrystalHeart:UsableIf(function(self)
+        return self:IsUsable()
+            and not self:IsOnCooldown()
+            and Target:Exists()
+            and Target:IsHostile()
+            and (Target:IsBoss() or Target:IsDungeonBoss())
+            and not Player:IsMoving()
+            and not Player:IsCastingOrChanneling()
+    end):SetTarget(None)
+)
+
 -- Beserking
 DefaultAPL:AddSpell(
     spells.beserking:CastableIf(function(self)
