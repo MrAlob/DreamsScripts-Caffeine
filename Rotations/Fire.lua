@@ -316,6 +316,7 @@ DefaultAPL:AddSpell(
 DefaultAPL:AddSpell(
     spells.iceBlock:CastableIf(function(self)
         return self:IsKnownAndUsable()
+            and Target:Exists()
             and Target:GetCastingOrChannelingSpell() == spells.pungentBlight
             and not Player:GetAuras():FindAny(spells.inoculatedAura):GetCount() == 3
     end):SetTarget(Player)
@@ -379,8 +380,6 @@ DefaultAPL:AddSpell(
             and Target:IsHostile()
             and spells.combustion:GetTimeSinceLastCast() > 120
             and (Target:IsBoss() or Target:IsDungeonBoss())
-            and (Target:GetAuras():FindAny(spells.improvedScorchAura):IsUp()
-                or Target:GetAuras():FindAny(spells.shadowMasteryAura):IsUp())
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Player)
