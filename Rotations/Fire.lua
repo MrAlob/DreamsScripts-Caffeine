@@ -33,6 +33,7 @@ local npcBlacklistByID = {
     [28926] = true, -- Spark of lonar: 28926
     [28584] = true, -- Unbound Firestorm: 28584
     [27737] = true, -- Risen Zombie: 27737
+    [27651] = true, -- Phtasmal Fire: 27651
 }
 
 local LowestEnemy = Caffeine.UnitManager:CreateCustomUnit('lowest', function(unit)
@@ -362,7 +363,7 @@ DefaultAPL:AddItem(
             and Target:Exists()
             and Target:IsHostile()
             and Target:IsBoss()
-            and Player:GetDistance(Target) < 28
+            and Player:GetDistance(Target) < 20
             and not Target:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(None):PreUse(function(self)
