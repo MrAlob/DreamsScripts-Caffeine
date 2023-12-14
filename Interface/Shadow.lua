@@ -20,9 +20,9 @@ Rotation.Config:Write("aoe", false)
 Rotation.Config:Write("autoTarget", false)
 
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Hello! Rotation successfully initialized.")
-Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Version: 2.0.9")
+Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Version: 2.1.0")
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - If you need any help or have suggestions.")
-Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Discord: |cffeb6ee9https://discord.gg/dJ2upysMcW")
+Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Discord: |cffeb6ee9https://discord.gg/Pm4wQpMDKh")
 
 -- Hotbar
 Hotbar = Caffeine.Interface.Hotbar:New({
