@@ -27,6 +27,7 @@ local items = Rotation.Items
 local PreCombatAPL = Caffeine.APL:New('precombat')
 local DefaultAPL = Caffeine.APL:New('default')
 
+-- NPC Blacklist
 local npcBlacklistByID = {
     [37695] = true, -- Lichking, Drudge Ghoul: 37695
     [37698] = true, -- Shambling Horror: 37698
@@ -329,6 +330,7 @@ DefaultAPL:AddSpell(
         return self:IsKnownAndUsable()
             and Target:Exists()
             and Target:IsHostile()
+            and Player:CanSee(Target)
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
@@ -344,6 +346,7 @@ DefaultAPL:AddSpell(
             and useScorch
             and Target:Exists()
             and Target:IsHostile()
+            and Player:CanSee(Target)
             and spells.scorch:GetTimeSinceLastCast() > 4
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and not (Target:GetAuras():FindAny(spells.improvedScorchAura):IsUp()
@@ -362,8 +365,9 @@ DefaultAPL:AddItem(
             and useSaroniteBomb
             and Target:Exists()
             and Target:IsHostile()
+            and Player:CanSee(Target)
             and Target:IsBoss()
-            and Player:GetDistance(Target) < 20
+            and Player:GetDistance(Target) < 28
             and not Target:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(None):PreUse(function(self)
@@ -379,6 +383,7 @@ DefaultAPL:AddSpell(
             and not self:IsOnCooldown()
             and Target:Exists()
             and Target:IsHostile()
+            and Player:CanSee(Target)
             and spells.combustion:GetTimeSinceLastCast() > 120
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and not Player:IsMoving()
@@ -393,6 +398,7 @@ DefaultAPL:AddItem(
             and not self:IsOnCooldown()
             and Target:Exists()
             and Target:IsHostile()
+            and Player:CanSee(Target)
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
@@ -405,6 +411,7 @@ DefaultAPL:AddSpell(
         return self:IsKnownAndUsable()
             and Target:Exists()
             and Target:IsHostile()
+            and Player:CanSee(Target)
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
@@ -419,8 +426,9 @@ DefaultAPL:AddItem(
             and not self:IsOnCooldown()
             and useEngineeringGloves
             and Target:Exists()
-            and (Target:IsBoss() or Target:IsDungeonBoss())
             and Target:IsHostile()
+            and Player:CanSee(Target)
+            and (Target:IsBoss() or Target:IsDungeonBoss())
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(None)
@@ -433,6 +441,7 @@ DefaultAPL:AddSpell(
             and self:IsInRange(Target)
             and Target:Exists()
             and Target:IsHostile()
+            and Player:CanSee(Target)
             and Player:GetAuras():FindMy(spells.hotStreakAura):IsUp()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Target)
@@ -471,6 +480,7 @@ DefaultAPL:AddSpell(
             and self:IsInRange(Target)
             and Target:Exists()
             and Target:IsHostile()
+            and Player:CanSee(Target)
             and Player:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Target)
@@ -482,6 +492,7 @@ DefaultAPL:AddSpell(
         return self:IsKnownAndUsable()
             and self:IsInRange(Target)
             and Target:Exists()
+            and Player:CanSee(Target)
             and Target:CustomTimeToDie() > 12
             and not Target:GetAuras():FindMy(spells.livingBomb):IsUp()
             and not Player:IsCastingOrChanneling()
@@ -513,6 +524,7 @@ DefaultAPL:AddSpell(
             and useAoe
             and Target:Exists()
             and Target:IsHostile()
+            and Player:CanSee(Target)
             and spells.flamestrike:GetTimeSinceLastCast() > 8
             and Target:GetEnemies(30) >= 2
             and not Player:IsMoving()
@@ -530,6 +542,7 @@ DefaultAPL:AddSpell(
             and self:IsInRange(Target)
             and Target:Exists()
             and Target:IsHostile()
+            and Player:CanSee(Target)
             and not Player:IsCastingOrChanneling()
             and not Player:IsMoving()
     end):SetTarget(Target)

@@ -313,6 +313,7 @@ DefaultAPL:AddSpell(
             and Target:Exists()
             and Target:IsHostile()
             and Target:GetEnemies(12) >= 8
+            and Player:CanSee(Target)
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Target)
@@ -325,6 +326,7 @@ DefaultAPL:AddSpell(
             and self:IsInRange(Target)
             and Target:Exists()
             and Target:IsHostile()
+            and Player:CanSee(Target)
             and GetEnemiesWithVampiricTouch(12) >= 4
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
@@ -341,6 +343,7 @@ DefaultAPL:AddItem(
             and Target:Exists()
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and Target:IsHostile()
+            and Player:CanSee(Target)
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(None)
@@ -356,6 +359,7 @@ DefaultAPL:AddSpell(
             and self:IsInRange(Target)
             and Target:Exists()
             and Target:IsHostile()
+            and Player:CanSee(Target)
             and Target:CustomTimeToDie() > 10
             and (Target:GetAuras():FindMy(spells.vampiricTouch):GetRemainingTime() < spells.vampiricTouch:GetCastLength() / 1000
                 or not Target:GetAuras():FindMy(spells.vampiricTouch):IsUp())
@@ -370,8 +374,9 @@ DefaultAPL:AddSpell(
         return self:IsKnownAndUsable()
             and self:IsInRange(Target)
             and Target:Exists()
-            and (Target:IsBoss() or Target:IsDungeonBoss())
             and Target:IsHostile()
+            and Player:CanSee(Target)
+            and (Target:IsBoss() or Target:IsDungeonBoss())
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Target)
 )
@@ -382,6 +387,7 @@ DefaultAPL:AddSpell(
         return self:IsKnownAndUsable()
             and Target:Exists()
             and Target:IsHostile()
+            and Player:CanSee(Target)
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
@@ -398,6 +404,7 @@ DefaultAPL:AddItem(
             and Target:Exists()
             and Target:IsBoss()
             and Target:IsHostile()
+            and Player:CanSee(Target)
             and Player:GetDistance(Target) < 28
             and not Target:IsMoving()
             and not Player:IsCastingOrChanneling()
@@ -414,6 +421,7 @@ DefaultAPL:AddSpell(
             and self:IsInRange(Target)
             and Target:Exists()
             and Target:IsHostile()
+            and Player:CanSee(Target)
             and Target:CustomTimeToDie() > 10
             and (Target:GetAuras():FindMy(spells.devouringPlague):GetRemainingTime() < 1.75
                 or not Target:GetAuras():FindMy(spells.devouringPlague):IsUp())
@@ -428,6 +436,7 @@ DefaultAPL:AddSpell(
             and self:IsInRange(Target)
             and Target:Exists()
             and Target:IsHostile()
+            and Player:CanSee(Target)
             and Target:CustomTimeToDie() > 10
             and not Target:GetAuras():FindMy(spells.shadowWordPain):IsUp()
             and Player:GetAuras():FindMy(spells.shadowWeaving):GetCount() == 5
@@ -476,6 +485,7 @@ DefaultAPL:AddSpell(
             and self:IsInRange(Target)
             and Target:Exists()
             and Target:IsHostile()
+            and Player:CanSee(Target)
             and Player:GetHP() > 60
             and Player:IsMoving()
             and not Player:IsCastingOrChanneling()
@@ -491,6 +501,7 @@ DefaultAPL:AddSpell(
             and self:IsKnownAndUsable()
             and Target:Exists()
             and Target:IsHostile()
+            and Player:CanSee(Target)
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Target)
@@ -503,6 +514,7 @@ DefaultAPL:AddSpell(
             and self:IsInRange(Target)
             and Target:IsHostile()
             and Target:Exists()
+            and Player:CanSee(Target)
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Target):PreCast(function()
@@ -517,16 +529,16 @@ DefaultAPL:AddSpell(
 -- Sync
 Module:Sync(function()
     if Player:IsDead() then
-        return
+        return false
     end
     if IsMounted() then
-        return
+        return false
     end
     if UnitInVehicle("player") then
-        return
+        return false
     end
     if Player:GetAuras():FindAnyOfMy(spells.refreshmentAuras):IsUp() then
-        return
+        return false
     end
 
     -- Auto Target
