@@ -543,6 +543,7 @@ DefaultAPL:AddSpell(
             and Target:Exists()
             and Target:IsHostile()
             and Player:CanSee(Target)
+            and Player:IsFacing(Target)
             and not Player:IsCastingOrChanneling()
             and not Player:IsMoving()
     end):SetTarget(Target)
