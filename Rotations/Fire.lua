@@ -347,6 +347,7 @@ DefaultAPL:AddSpell(
             and Target:Exists()
             and Target:IsHostile()
             and Player:CanSee(Target)
+            and Player:IsFacing(Target)
             and spells.scorch:GetTimeSinceLastCast() > 4
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and not (Target:GetAuras():FindAny(spells.improvedScorchAura):IsUp()
@@ -427,7 +428,6 @@ DefaultAPL:AddItem(
             and useEngineeringGloves
             and Target:Exists()
             and Target:IsHostile()
-            and Player:CanSee(Target)
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
@@ -442,6 +442,7 @@ DefaultAPL:AddSpell(
             and Target:Exists()
             and Target:IsHostile()
             and Player:CanSee(Target)
+            and Player:IsFacing(Target)
             and Player:GetAuras():FindMy(spells.hotStreakAura):IsUp()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Target)
@@ -481,6 +482,7 @@ DefaultAPL:AddSpell(
             and Target:Exists()
             and Target:IsHostile()
             and Player:CanSee(Target)
+            and Player:IsFacing(Target)
             and Player:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Target)
@@ -524,7 +526,6 @@ DefaultAPL:AddSpell(
             and useAoe
             and Target:Exists()
             and Target:IsHostile()
-            and Player:CanSee(Target)
             and spells.flamestrike:GetTimeSinceLastCast() > 8
             and Target:GetEnemies(30) >= 2
             and not Player:IsMoving()
