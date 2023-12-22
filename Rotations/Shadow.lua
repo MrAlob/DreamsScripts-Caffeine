@@ -343,7 +343,6 @@ DefaultAPL:AddItem(
             and Target:Exists()
             and (Target:IsBoss() or Target:IsDungeonBoss())
             and Target:IsHostile()
-            and Player:CanSee(Target)
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(None)

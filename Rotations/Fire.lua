@@ -527,11 +527,11 @@ DefaultAPL:AddSpell(
             and Target:Exists()
             and Target:IsHostile()
             and spells.flamestrike:GetTimeSinceLastCast() > 8
-            and Target:GetEnemies(30) >= 2
+            and Target:GetEnemies(36) >= 3
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(None):OnCast(function(self)
-        local position = Caffeine.UnitManager:FindEnemiesCentroid(10, 30)
+        local position = Caffeine.UnitManager:FindEnemiesCentroid(10, 36)
         self:Click(position)
     end)
 )

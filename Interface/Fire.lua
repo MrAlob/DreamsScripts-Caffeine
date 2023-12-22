@@ -131,7 +131,7 @@ Rotation.Category:Checkbox({
     var = "flamestrike",
     name = "Flamestrike",
     tooltip = "Use of Flamestrike in the aoe rotation. Beta feature use with caution, disable it if you have problems",
-    default = false,
+    default = true,
     disabled = false
 })
 
