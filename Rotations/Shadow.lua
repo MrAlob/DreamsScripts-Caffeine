@@ -102,6 +102,46 @@ local DungeonLogic = Caffeine.UnitManager:CreateCustomUnit('dungeonLogic', funct
     return dungeonLogic
 end)
 
+local ShadowWordPainRefresh = Caffeine.UnitManager:CreateCustomUnit('shadowWordPainRefresh', function(unit)
+    local shadowWordPainRefresh = nil
+
+    Caffeine.UnitManager:EnumUnits(function(unit)
+        if unit:IsDead() then
+            return false
+        end
+
+        if Player:GetDistance(unit) > 36 then
+            return false
+        end
+
+        if not Player:CanSee(unit) then
+            return false
+        end
+
+        if not unit:IsEnemy() then
+            return false
+        end
+
+        if not unit:CustomIsBoss() then
+            return false
+        end
+
+        if unit:GetAuras():FindMy(spells.shadowWordPain):GetRemainingTime() > 4 then
+            return false
+        end
+
+        if Player:CanSee(unit) and Player:IsFacing(unit) and unit:GetAuras():FindMy(spells.shadowWordPain):GetRemainingTime() < 4 then
+            shadowWordPainRefresh = unit
+        end
+    end)
+
+    if shadowWordPainRefresh == nil then
+        shadowWordPainRefresh = None
+    end
+
+    return shadowWordPainRefresh
+end)
+
 local VampireTouchTarget = Caffeine.UnitManager:CreateCustomUnit('vampireTouch', function(unit)
     local vampiricTouch = nil
 
@@ -115,10 +155,6 @@ local VampireTouchTarget = Caffeine.UnitManager:CreateCustomUnit('vampireTouch',
         end
 
         if not Player:CanSee(unit) then
-            return false
-        end
-
-        if not unit:IsAffectingCombat() then
             return false
         end
 
@@ -240,12 +276,24 @@ function GetEnemiesWithVampiricTouch(range)
     return count
 end
 
-function Caffeine.Unit:IsDungeonBoss()
-    if UnitClassification(self:GetOMToken()) == "elite"
-        and UnitLevel(self:GetOMToken()) == 82
+function Caffeine.Unit:CustomIsBoss()
+    -- Raid Boss
+    if self:IsBoss() then
+        return true
+    end
+
+    -- Raid Boss (Custom Cases)
+    -- Lady Deathwhisper (36855), Sindragossa (36853), Professor Putricide (36678)
+    if self:GetID() == 36855 or self:GetID() == 36853 or self:GetID() == 36678 then
+        return true
+    end
+
+    -- Dungeon Boss
+    if UnitClassification(self:GetOMToken()) == "elite" and UnitLevel(self:GetOMToken()) == 82
         and Player:GetAuras():FindMy(spells.luckoftheDraw):IsUp() then
         return true
     end
+
     return false
 end
 
@@ -303,6 +351,25 @@ DefaultAPL:AddSpell(
     end):SetTarget(DungeonLogic)
 )
 
+DefaultAPL:AddSpell(
+    spells.mindFlay:CastableIf(function(self)
+        return self:IsKnownAndUsable()
+            and self:IsInRange(ShadowWordPainRefresh)
+            and ShadowWordPainRefresh:Exists()
+            and ShadowWordPainRefresh:GetAuras():FindMy(spells.shadowWordPain):GetRemainingTime() <= 4.0
+            and Player:IsFacing(ShadowWordPainRefresh)
+            and not Player:IsMoving()
+    end):SetTarget(ShadowWordPainRefresh)
+)
+
+DefaultAPL:AddSpell(
+    spells.dispersion:CastableIf(function(self)
+        return self:IsKnownAndUsable()
+            and Player:GetAuras():FindAny(spells.instability):GetRemainingTime() <= 2.0
+            and Player:GetAuras():FindAny(spells.instability):GetCount() >= 8
+    end):SetTarget(Player)
+)
+
 -- Mind Sear (AoE)
 DefaultAPL:AddSpell(
     spells.mindSear:CastableIf(function(self)
@@ -333,6 +400,22 @@ DefaultAPL:AddSpell(
     end):SetTarget(Target)
 )
 
+-- Vampiric Touch (AoE)
+DefaultAPL:AddSpell(
+    spells.vampiricTouch:CastableIf(function(self)
+        local isAoeEnabled = Rotation.Config:Read("aoe", true)
+        return self:IsKnownAndUsable()
+            and isAoeEnabled
+            and VampireTouchTarget:Exists()
+            and VampireTouchTarget:CustomTimeToDie() > 10
+            and
+            (VampireTouchTarget:GetAuras():FindMy(spells.vampiricTouch):GetRemainingTime() < spells.vampiricTouch:GetCastLength() / 1000
+                or not VampireTouchTarget:GetAuras():FindMy(spells.vampiricTouch):IsUp())
+            and not Player:IsMoving()
+            and not Player:IsCastingOrChanneling()
+    end):SetTarget(VampireTouchTarget)
+)
+
 -- Engineering Gloves
 DefaultAPL:AddItem(
     items.inventorySlotGloves:UsableIf(function(self)
@@ -341,7 +424,7 @@ DefaultAPL:AddItem(
             and self:IsUsable()
             and not self:IsOnCooldown()
             and Target:Exists()
-            and (Target:IsBoss() or Target:IsDungeonBoss())
+            and Target:CustomIsBoss()
             and Target:IsHostile()
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
@@ -375,7 +458,7 @@ DefaultAPL:AddSpell(
             and Target:Exists()
             and Target:IsHostile()
             and Player:CanSee(Target)
-            and (Target:IsBoss() or Target:IsDungeonBoss())
+            and Target:CustomIsBoss()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Target)
 )
@@ -387,7 +470,7 @@ DefaultAPL:AddSpell(
             and Target:Exists()
             and Target:IsHostile()
             and Player:CanSee(Target)
-            and (Target:IsBoss() or Target:IsDungeonBoss())
+            and Target:CustomIsBoss()
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(None)
@@ -397,17 +480,17 @@ DefaultAPL:AddSpell(
 DefaultAPL:AddItem(
     items.saroniteBomb:UsableIf(function(self)
         local useSaroniteBomb = Rotation.Config:Read("items_saroniteBomb", true)
-        return useSaroniteBomb
-            and self:IsUsable()
+        return self:IsUsable()
             and not self:IsOnCooldown()
+            and useSaroniteBomb
             and Target:Exists()
-            and Target:IsBoss()
             and Target:IsHostile()
             and Player:CanSee(Target)
-            and Player:GetDistance(Target) < 28
+            and Target:CustomIsBoss()
+            and Player:GetDistance(Target) <= 29
             and not Target:IsMoving()
             and not Player:IsCastingOrChanneling()
-    end):SetTarget(None):PreUse(function(self)
+    end):SetTarget(None):OnUse(function(self)
         local targetPosition = Target:GetPosition()
         self:Click(targetPosition)
     end)
@@ -441,23 +524,6 @@ DefaultAPL:AddSpell(
             and Player:GetAuras():FindMy(spells.shadowWeaving):GetCount() == 5
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Target)
-)
-
--- Vampiric Touch (AoE)
-DefaultAPL:AddSpell(
-    spells.vampiricTouch:CastableIf(function(self)
-        local isAoeEnabled = Rotation.Config:Read("aoe", true)
-        return self:IsKnownAndUsable()
-            and self:IsInRange(VampireTouchTarget)
-            and isAoeEnabled
-            and VampireTouchTarget:Exists()
-            and VampireTouchTarget:CustomTimeToDie() > 10
-            and
-            (VampireTouchTarget:GetAuras():FindMy(spells.vampiricTouch):GetRemainingTime() < spells.vampiricTouch:GetCastLength() / 1000
-                or not VampireTouchTarget:GetAuras():FindMy(spells.vampiricTouch):IsUp())
-            and not Player:IsMoving()
-            and not Player:IsCastingOrChanneling()
-    end):SetTarget(VampireTouchTarget)
 )
 
 -- Shadow Word: Pain (AoE)
@@ -519,7 +585,7 @@ DefaultAPL:AddSpell(
     end):SetTarget(Target):PreCast(function()
         if spells.innerFocus:IsKnownAndUsable()
             and Player:GetAuras():FindMy(spells.shadowWeaving):GetCount() == 5
-            and (Target:IsBoss() or Target:IsDungeonBoss()) then
+            and Target:CustomIsBoss() then
             spells.innerFocus:ForceCast(None)
         end
     end)

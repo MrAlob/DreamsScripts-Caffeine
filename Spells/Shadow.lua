@@ -18,7 +18,7 @@ Rotation.Spells = {
     vampiricEmbrace   = SpellBook:GetSpell(15286),
     innerFocus        = SpellBook:GetSpell(14751),
 
-    -- Damage Spells
+    -- Spells
     mindBlast         = SpellBook:GetSpell(48127),
     mindFlay          = SpellBook:GetSpell(48156),
     vampiricTouch     = SpellBook:GetSpell(48160),
@@ -27,6 +27,7 @@ Rotation.Spells = {
     mindSear          = SpellBook:GetSpell(53023),
     shadowfiend       = SpellBook:GetSpell(34433),
     shadowWordDeath   = SpellBook:GetSpell(48158),
+    dispersion        = SpellBook:GetSpell(47585),
 
     -- Racials
     beserking         = SpellBook:GetSpell(26297),
@@ -36,5 +37,7 @@ Rotation.Spells = {
     shroudOfTheOccult = SpellBook:GetSpell(70768),
     replenishment     = SpellBook:GetSpell(57669),
     luckoftheDraw     = SpellBook:GetSpell(72221),
-    refreshmentAuras  = SpellBook:GetList(43183, 57073)
+    refreshmentAuras  = SpellBook:GetList(43183, 57073),
+    pungentBlight     = SpellBook:GetSpell(69195),
+    instability       = SpellBook:GetSpell(69766),
 }
