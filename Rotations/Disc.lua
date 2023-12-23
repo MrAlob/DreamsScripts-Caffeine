@@ -205,12 +205,24 @@ local DungeonLogic = Caffeine.UnitManager:CreateCustomUnit('dungeonLogic', funct
     return dungeonLogic
 end)
 
-function Caffeine.Unit:IsDungeonBoss()
-    if UnitClassification(self:GetOMToken()) == "elite"
-        and UnitLevel(self:GetOMToken()) == 82
+function Caffeine.Unit:CustomIsBoss()
+    -- Raid Boss
+    if self:IsBoss() then
+        return true
+    end
+
+    -- Raid Boss (Custom Cases)
+    -- Lady Deathwhisper (36855), Sindragossa (36853), Professor Putricide (36678)
+    if self:GetID() == 36855 or self:GetID() == 36853 or self:GetID() == 36678 then
+        return true
+    end
+
+    -- Dungeon Boss
+    if UnitClassification(self:GetOMToken()) == "elite" and UnitLevel(self:GetOMToken()) == 82
         and Player:GetAuras():FindMy(spells.luckoftheDraw):IsUp() then
         return true
     end
+
     return false
 end
 
@@ -255,7 +267,7 @@ DefaultAPL:AddItem(
             and self:IsUsable()
             and not self:IsOnCooldown()
             and Target:Exists()
-            and (Target:IsBoss() or Target:IsDungeonBoss())
+            and Target:CustomIsBoss()
             and Target:IsHostile()
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
@@ -265,17 +277,18 @@ DefaultAPL:AddItem(
 -- Saronite Bomb
 DefaultAPL:AddItem(
     items.saroniteBomb:UsableIf(function(self)
-        local saroniteBomb = Rotation.Config:Read("items_saroniteBomb", true)
-        return saroniteBomb
-            and self:IsUsable()
+        local useSaroniteBomb = Rotation.Config:Read("items_saroniteBomb", true)
+        return self:IsUsable()
             and not self:IsOnCooldown()
+            and useSaroniteBomb
             and Target:Exists()
-            and Target:IsBoss()
             and Target:IsHostile()
-            and Player:GetDistance(Target) < 28
+            and Player:CanSee(Target)
+            and Target:CustomIsBoss()
+            and Player:GetDistance(Target) <= 29
             and not Target:IsMoving()
             and not Player:IsCastingOrChanneling()
-    end):SetTarget(None):PreUse(function(self)
+    end):SetTarget(None):OnUse(function(self)
         local targetPosition = Target:GetPosition()
         self:Click(targetPosition)
     end)
@@ -287,7 +300,7 @@ DefaultAPL:AddSpell(
         return Target:Exists()
             and self:IsKnownAndUsable()
             and Target:IsHostile()
-            and (Target:IsBoss() or Target:IsDungeonBoss())
+            and Target:CustomIsBoss()
             and Player:GetPP() < Rotation.Config:Read("spells_shadowfiend", 40)
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Target)
@@ -376,7 +389,7 @@ DefaultAPL:AddSpell(
             and Focus:Exists()
             and self:IsKnownAndUsable()
             and Focus:IsAffectingCombat()
-            and (Target:IsBoss() or Target:IsDungeonBoss())
+            and Target:CustomIsBoss()
             and not Focus:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Focus)
