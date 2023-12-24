@@ -260,7 +260,7 @@ function Caffeine.Unit:CustomIsBoss()
 
     -- Dungeon Boss
     if UnitClassification(self:GetOMToken()) == "elite" and UnitLevel(self:GetOMToken()) == 82
-        and Player:GetAuras():FindMy(spells.luckoftheDraw):IsUp() then
+        and Player:GetAuras():FindAny(spells.luckoftheDraw):IsUp() then
         return true
     end
 
