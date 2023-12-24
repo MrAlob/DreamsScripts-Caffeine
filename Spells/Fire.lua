@@ -34,7 +34,8 @@ Rotation.Spells = {
     mirrorImage        = SpellBook:GetSpell(55342),
     evocation          = SpellBook:GetSpell(12051),
     spellsteal         = SpellBook:GetSpell(30449),
-    removeCurse    = SpellBook:GetSpell(475),
+    removeCurse        = SpellBook:GetSpell(475),
+    invisibility       = SpellBook:GetSpell(66),
 
     -- Racials
     beserking          = SpellBook:GetSpell(26297),
@@ -50,4 +51,5 @@ Rotation.Spells = {
     refreshmentAuras   = SpellBook:GetList(43183, 57073),
     inoculatedAura     = SpellBook:GetSpell(69291),
     pungentBlight      = SpellBook:GetSpell(69195),
+    tearGas            = SpellBook:GetSpell(71617),
 }

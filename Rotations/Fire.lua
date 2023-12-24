@@ -278,9 +278,7 @@ PreCombatAPL:AddSpell(
         return self:IsKnownAndUsable()
             and not Player:GetAuras():FindMy(spells.moltenFire):IsUp()
             and not Player:IsCastingOrChanneling()
-    end):SetTarget(Player):PreCast(function(self)
-        Caffeine.Notifications:AddNotification(spells.moltenFire:GetIcon(), "Molten Fire")
-    end)
+    end):SetTarget(Player)
 )
 
 -- Conjure Mana Gem
@@ -291,9 +289,7 @@ PreCombatAPL:AddSpell(
             and not Player:IsAffectingCombat()
             and not Player:IsCastingOrChanneling()
             and not Player:IsMoving()
-    end):SetTarget(Player):PreCast(function(self)
-        Caffeine.Notifications:AddNotification(spells.conjureManaGem:GetIcon(), "Conjure Mana Gem")
-    end)
+    end):SetTarget(Player)
 )
 
 -- Mana Gem
@@ -320,13 +316,24 @@ DefaultAPL:AddSpell(
     end):SetTarget(DungeonLogic)
 )
 
+-- Invisibility
+-- Professor Putricide
+DefaultAPL:AddSpell(
+    spells.invisibility:CastableIf(function(self)
+        return self:IsKnownAndUsable()
+            and Target:GetCastingOrChannelingSpell() == spells.tearGas
+    end):SetTarget(Player):OnCast(function(self)
+        Caffeine.Notifications:AddNotification(spells.invisibility:GetIcon(), "Invisibility (Tear Gas)")
+    end)
+)
+
 -- Ice Block
 -- Deathbringer Saurfang
 DefaultAPL:AddSpell(
     spells.iceBlock:CastableIf(function(self)
         return self:IsKnownAndUsable()
             and Player:GetAuras():FindAny(spells.bloodBoilAura):IsUp()
-    end):SetTarget(Player):PreCast(function(self)
+    end):SetTarget(Player):OnCast(function(self)
         Caffeine.Notifications:AddNotification(spells.iceBlock:GetIcon(), "Ice Block (Blood Boil)")
     end)
 )
@@ -338,7 +345,7 @@ DefaultAPL:AddSpell(
         return self:IsKnownAndUsable()
             and Target:Exists()
             and Target:GetCastingOrChannelingSpell() == spells.pungentBlight
-    end):SetTarget(Player):PreCast(function(self)
+    end):SetTarget(Player):OnCast(function(self)
         Caffeine.Notifications:AddNotification(spells.iceBlock:GetIcon(), "Ice Block (Pungent Blight)")
     end)
 )
@@ -353,9 +360,7 @@ DefaultAPL:AddSpell(
             and Target:CustomIsBoss()
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
-    end):SetTarget(None):PreCast(function(self)
-        Caffeine.Notifications:AddNotification(spells.mirrorImage:GetIcon(), "Mirror Image")
-    end)
+    end):SetTarget(None)
 )
 
 -- Scorch
@@ -375,9 +380,7 @@ DefaultAPL:AddSpell(
                 or Target:GetAuras():FindAny(spells.shadowMasteryAura):IsUp())
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
-    end):SetTarget(Target):PreCast(function(self)
-        Caffeine.Notifications:AddNotification(spells.scorch:GetIcon(), "Scorch")
-    end)
+    end):SetTarget(Target)
 )
 
 -- Saronite Bomb
@@ -412,9 +415,7 @@ DefaultAPL:AddSpell(
             and Target:CustomIsBoss()
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
-    end):SetTarget(Player):PreCast(function(self)
-        Caffeine.Notifications:AddNotification(spells.combustion:GetIcon(), "Combustion")
-    end)
+    end):SetTarget(Player)
 )
 
 -- Shard of the Crystal Heart
@@ -441,9 +442,7 @@ DefaultAPL:AddSpell(
             and Target:CustomIsBoss()
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
-    end):SetTarget(None):PreCast(function(self)
-        Caffeine.Notifications:AddNotification(spells.beserking:GetIcon(), "Beserking")
-    end)
+    end):SetTarget(None)
 )
 
 -- Engineering Gloves
@@ -472,9 +471,7 @@ DefaultAPL:AddSpell(
             and Player:IsFacing(Target)
             and Player:GetAuras():FindMy(spells.hotStreakAura):IsUp()
             and not Player:IsCastingOrChanneling()
-    end):SetTarget(Target):PreCast(function(self)
-        Caffeine.Notifications:AddNotification(spells.pyroblast:GetIcon(), "Pyroblast")
-    end)
+    end):SetTarget(Target)
 )
 
 -- Remove Curse
@@ -487,9 +484,7 @@ DefaultAPL:AddSpell(
             and Decurse:Exists()
             and Decurse:GetAuras():HasAnyDispelableAura(spells.removeCurse)
             and not Player:IsCastingOrChanneling()
-    end):SetTarget(Decurse):PreCast(function(self)
-        Caffeine.Notifications:AddNotification(spells.removeCurse:GetIcon(), "Remove Curse")
-    end)
+    end):SetTarget(Decurse)
 )
 
 -- Spellsteal
@@ -502,9 +497,7 @@ DefaultAPL:AddSpell(
             and Spellsteal:Exists()
             and Spellsteal:GetAuras():HasAnyStealableAura()
             and not Player:IsCastingOrChanneling()
-    end):SetTarget(Spellsteal):PreCast(function(self)
-        Caffeine.Notifications:AddNotification(spells.spellsteal:GetIcon(), "Spellsteal")
-    end)
+    end):SetTarget(Spellsteal)
 )
 
 -- Fire Blast
@@ -518,9 +511,7 @@ DefaultAPL:AddSpell(
             and Player:IsFacing(Target)
             and Player:IsMoving()
             and not Player:IsCastingOrChanneling()
-    end):SetTarget(Target):PreCast(function(self)
-        Caffeine.Notifications:AddNotification(spells.fireBlast:GetIcon(), "Fire Blast")
-    end)
+    end):SetTarget(Target)
 )
 
 -- Living Bomb
@@ -533,9 +524,7 @@ DefaultAPL:AddSpell(
             and Target:CustomTimeToDie() > 12
             and not Target:GetAuras():FindMy(spells.livingBomb):IsUp()
             and not Player:IsCastingOrChanneling()
-    end):SetTarget(Target):PreCast(function(self)
-        Caffeine.Notifications:AddNotification(spells.livingBomb:GetIcon(), "Living Bomb")
-    end)
+    end):SetTarget(Target)
 )
 
 -- Living Bomb (AoE)
@@ -550,9 +539,7 @@ DefaultAPL:AddSpell(
             and LivingBomb:CustomTimeToDie() > 12
             and not LivingBomb:GetAuras():FindMy(spells.livingBomb):IsUp()
             and not Player:IsCastingOrChanneling()
-    end):SetTarget(LivingBomb):PreCast(function(self)
-        Caffeine.Notifications:AddNotification(spells.livingBomb:GetIcon(), "Living Bomb")
-    end)
+    end):SetTarget(LivingBomb)
 )
 
 -- Flamestrike
@@ -566,11 +553,10 @@ DefaultAPL:AddSpell(
             and Target:Exists()
             and Target:GetDistance(Player) <= 36
             and spells.flamestrike:GetTimeSinceLastCast() > 8
-            and Target:GetEnemies(10) >= 3
+            and Target:GetEnemies(10) >= 2
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(None):OnCast(function(self)
-        Caffeine.Notifications:AddNotification(spells.flamestrike:GetIcon(), "Flamestrike")
         local position = Target:GetPosition()
         self:Click(position)
     end)
@@ -587,9 +573,7 @@ DefaultAPL:AddSpell(
             and Player:IsFacing(Target)
             and not Player:IsCastingOrChanneling()
             and not Player:IsMoving()
-    end):SetTarget(Target):PreCast(function(self)
-        Caffeine.Notifications:AddNotification(spells.fireball:GetIcon(), "Fireball")
-    end)
+    end):SetTarget(Target)
 )
 
 -- Sync
@@ -607,6 +591,9 @@ Module:Sync(function()
         return false
     end
     if npcBlacklistByID[Target:GetID()] then
+        return false
+    end
+    if Target:GetCastingOrChannelingSpell() == spells.tearGas and Player:GetAuras():FindMy(spells.invisibility):IsUp() then
         return false
     end
 
