@@ -593,7 +593,7 @@ Module:Sync(function()
     if npcBlacklistByID[Target:GetID()] then
         return false
     end
-    if Target:GetCastingOrChannelingSpell() == spells.tearGas and Player:GetAuras():FindMy(spells.invisibility):IsUp() then
+    if Target:GetCastingOrChannelingSpell() == spells.tearGas and Player:GetAuras():FindMy(spells.invisibilityAura):IsUp() then
         return false
     end
 

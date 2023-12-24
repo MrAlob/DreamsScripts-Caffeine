@@ -49,6 +49,7 @@ Rotation.Spells = {
     bloodBoilAura      = SpellBook:GetSpell(72385),
     luckoftheDraw      = SpellBook:GetSpell(72221),
     refreshmentAuras   = SpellBook:GetList(43183, 57073),
+    invisibilityAura   = SpellBook:GetSpell(32612),
     inoculatedAura     = SpellBook:GetSpell(69291),
     pungentBlight      = SpellBook:GetSpell(69195),
     tearGas            = SpellBook:GetSpell(71617),
