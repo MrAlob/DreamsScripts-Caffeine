@@ -372,7 +372,7 @@ DefaultAPL:AddSpell(
 -- Mirror Image
 DefaultAPL:AddSpell(
     spells.mirrorImage:CastableIf(function(self)
-        return self:IsKnownAndUsable()
+        return spells.mirrorImage:IsKnownAndUsable()
             and Target:Exists()
             and Target:IsHostile()
             and Player:CanSee(Target)
