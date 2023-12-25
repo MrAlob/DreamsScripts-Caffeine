@@ -251,41 +251,35 @@ function Caffeine.Unit:CustomTimeToDie()
 end
 
 function Caffeine.Unit:CustomIsBoss()
-    local unitID = self:GetID()
+    local id = ObjectID(self:GetOMToken())
 
     -- Lady Deathwhisper (36855)
-    if unitID == 36855 then
+    if id == 36855 then
         return true
     end
 
     -- Sindragossa
-    if unitID == 36853 then
+    if id == 36853 then
         return true
     end
 
     -- Professor Putricide
-    if unitID == 36678 then
+    if id == 36678 then
         return true
     end
 
     -- Skybreaker Sorcerer
-    if unitID == 37116 then
+    if id == 37116 then
         return true
     end
 
     -- Kor'kron Battle Mage
-    if unitID == 37117 then
+    if id == 37117 then
         return true
     end
 
     -- Raid Boss
     if self:IsBoss() then
-        return true
-    end
-
-    -- Dungeon Boss
-    if UnitClassification(self:GetOMToken()) == "elite" and UnitLevel(self:GetOMToken()) == 82
-        and Player:GetAuras():FindAny(spells.luckoftheDraw):IsUp() then
         return true
     end
 
