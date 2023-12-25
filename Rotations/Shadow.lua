@@ -587,10 +587,12 @@ DefaultAPL:AddSpell(spells.mindFlay
 
 -- Sync
 Module:Sync(function()
-    if Player:IsDead()
-        or IsMounted()
-        or UnitInVehicle("player")
-		or Player:GetAuras():FindAnyOfMy(spells.refreshmentAuras):IsUp() then
+	if
+		Player:IsDead()
+		or IsMounted()
+		or UnitInVehicle("player")
+		or Player:GetAuras():FindAnyOfMy(spells.refreshmentAuras):IsUp()
+	then
 		return false
 	end
 
@@ -604,7 +606,7 @@ Module:Sync(function()
 	PreCombatAPL:Execute()
 
 	if Player:IsAffectingCombat() or Target:IsAffectingCombat() then
-        WasCastingCheck()
+		WasCastingCheck()
 		-- DefaultAPL
 		DefaultAPL:Execute()
 	end
