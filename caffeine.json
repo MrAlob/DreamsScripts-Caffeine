@@ -1,6 +1,6 @@
 {
   "order": [
-    "Loader/Loader",
+    "Helper/Helper",
     "Interface/Disc",
     "Interface/Shadow",
     "Interface/Fire",
