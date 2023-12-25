@@ -478,7 +478,7 @@ DefaultAPL:AddSpell(
 -- Shard of the Crystal Heart
 DefaultAPL:AddItem(
     items.shardIfTheCrystalHeart:UsableIf(function(self)
-        return self:IsUsable()
+        return self:IsEquippedAndUsable()
             and not self:IsOnCooldown()
             and Target:Exists()
             and Target:IsHostile()
