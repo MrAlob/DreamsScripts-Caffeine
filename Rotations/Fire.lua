@@ -29,7 +29,7 @@ local DefaultAPL = Caffeine.APL:New('default')
 
 -- NPC Blacklist
 local npcBlacklistByID = {
-    [37695] = true, -- Lichking, Drudge Ghoul: 37695
+    [37695] = true, -- Drudge Ghoul: 37695
     [37698] = true, -- Shambling Horror: 37698
     [28926] = true, -- Spark of lonar: 28926
     [28584] = true, -- Unbound Firestorm: 28584
@@ -63,6 +63,10 @@ local LowestEnemy = Caffeine.UnitManager:CreateCustomUnit('lowest', function(uni
         end
 
         if not unit:IsHostile() then
+            return false
+        end
+
+        if unit:GetID() == 37695 or unit:GetID() == 37698 then
             return false
         end
 
@@ -247,28 +251,35 @@ function Caffeine.Unit:CustomTimeToDie()
 end
 
 function Caffeine.Unit:CustomIsBoss()
+    local unitID = self:GetID()
+
     -- Lady Deathwhisper (36855)
-    if self:GetID() == 36855 then
+    if unitID == 36855 then
         return true
     end
 
     -- Sindragossa
-    if self:GetID() == 36853 then
+    if unitID == 36853 then
         return true
     end
 
     -- Professor Putricide
-    if self:GetID() == 36678 then
+    if unitID == 36678 then
         return true
     end
 
     -- Skybreaker Sorcerer
-    if self:GetID() == 37116 then
+    if unitID == 37116 then
         return true
     end
 
     -- Kor'kron Battle Mage
-    if self:GetID() == 37117 then
+    if unitID == 37117 then
+        return true
+    end
+
+    -- Raid Boss
+    if self:IsBoss() then
         return true
     end
 
@@ -278,12 +289,43 @@ function Caffeine.Unit:CustomIsBoss()
         return true
     end
 
-    -- Raid Boss
-    if self:IsBoss() then
-        return true
+    return false
+end
+
+-- Icecrown Boss Logic
+local function IcecrownBossLogic()
+    -- Professor Putricide
+    if Player:GetAuras():FindAny(spells.invisibilityAura):IsUp() or Target:GetCastingOrChannelingSpell() == spells.tearGas then
+        SpellStopCasting()
+        return false
     end
 
-    return false
+    -- Canceling Invisibility after 2 seconds when fully invisible
+    if Player:GetAuras():FindAny(spells.successInvisibilityAura):IsUp() and Player:GetAuras():FindAny(spells.successInvisibilityAura):GetRemainingTime() < 17 then
+        local i = 1
+        repeat
+            local name = UnitBuff("player", i)
+            if name == "Invisibility" then
+                CancelUnitBuff("player", i)
+                break
+            end
+            i = i + 1
+        until not name
+    end
+
+    -- Festergut
+    -- Canceling Ice Block if its active and when target not casting Pungent Blight
+    if Player:GetAuras():FindAny(spells.iceBlock):IsUp() and not Target:GetCastingOrChannelingSpell() == spells.pungentBlight then
+        local i = 1
+        repeat
+            local name = UnitBuff("player", i)
+            if name == "Ice Block" then
+                CancelUnitBuff("player", i)
+                break
+            end
+            i = i + 1
+        until not name
+    end
 end
 
 function Caffeine.Unit:IsCreatureType(creatureType)
@@ -326,6 +368,9 @@ DefaultAPL:AddItem(
 -- DungeonLogic: Web Wrap and Mirror Images
 DefaultAPL:AddSpell(
     spells.iceLance:CastableIf(function(self)
+        if not Player:GetAuras():FindAny(spells.luckoftheDraw):IsUp() then
+            return false
+        end
         local useDungeonLogic = Rotation.Config:Read("options_dungeonLogic", true)
         return self:IsKnownAndUsable()
             and self:IsInRange(DungeonLogic)
@@ -335,30 +380,30 @@ DefaultAPL:AddSpell(
     end):SetTarget(DungeonLogic)
 )
 
--- Invisibility
--- Professor Putricide
+-- Invisibility: Professor Putricide
 DefaultAPL:AddSpell(
     spells.invisibility:CastableIf(function(self)
         return self:IsKnownAndUsable()
+            and Target:Exists()
             and Target:GetCastingOrChannelingSpell() == spells.tearGas
-    end):SetTarget(Player):OnCast(function(self)
+    end):SetTarget(Player):PreCast(function(self)
+        self:ForceCast(None)
         Caffeine.Notifications:AddNotification(spells.invisibility:GetIcon(), "Invisibility (Tear Gas)")
     end)
 )
 
--- Ice Block
--- Deathbringer Saurfang
+-- Ice Block: Deathbringer Saurfang
 DefaultAPL:AddSpell(
     spells.iceBlock:CastableIf(function(self)
         return self:IsKnownAndUsable()
+            and Target:Exists()
             and Player:GetAuras():FindAny(spells.bloodBoilAura):IsUp()
     end):SetTarget(Player):OnCast(function(self)
         Caffeine.Notifications:AddNotification(spells.iceBlock:GetIcon(), "Ice Block (Blood Boil)")
     end)
 )
 
--- Ice Block
--- Festergut
+-- Ice Block: Festergut
 DefaultAPL:AddSpell(
     spells.iceBlock:CastableIf(function(self)
         return self:IsKnownAndUsable()
@@ -395,8 +440,7 @@ DefaultAPL:AddSpell(
             and Player:IsFacing(Target)
             and spells.scorch:GetTimeSinceLastCast() > 4
             and Target:CustomIsBoss()
-            and not (Target:GetAuras():FindAny(spells.improvedScorchAura):IsUp()
-                or Target:GetAuras():FindAny(spells.shadowMasteryAura):IsUp())
+            and not Target:GetAuras():FindAnyOf(spells.critDebuffAuras):IsUp()
             and not Player:IsMoving()
             and not Player:IsCastingOrChanneling()
     end):SetTarget(Target)
@@ -597,24 +641,18 @@ DefaultAPL:AddSpell(
 
 -- Sync
 Module:Sync(function()
-    if Player:IsDead() then
+    -- Check various conditions where the player should not perform actions
+    if Player:IsDead()
+        or IsMounted()
+        or UnitInVehicle("player")
+        or Player:GetAuras():FindAnyOfMy(spells.refreshmentAuras):IsUp()
+        or Player:GetAuras():FindAny(spells.invisibilityAura):IsUp()
+        or npcBlacklistByID[Target:GetID()] then
         return false
     end
-    if IsMounted() then
-        return false
-    end
-    if UnitInVehicle("player") then
-        return false
-    end
-    if Player:GetAuras():FindAnyOfMy(spells.refreshmentAuras):IsUp() then
-        return false
-    end
-    if npcBlacklistByID[Target:GetID()] then
-        return false
-    end
-    if Target:GetCastingOrChannelingSpell() == spells.tearGas and Player:GetAuras():FindMy(spells.invisibilityAura):IsUp() then
-        return false
-    end
+
+    -- Icecrown Boss Logic
+    IcecrownBossLogic()
 
     -- Auto Target
     local useAutoTarget = Rotation.Config:Read("autoTarget", true)
@@ -622,9 +660,11 @@ Module:Sync(function()
         TargetUnit(LowestEnemy:GetGUID())
     end
 
+    -- PreCombatAPL
     PreCombatAPL:Execute()
 
     if Player:IsAffectingCombat() or Target:IsAffectingCombat() then
+        -- DefaultAPL
         DefaultAPL:Execute()
     end
 end)
