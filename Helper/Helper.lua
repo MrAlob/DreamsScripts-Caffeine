@@ -70,7 +70,7 @@ function Caffeine.Unit:CustomIsBoss()
 
 	-- Dungeon Boss
 	if Player:GetInstanceInfo("party", 2) then
-		if UnitClassification(self:GetOMToken()) == "normal" and UnitLevel(self:GetOMToken()) == 82 then
+		if UnitClassification(self:GetOMToken()) == "elite" and UnitLevel(self:GetOMToken()) == 82 then
 			return true
 		end
 	end
@@ -118,7 +118,6 @@ end
 function Caffeine.Unit:GetInstanceInfoByParameter(param)
 	local _, type, difficulty, _, _, _, _, instance = GetInstanceInfo()
 
-	-- Check givin parameter and return value
 	if param == "type" then
 		return type
 	elseif param == "difficultyID" then
