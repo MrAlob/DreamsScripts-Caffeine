@@ -28,13 +28,15 @@ local PreCombatAPL = Caffeine.APL:New("precombat")
 local DefaultAPL = Caffeine.APL:New("default")
 
 -- NPC Blacklist
-local npcBlacklistByID = {
+local blacklistUnitById = {
 	[37695] = true, -- Drudge Ghoul: 37695
 	[37698] = true, -- Shambling Horror: 37698
 	[28926] = true, -- Spark of lonar: 28926
 	[28584] = true, -- Unbound Firestorm: 28584
 	[27737] = true, -- Risen Zombie: 27737
 	[27651] = true, -- Phtasmal Fire: 27651
+	[37232] = true, -- Nerub'ar Broodling
+	[37799] = true, -- Vile Spirit: 37799
 }
 
 local LowestEnemy = Caffeine.UnitManager:CreateCustomUnit("lowest", function(unit)
@@ -156,7 +158,7 @@ local LivingBomb = Caffeine.UnitManager:CreateCustomUnit("livingBomb", function(
 			return false
 		end
 
-		if npcBlacklistByID[unit:GetID()] then
+		if blacklistUnitById[unit:GetID()] then
 			return false
 		end
 
