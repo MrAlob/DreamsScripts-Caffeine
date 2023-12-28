@@ -27,6 +27,17 @@ local items = Rotation.Items
 local PreCombatAPL = Caffeine.APL:New("precombat")
 local DefaultAPL = Caffeine.APL:New("default")
 
+local blacklistUnitById = {
+	[37695] = true, -- Drudge Ghoul: 37695
+	[37698] = true, -- Shambling Horror: 37698
+	[28926] = true, -- Spark of lonar: 28926
+	[28584] = true, -- Unbound Firestorm: 28584
+	[27737] = true, -- Risen Zombie: 27737
+	[27651] = true, -- Phtasmal Fire: 27651
+	[37232] = true, -- Nerub'ar Broodling
+	[37799] = true, -- Vile Spirit: 37799
+}
+
 local LowestEnemy = Caffeine.UnitManager:CreateCustomUnit("lowest", function(unit)
 	local lowest = nil
 	local lowestHP = math.huge
@@ -49,6 +60,10 @@ local LowestEnemy = Caffeine.UnitManager:CreateCustomUnit("lowest", function(uni
 		end
 
 		if not unit:IsEnemy() then
+			return false
+		end
+
+		if blacklistUnitById[unit:GetID()] then
 			return false
 		end
 
@@ -134,6 +149,10 @@ local ShadowWordPainRefresh = Caffeine.UnitManager:CreateCustomUnit("shadowWordP
 			return false
 		end
 
+		if blacklistUnitById[unit:GetID()] then
+			return false
+		end
+
 		if
 			Player:CanSee(unit)
 			and Player:IsFacing(unit)
@@ -174,9 +193,7 @@ local VampireTouchTarget = Caffeine.UnitManager:CreateCustomUnit("vampireTouch",
 			return false
 		end
 
-		-- Lich King
-		-- Drudge Ghoul: 37695, Shambling Horror: 37698
-		if unit:GetID() == 37695 or unit:GetID() == 37698 then
+		if blacklistUnitById[unit:GetID()] then
 			return false
 		end
 
@@ -234,9 +251,7 @@ local ShadowWordPainTarget = Caffeine.UnitManager:CreateCustomUnit("shadowWordPa
 			return false
 		end
 
-		-- Lich King
-		-- Drudge Ghoul: 37695, Shambling Horror: 37698
-		if unit:GetID() == 37695 or unit:GetID() == 37698 then
+		if blacklistUnitById[unit:GetID()] then
 			return false
 		end
 
@@ -301,6 +316,38 @@ function WasCastingCheck()
 	end
 end
 
+local function BossBehaviors()
+	-- Festergut
+	-- Stop Casting if Pungent Blight is being casted
+	if Target:GetCastingOrChannelingSpell() == spells.pungentBlight then
+		SpellStopCasting()
+	end
+	-- Canceling Dispersion if its active and when target not casting Pungent Blight
+	if
+		Player:GetAuras():FindAny(spells.dispersion):IsUp()
+		and not Target:GetCastingOrChannelingSpell() == spells.pungentBlight
+	then
+		local i = 1
+		repeat
+			local name = UnitBuff("player", i)
+			if name == "Dispersion" then
+				CancelUnitBuff("player", i)
+				break
+			end
+			i = i + 1
+		until not name
+	end
+
+	-- Sindragosa
+	-- Stop Casting if we have more than 8 stacks of Instability and less than 3 seconds remaining
+	if
+		Player:GetAuras():FindAny(spells.instability):GetRemainingTime() <= 2.0
+		and Player:GetAuras():FindAny(spells.instability):GetCount() >= 8
+	then
+		SpellStopCasting()
+	end
+end
+
 -- PreCombatAPL
 PreCombatAPL:AddSpell(spells.shadowform
 	:CastableIf(function(self)
@@ -337,6 +384,7 @@ DefaultAPL:AddSpell(spells.mindFlay
 	end)
 	:SetTarget(DungeonLogic))
 
+-- Mind Flay
 DefaultAPL:AddSpell(spells.mindFlay
 	:CastableIf(function(self)
 		return self:IsKnownAndUsable()
@@ -348,13 +396,29 @@ DefaultAPL:AddSpell(spells.mindFlay
 	end)
 	:SetTarget(ShadowWordPainRefresh))
 
+-- Dispersion
 DefaultAPL:AddSpell(spells.dispersion
 	:CastableIf(function(self)
 		return self:IsKnownAndUsable()
-			and Player:GetAuras():FindAny(spells.instability):GetRemainingTime() <= 3.0
+			and Target:Exists()
+			and Target:GetCastingOrChannelingSpell() == spells.pungentBlight
+	end)
+	:SetTarget(Player)
+	:OnCast(function(self)
+		Caffeine.Notifications:AddNotification(spells.dispersion:GetIcon(), "Dispersion (Pungent Blight)")
+	end))
+
+-- Dispersion - Sindragosa
+DefaultAPL:AddSpell(spells.dispersion
+	:CastableIf(function(self)
+		return self:IsKnownAndUsable()
+			and Player:GetAuras():FindAny(spells.instability):GetRemainingTime() <= 2.0
 			and Player:GetAuras():FindAny(spells.instability):GetCount() >= 8
 	end)
-	:SetTarget(Player))
+	:SetTarget(Player)
+	:OnCast(function(self)
+		Caffeine.Notifications:AddNotification(spells.dispersion:GetIcon(), "Dispersion (Instability)")
+	end))
 
 -- Mind Sear (AoE)
 DefaultAPL:AddSpell(spells.mindSear
@@ -601,6 +665,9 @@ Module:Sync(function()
 	if isAutoTargetEnabled and (not Target:Exists() or Target:IsDead()) then
 		TargetUnit(LowestEnemy:GetGUID())
 	end
+
+	-- Boss Behaviors
+	BossBehaviors()
 
 	-- PreCombatAPL
 	PreCombatAPL:Execute()

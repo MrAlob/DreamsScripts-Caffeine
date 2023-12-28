@@ -20,7 +20,7 @@ Rotation.Config:Write("aoe", false)
 Rotation.Config:Write("autoTarget", false)
 
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Hello! Rotation successfully initialized.")
-Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Version: 2.1.1")
+Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Version: 2.1.2")
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - If you need any help or have suggestions.")
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Discord: |cffeb6ee9https://discord.gg/Pm4wQpMDKh")
 
@@ -31,6 +31,7 @@ Hotbar = Caffeine.Interface.Hotbar:New({
 	buttonCount = 3,
 })
 
+-- Toggle Rotation
 Hotbar:AddButton({
 	name = "Toggle Rotation",
 	texture = "Interface\\ICONS\\Ability_Rogue_FindWeakness",
@@ -49,6 +50,7 @@ Hotbar:AddButton({
 	end,
 })
 
+-- AoE
 Hotbar:AddButton({
 	name = "Toggle AoE",
 	texture = "Interface\\ICONS\\Spell_Shadow_MindShear",
@@ -67,6 +69,7 @@ Hotbar:AddButton({
 	end,
 })
 
+-- Auto Target
 Hotbar:AddButton({
 	name = "Toggle Auto Target",
 	texture = "Interface\\ICONS\\Ability_Hunter_MarkedForDeath",
