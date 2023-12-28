@@ -19,10 +19,11 @@ Rotation.Config = Rotation.Category.config
 Rotation.Config:Write("aoe", false)
 Rotation.Config:Write("autoTarget", false)
 Rotation.Config:Write("decurse", false)
+Rotation.Config:Write("scorch", false)
 Rotation.Config:Write("spellsteal", false)
 
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Hello! Rotation successfully initialized.")
-Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Version: 2.0.1")
+Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Version: 2.0.2")
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - If you need any help or have suggestions.")
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Discord: |cffeb6ee9https://discord.gg/Pm4wQpMDKh")
 
@@ -33,6 +34,7 @@ Hotbar = Caffeine.Interface.Hotbar:New({
 	buttonCount = 3,
 })
 
+-- Toggle Rotation
 Hotbar:AddButton({
 	name = "Toggle Rotation",
 	texture = "Interface\\ICONS\\Ability_Rogue_FindWeakness",
@@ -51,6 +53,7 @@ Hotbar:AddButton({
 	end,
 })
 
+-- AoE
 Hotbar:AddButton({
 	name = "Toggle AoE",
 	texture = "Interface\\ICONS\\Ability_Mage_LivingBomb",
@@ -69,6 +72,7 @@ Hotbar:AddButton({
 	end,
 })
 
+-- Remove Decurse
 Hotbar:AddButton({
 	name = "Toggle Remove Curse",
 	texture = "Interface\\ICONS\\Spell_Nature_RemoveCurse",
@@ -87,6 +91,26 @@ Hotbar:AddButton({
 	end,
 })
 
+-- Scorch
+Hotbar:AddButton({
+	name = "Toggle Scorch",
+	texture = "Interface\\ICONS\\Spell_Fire_SoulBurn",
+	tooltip = "Use Scorch to apply the Crit Debuff. Dont use it if you have a Warlock in Raid",
+	toggle = true,
+	onClick = function()
+		local getSetting = Rotation.Config:Read("scorch", false)
+		local setting = not getSetting
+		Rotation.Config:Write("scorch", setting)
+
+		if setting then
+			Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Scorch Enabled")
+		else
+			Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Scorch Disabled")
+		end
+	end,
+})
+
+-- Spellsteal
 Hotbar:AddButton({
 	name = "Toggle Spellsteal",
 	texture = "Interface\\ICONS\\Spell_Arcane_Arcane02",
@@ -105,6 +129,7 @@ Hotbar:AddButton({
 	end,
 })
 
+-- Auto Target
 Hotbar:AddButton({
 	name = "Toggle Auto Target",
 	texture = "Interface\\ICONS\\Ability_Hunter_MarkedForDeath",
@@ -130,15 +155,6 @@ Rotation.Category:Checkbox({
 	var = "flamestrike",
 	name = "Flamestrike",
 	tooltip = "Use of Flamestrike in the aoe rotation. Beta feature use with caution, disable it if you have problems",
-	default = true,
-	disabled = false,
-})
-
-Rotation.Category:Checkbox({
-	category = "spells",
-	var = "scorch",
-	name = "Scorch",
-	tooltip = "Use of Scorch in the rotation too apply Crit Debuff. Use it only if you have not a Warlock in Raid.",
 	default = true,
 	disabled = false,
 })

@@ -248,8 +248,8 @@ local Spellsteal = Caffeine.UnitManager:CreateCustomUnit("spellsteal", function(
 	return spellsteal
 end)
 
--- Icecrown Boss Logic
-local function IcecrownBossLogic()
+-- Boss Behavior
+local function BossBehaviors()
 	-- Professor Putricide
 	if
 		Player:GetAuras():FindAny(spells.invisibilityAura):IsUp()
@@ -290,6 +290,16 @@ local function IcecrownBossLogic()
 			end
 			i = i + 1
 		until not name
+	end
+end
+
+-- Rotation Behavior
+local function RotationBehaviors()
+	-- if Hot Streak is active and we started a new cast, cancling current cast. This is preventing overlapping HotStreak Buffs
+	if Player:GetAuras():FindMy(spells.hotStreakAura):IsUp() then
+		if Player:IsCasting() and Player:GetChannelOrCastPercentComplete() <= 20 then
+			SpellStopCasting()
+		end
 	end
 end
 
@@ -389,7 +399,7 @@ DefaultAPL:AddSpell(spells.mirrorImage
 -- Scorch
 DefaultAPL:AddSpell(spells.scorch
 	:CastableIf(function(self)
-		local useScorch = Rotation.Config:Read("spells_scorch", true)
+		local useScorch = Rotation.Config:Read("scorch", true)
 		return self:IsKnownAndUsable()
 			and self:IsInRange(Target)
 			and useScorch
@@ -613,8 +623,11 @@ Module:Sync(function()
 		return false
 	end
 
-	-- Icecrown Boss Logic
-	IcecrownBossLogic()
+	-- Rotation Behavior
+	RotationBehaviors()
+
+	-- Boss Behavior
+	BossBehaviors()
 
 	-- Auto Target
 	local useAutoTarget = Rotation.Config:Read("autoTarget", true)
