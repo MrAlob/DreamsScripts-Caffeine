@@ -620,7 +620,7 @@ Module:Sync(function()
 		or UnitInVehicle("player")
 		or Player:GetAuras():FindAnyOfMy(spells.refreshmentAuras):IsUp()
 		or Player:GetAuras():FindAny(spells.invisibilityAura):IsUp()
-		or npcBlacklistByID[Target:GetID()]
+		or blacklistUnitById[Target:GetID()]
 	then
 		return false
 	end
