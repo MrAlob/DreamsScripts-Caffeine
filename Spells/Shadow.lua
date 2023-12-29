@@ -39,5 +39,6 @@ Rotation.Spells = {
 	luckOfTheDrawAura = SpellBook:GetSpell(72221),
 	refreshmentAuras = SpellBook:GetList(43183, 57073),
 	pungentBlight = SpellBook:GetSpell(69195),
-	instability = SpellBook:GetSpell(69766),
+	unchainedMagicAura = SpellBook:GetSpell(69762),
+	instabilityAura = SpellBook:GetSpell(69766),
 }
