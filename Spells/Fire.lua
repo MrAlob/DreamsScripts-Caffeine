@@ -65,6 +65,8 @@ Rotation.Spells = {
 	invisibilityAura = SpellBook:GetSpell(66),
 	successInvisibilityAura = SpellBook:GetSpell(32612),
 	inoculatedAura = SpellBook:GetSpell(69291),
+	unchainedMagicAura = SpellBook:GetSpell(69762),
+	instabilityAura = SpellBook:GetSpell(69766),
 	pungentBlight = SpellBook:GetSpell(69195),
 	tearGas = SpellBook:GetSpell(71617),
 }
