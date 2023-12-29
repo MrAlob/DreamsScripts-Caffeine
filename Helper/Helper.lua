@@ -63,6 +63,11 @@ function Caffeine.Unit:CustomIsBoss()
 		return true
 	end
 
+	-- Blazing Skeleton
+	if id == 36791 then
+		return true
+	end
+
 	-- Raid Boss
 	if self:IsBoss() then
 		return true
