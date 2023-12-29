@@ -22,7 +22,7 @@ Rotation.Config:Write("dispel", false)
 Rotation.Config:Write("outOfCombat", false)
 
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Hello! Rotation successfully initialized.")
-Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Version: 2.0.4")
+Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Version: 2.0.5")
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - If you need any help or have suggestions.")
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Discord: |cffeb6ee9https://discord.gg/Pm4wQpMDKh")
 
@@ -33,6 +33,7 @@ Hotbar = Caffeine.Interface.Hotbar:New({
 	buttonCount = 5,
 })
 
+-- Rotation
 Hotbar:AddButton({
 	name = "Toggle Rotation",
 	texture = "Interface\\ICONS\\Ability_Rogue_FindWeakness",
@@ -51,6 +52,7 @@ Hotbar:AddButton({
 	end,
 })
 
+-- Pre-Shield
 Hotbar:AddButton({
 	name = "Toggle Pre-Shield",
 	texture = "Interface\\ICONS\\Spell_Holy_PowerWordShield",
@@ -69,6 +71,7 @@ Hotbar:AddButton({
 	end,
 })
 
+-- Dispel
 Hotbar:AddButton({
 	name = "Toggle Dispel",
 	texture = "Interface\\ICONS\\SPELL_HOLY_DISPELMAGIC",
@@ -87,6 +90,7 @@ Hotbar:AddButton({
 	end,
 })
 
+-- Flash Heal
 Hotbar:AddButton({
 	name = "Toggle Flash Heal",
 	texture = "Interface\\ICONS\\Spell_Holy_FlashHeal",
@@ -105,6 +109,7 @@ Hotbar:AddButton({
 	end,
 })
 
+-- Out of Combat
 Hotbar:AddButton({
 	name = "Toggle Out of Combat",
 	texture = "Interface\\ICONS\\Ability_Vanish",
@@ -142,8 +147,7 @@ Rotation.Category:Slider({
 	category = "spells",
 	var = "powerWordShieldTankSafe",
 	name = "Power Word: Shield (Tank)",
-	tooltip =
-	"Use Power Word: Shield on Tank if their Health Percentage is below the set value. High priority. Tip: Too high value is counterproductive for Rupture.",
+	tooltip = "Use Power Word: Shield on Tank if their Health Percentage is below the set value. High priority. Tip: Too high value is counterproductive for Rupture.",
 	default = 40,
 	min = 0,
 	max = 100,
@@ -155,8 +159,7 @@ Rotation.Category:Slider({
 	category = "spells",
 	var = "powerWordShieldSafe",
 	name = "Power Word: Shield",
-	tooltip =
-	"Use Power Word: Shield on the lowest health unit if their Health Percentage falls below the set value. Excluding tanks.",
+	tooltip = "Use Power Word: Shield on the lowest health unit if their Health Percentage falls below the set value. Excluding tanks.",
 	default = 80,
 	min = 0,
 	max = 100,
@@ -192,8 +195,7 @@ Rotation.Category:Slider({
 	category = "spells",
 	var = "bindingHeal",
 	name = "Binding Heal",
-	tooltip =
-	"Use Binding Heal if the player's and the lowest health unit's Health Percentage falls below the set value.",
+	tooltip = "Use Binding Heal if the player's and the lowest health unit's Health Percentage falls below the set value.",
 	default = 60,
 	min = 0,
 	max = 100,
@@ -205,8 +207,7 @@ Rotation.Category:Slider({
 	category = "spells",
 	var = "flashHeal",
 	name = "Flash Heal",
-	tooltip =
-	"Use Flash Heal on the lowest health unit if their Health Percentage falls below the set value. Tip: You dont use Flash Heal in 25man.",
+	tooltip = "Use Flash Heal on the lowest health unit if their Health Percentage falls below the set value. Tip: You dont use Flash Heal in 25man.",
 	default = 80,
 	min = 0,
 	max = 100,
@@ -252,8 +253,7 @@ Rotation.Category:Checkbox({
 	category = "toggles",
 	var = "dungeonLogic",
 	name = "Dungeon Logic (Gamma)",
-	tooltip =
-	"Use of Dungeon Logic in Gamma Dungeons. This will use Holy Fire and Mind Blast at Mirror Images and Web Wraps.",
+	tooltip = "Use of Dungeon Logic in Gamma Dungeons. This will use Holy Fire and Mind Blast at Mirror Images and Web Wraps.",
 	default = true,
 	disabled = false,
 })
