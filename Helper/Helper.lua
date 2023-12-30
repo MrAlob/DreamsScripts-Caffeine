@@ -200,6 +200,43 @@ Draw:Sync(function(draw)
 		end
 	end
 
+	-- Higher Learning
+	if Player:GetInstanceInfoByParameter("instanceID") == 571 then
+		local HigherLearningObjectIDs = { 192867, 192865, 192708, 192710, 192713, 192866, 192709, 192711 }
+		local higherLearningCircleRadius = 1
+		local objects = Objects() -- Retrieve all objects
+		local playerPos = Player:GetPosition() -- Get the position of the player
+
+		-- Set common drawing properties for lines and circles
+		draw:SetWidth(2)
+		draw:SetColor(0, 191, 255, 200) -- Light blue color
+
+		for i, object in ipairs(objects) do
+			local objectID = ObjectID(object)
+			if hasValue(HigherLearningObjectIDs, objectID) then
+				local x, y, z = ObjectPosition(object)
+				local distance = Draw:Distance(playerPos.x, playerPos.y, playerPos.z, x, y, z)
+
+				-- Draw the line from the player to the GameObject
+				draw:Line(playerPos.x, playerPos.y, playerPos.z, x, y, z)
+
+				-- Draw the filled circle around the GameObject
+				draw:SetColor(0, 191, 255, 200)
+				draw:Circle(x, y, z, higherLearningCircleRadius)
+
+				-- Set color for text
+				draw:SetColor(255, 255, 255, 200) -- White color
+
+				-- Draw the name of the GameObject
+				local name = ObjectName(object)
+				draw:Text(name, "GameFontNormal", x, y, z + 0.5) -- Adjust z position for text readability
+
+				-- Draw the distance below the GameObject's name
+				draw:Text(string.format("Distance: %.1f", distance), "GameFontNormal", x, y, z)
+			end
+		end
+	end
+
 	return false
 end)
 
