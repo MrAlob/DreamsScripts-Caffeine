@@ -350,9 +350,9 @@ DefaultAPL:AddSpell(spells.powerWordShield
 DefaultAPL:AddSpell(spells.prayerOfMending
 	:CastableIf(function(self)
 		return Tank:Exists()
-				and self:IsKnownAndUsable()
-				and (Tank:GetHP() <= 95 and not Tank:GetAuras():FindMy(spells.prayerOfMendingAura):IsUp())
-			or not Tank:GetAuras():FindMy(spells.prayerOfMendingAura):IsUp() and not Player:IsCastingOrChanneling()
+			and self:IsKnownAndUsable()
+            and Tank:GetAuras():FindMy(spells.prayerOfMendingAura):IsUp()
+			and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(Tank))
 
