@@ -265,7 +265,7 @@ DefaultAPL:AddSpell(spells.beserking
 			and Target:CustomIsBoss()
 			and not Player:IsCastingOrChanneling()
 	end)
-    :SetTarget(None))
+	:SetTarget(None))
 
 -- Engineering Gloves
 DefaultAPL:AddItem(items.inventorySlotGloves

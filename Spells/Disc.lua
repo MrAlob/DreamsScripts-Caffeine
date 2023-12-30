@@ -38,7 +38,7 @@ Rotation.Spells = {
 	massDispel = SpellBook:GetSpell(32375),
 	cureDisease = SpellBook:GetSpell(528),
 	shadowfiend = SpellBook:GetSpell(34433),
-    hymnOfHope = SpellBook:GetSpell(64901),
+	hymnOfHope = SpellBook:GetSpell(64901),
 
 	-- Racials
 	beserking = SpellBook:GetSpell(26297),

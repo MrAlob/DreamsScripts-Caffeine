@@ -117,7 +117,11 @@ local DungeonLogic = Caffeine.UnitManager:CreateCustomUnit("dungeonLogic", funct
 			return false
 		end
 
-		if Player:CanSee(unit) and Player:IsFacing(unit) and (unit:GetID() == 28619 or unit:GetName() == "Mirror Image") then
+		if
+			Player:CanSee(unit)
+			and Player:IsFacing(unit)
+			and (unit:GetID() == 28619 or unit:GetName() == "Mirror Image")
+		then
 			dungeonLogic = unit
 		end
 	end)
@@ -170,7 +174,12 @@ local LivingBomb = Caffeine.UnitManager:CreateCustomUnit("livingBomb", function(
 			return false
 		end
 
-		if not unit:IsDead() and unit:IsEnemy() and Player:CanSee(unit) and not unit:GetAuras():FindMy(spells.livingBomb):IsUp() then
+		if
+			not unit:IsDead()
+			and unit:IsEnemy()
+			and Player:CanSee(unit)
+			and not unit:GetAuras():FindMy(spells.livingBomb):IsUp()
+		then
 			livingBomb = unit
 		end
 	end)
@@ -266,7 +275,10 @@ local function BossBehaviors()
 
 		if Target:GetID() == 36678 then
 			-- Stop Casting if Target is casting Tear Gas
-			if Player:GetAuras():FindAny(spells.invisibilityAura):IsUp() or Target:GetCastingOrChannelingSpell() == spells.tearGas then
+			if
+				Player:GetAuras():FindAny(spells.invisibilityAura):IsUp()
+				or Target:GetCastingOrChannelingSpell() == spells.tearGas
+			then
 				SpellStopCasting()
 			end
 		end
@@ -274,7 +286,10 @@ local function BossBehaviors()
 		-- Festergut (36626)
 		if Target:GetID() == 36626 then
 			-- Canceling Ice Block if its active and when the target is not casting Pungent Blight
-			if Player:GetAuras():FindAny(spells.iceBlock):IsUp() and not Target:GetCastingOrChannelingSpell() == spells.pungentBlight then
+			if
+				Player:GetAuras():FindAny(spells.iceBlock):IsUp()
+				and not Target:GetCastingOrChannelingSpell() == spells.pungentBlight
+			then
 				local i = 1
 				repeat
 					local name = UnitBuff("player", i)
@@ -290,7 +305,10 @@ local function BossBehaviors()
 		-- Sindragosa Logic (36853)
 		if Target:GetID() == 36853 then
 			-- Stop Casting after 1 Stack of Instability
-			if Player:GetAuras():FindAny(spells.unchainedMagicAura):IsUp() and Player:GetAuras():FindAny(spells.instabilityAura):GetCount() >= 1 then
+			if
+				Player:GetAuras():FindAny(spells.unchainedMagicAura):IsUp()
+				and Player:GetAuras():FindAny(spells.instabilityAura):GetCount() >= 1
+			then
 				SpellStopCasting()
 			end
 			-- Phase 3: Canceling Ice Block if its active and Unchained Magic is not active
@@ -329,7 +347,10 @@ end
 local function RotationBehaviors()
 	-- if Hot Streak is active and we started a new cast, cancling current cast. This is preventing overlapping HotStreak Buffs
 	if Player:GetAuras():FindMy(spells.hotStreakAura):IsUp() then
-		if Player:GetCastingOrChannelingSpell() == spells.fireball and Player:GetChannelOrCastPercentComplete() <= 30 then
+		if
+			Player:GetCastingOrChannelingSpell() == spells.fireball
+			and Player:GetChannelOrCastPercentComplete() <= 30
+		then
 			SpellStopCasting()
 		end
 	end
@@ -338,7 +359,9 @@ end
 -- Molten Fire
 PreCombatAPL:AddSpell(spells.moltenFire
 	:CastableIf(function(self)
-		return self:IsKnownAndUsable() and not Player:GetAuras():FindMy(spells.moltenFire):IsUp() and not Player:IsCastingOrChanneling()
+		return self:IsKnownAndUsable()
+			and not Player:GetAuras():FindMy(spells.moltenFire):IsUp()
+			and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(Player))
 
@@ -372,7 +395,11 @@ DefaultAPL:AddSpell(spells.iceLance
 			return false
 		end
 		local useDungeonLogic = Rotation.Config:Read("options_dungeonLogic", true)
-		return self:IsKnownAndUsable() and self:IsInRange(DungeonLogic) and useDungeonLogic and DungeonLogic:Exists() and Player:IsFacing(DungeonLogic)
+		return self:IsKnownAndUsable()
+			and self:IsInRange(DungeonLogic)
+			and useDungeonLogic
+			and DungeonLogic:Exists()
+			and Player:IsFacing(DungeonLogic)
 	end)
 	:SetTarget(DungeonLogic))
 
@@ -400,7 +427,9 @@ DefaultAPL:AddSpell(spells.iceBlock
 -- Ice Block: Festergut
 DefaultAPL:AddSpell(spells.iceBlock
 	:CastableIf(function(self)
-		return self:IsKnownAndUsable() and Target:Exists() and Target:GetCastingOrChannelingSpell() == spells.pungentBlight
+		return self:IsKnownAndUsable()
+			and Target:Exists()
+			and Target:GetCastingOrChannelingSpell() == spells.pungentBlight
 	end)
 	:SetTarget(Player)
 	:OnCast(function(self)
