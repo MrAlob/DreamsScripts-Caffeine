@@ -24,7 +24,6 @@ Rotation.Spells = {
 	flashHeal = SpellBook:GetSpell(2061),
 	prayerOfMending = SpellBook:GetSpell(48113),
 	prayerOfHealing = SpellBook:GetSpell(48072),
-	renew = SpellBook:GetSpell(48068),
 	painSupression = SpellBook:GetSpell(33206),
 	bindingHeal = SpellBook:GetSpell(48120),
 	hymnOfDivine = SpellBook:GetSpell(64843),
@@ -39,7 +38,10 @@ Rotation.Spells = {
 	massDispel = SpellBook:GetSpell(32375),
 	cureDisease = SpellBook:GetSpell(528),
 	shadowfiend = SpellBook:GetSpell(34433),
-	hymnOfHope = SpellBook:GetSpell(64901),
+    hymnOfHope = SpellBook:GetSpell(64901),
+
+	-- Racials
+	beserking = SpellBook:GetSpell(26297),
 
 	-- Auras
 	weakenedSoul = SpellBook:GetSpell(6788),

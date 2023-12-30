@@ -199,6 +199,10 @@ local DungeonLogic = Caffeine.UnitManager:CreateCustomUnit("dungeonLogic", funct
 			return false
 		end
 
+		if not Player:IsFacing(unit) then
+			return false
+		end
+
 		if not unit:GetID() == 28619 or not unit:GetName() == "Mirror Image" then
 			return false
 		end
@@ -251,6 +255,17 @@ DefaultAPL:AddSpell(spells.mindBlast
 			and not Player:IsMoving()
 	end)
 	:SetTarget(DungeonLogic))
+
+-- Beserking
+DefaultAPL:AddSpell(spells.beserking
+	:CastableIf(function(self)
+		return self:IsKnownAndUsable()
+			and Target:Exists()
+			and Target:IsHostile()
+			and Target:CustomIsBoss()
+			and not Player:IsCastingOrChanneling()
+	end)
+    :SetTarget(None))
 
 -- Engineering Gloves
 DefaultAPL:AddItem(items.inventorySlotGloves
@@ -331,6 +346,16 @@ DefaultAPL:AddSpell(spells.powerWordShield
 	end)
 	:SetTarget(Tank))
 
+-- Prayer of Mending (Tank)
+DefaultAPL:AddSpell(spells.prayerOfMending
+	:CastableIf(function(self)
+		return Tank:Exists()
+				and self:IsKnownAndUsable()
+				and (Tank:GetHP() <= 95 and not Tank:GetAuras():FindMy(spells.prayerOfMendingAura):IsUp())
+			or not Tank:GetAuras():FindMy(spells.prayerOfMendingAura):IsUp() and not Player:IsCastingOrChanneling()
+	end)
+	:SetTarget(Tank))
+
 -- Penance (Tank)
 DefaultAPL:AddSpell(spells.penance
 	:CastableIf(function(self)
@@ -338,16 +363,6 @@ DefaultAPL:AddSpell(spells.penance
 			and self:IsKnownAndUsable()
 			and Tank:GetHP() < Rotation.Config:Read("spells_penanceTank", 80)
 			and not Player:IsMoving()
-			and not Player:IsCastingOrChanneling()
-	end)
-	:SetTarget(Tank))
-
--- Prayer of Mending (Tank)
-DefaultAPL:AddSpell(spells.prayerOfMending
-	:CastableIf(function(self)
-		return Tank:Exists()
-			and self:IsKnownAndUsable()
-			and not Tank:GetAuras():FindMy(spells.prayerOfMendingAura):IsUp()
 			and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(Tank))
@@ -375,20 +390,6 @@ DefaultAPL:AddSpell(spells.penance
 	end)
 	:SetTarget(Lowest))
 
--- Power Infusion
-DefaultAPL:AddSpell(spells.powerInfusion
-	:CastableIf(function(self)
-		local usePowerInfusion = Rotation.Config:Read("spells_powerInfusion", true)
-		return usePowerInfusion
-			and Focus:Exists()
-			and self:IsKnownAndUsable()
-			and Focus:IsAffectingCombat()
-			and Target:CustomIsBoss()
-			and not Focus:IsMoving()
-			and not Player:IsCastingOrChanneling()
-	end)
-	:SetTarget(Focus))
-
 -- Dispel Magic
 DefaultAPL:AddSpell(spells.dispelMagic
 	:CastableIf(function(self)
@@ -412,6 +413,20 @@ DefaultAPL:AddSpell(spells.cureDisease
 			and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(Dispel))
+
+-- Power Infusion
+DefaultAPL:AddSpell(spells.powerInfusion
+	:CastableIf(function(self)
+		local usePowerInfusion = Rotation.Config:Read("spells_powerInfusion", true)
+		return usePowerInfusion
+			and Focus:Exists()
+			and self:IsKnownAndUsable()
+			and Focus:IsAffectingCombat()
+			and Target:CustomIsBoss()
+			and not Focus:IsMoving()
+			and not Player:IsCastingOrChanneling()
+	end)
+	:SetTarget(Focus))
 
 -- Binding Heal
 DefaultAPL:AddSpell(spells.bindingHeal
@@ -439,16 +454,6 @@ DefaultAPL:AddSpell(spells.flashHeal
 	end)
 	:SetTarget(Lowest))
 
--- Renew (Tank)
-DefaultAPL:AddSpell(spells.renew
-	:CastableIf(function(self)
-		return Tank:Exists()
-			and self:IsKnownAndUsable()
-			and not Tank:GetAuras():FindMy(spells.renew):IsUp()
-			and not Player:IsCastingOrChanneling()
-	end)
-	:SetTarget(Tank))
-
 -- Power Word: Shield (Pre-Shield)
 DefaultAPL:AddSpell(spells.powerWordShield
 	:CastableIf(function(self)
@@ -471,7 +476,7 @@ Module:Sync(function()
 		or Player:IsCastingOrChanneling()
 		or Player:GetAuras():FindAnyOfMy(spells.refreshmentAuras):IsUp()
 	then
-		return
+		return false
 	end
 
 	-- PreCombatAPL
