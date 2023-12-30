@@ -347,7 +347,7 @@ end
 local function RotationBehaviors()
 	-- if Hot Streak is active and we started a new cast, cancling current cast. This is preventing overlapping HotStreak Buffs
 	if Player:GetAuras():FindMy(spells.hotStreakAura):IsUp() then
-		if Player:IsCasting() and Player:GetChannelOrCastPercentComplete() <= 20 then
+		if Player:GetCastingOrChannelingSpell() == spells.fireball and Player:GetChannelOrCastPercentComplete() <= 30 then
 			SpellStopCasting()
 		end
 	end
