@@ -351,7 +351,7 @@ DefaultAPL:AddSpell(spells.prayerOfMending
 	:CastableIf(function(self)
 		return Tank:Exists()
 			and self:IsKnownAndUsable()
-            and Tank:GetAuras():FindMy(spells.prayerOfMendingAura):IsUp()
+            and not Tank:GetAuras():FindMy(spells.prayerOfMendingAura):IsUp()
 			and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(Tank))
@@ -440,6 +440,19 @@ DefaultAPL:AddSpell(spells.bindingHeal
 	end)
 	:SetTarget(Lowest))
 
+-- Power Word: Shield (Pre-Shield)
+DefaultAPL:AddSpell(spells.powerWordShield
+	:CastableIf(function(self)
+		local isPreShieldEnabled = Rotation.Config:Read("preShield", false)
+		return isPreShieldEnabled
+			and PreShield:Exists()
+			and self:IsKnownAndUsable()
+			and not PreShield:GetAuras():FindAny(spells.powerWordShield):IsUp()
+			and not PreShield:GetAuras():FindAny(spells.weakenedSoul):IsUp()
+			and not Player:IsCastingOrChanneling()
+	end)
+    :SetTarget(PreShield))
+
 -- Flash Heal
 DefaultAPL:AddSpell(spells.flashHeal
 	:CastableIf(function(self)
@@ -453,19 +466,6 @@ DefaultAPL:AddSpell(spells.flashHeal
 			and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(Lowest))
-
--- Power Word: Shield (Pre-Shield)
-DefaultAPL:AddSpell(spells.powerWordShield
-	:CastableIf(function(self)
-		local isPreShieldEnabled = Rotation.Config:Read("preShield", false)
-		return isPreShieldEnabled
-			and PreShield:Exists()
-			and self:IsKnownAndUsable()
-			and not PreShield:GetAuras():FindAny(spells.powerWordShield):IsUp()
-			and not PreShield:GetAuras():FindAny(spells.weakenedSoul):IsUp()
-			and not Player:IsCastingOrChanneling()
-	end)
-	:SetTarget(PreShield))
 
 -- Sync
 Module:Sync(function()
