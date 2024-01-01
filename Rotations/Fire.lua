@@ -212,7 +212,10 @@ local LivingBomb = Caffeine.UnitManager:CreateCustomUnit("livingBomb", function(
 			return false
 		end
 
-		if unit:GetAuras():FindAny(spells.shroudOfTheOccult):IsUp() or unit:GetAuras():FindAny(spells.shroudOfSpellWarding):IsUp() then
+		if
+			unit:GetAuras():FindAny(spells.shroudOfTheOccult):IsUp()
+			or unit:GetAuras():FindAny(spells.shroudOfSpellWarding):IsUp()
+		then
 			return false
 		end
 

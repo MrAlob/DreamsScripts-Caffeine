@@ -243,7 +243,10 @@ local VampireTouchTarget = Caffeine.UnitManager:CreateCustomUnit("vampireTouch",
 			return false
 		end
 
-		if unit:GetAuras():FindAny(spells.shroudOfTheOccult):IsUp() or unit:GetAuras():FindAny(spells.shroudOfSpellWarding):IsUp() then
+		if
+			unit:GetAuras():FindAny(spells.shroudOfTheOccult):IsUp()
+			or unit:GetAuras():FindAny(spells.shroudOfSpellWarding):IsUp()
+		then
 			return false
 		end
 
@@ -300,7 +303,10 @@ local ShadowWordPainTarget = Caffeine.UnitManager:CreateCustomUnit("shadowWordPa
 			return false
 		end
 
-		if unit:GetAuras():FindAny(spells.shroudOfTheOccult):IsUp() or unit:GetAuras():FindAny(spells.shroudOfSpellWarding):IsUp() then
+		if
+			unit:GetAuras():FindAny(spells.shroudOfTheOccult):IsUp()
+			or unit:GetAuras():FindAny(spells.shroudOfSpellWarding):IsUp()
+		then
 			return false
 		end
 
