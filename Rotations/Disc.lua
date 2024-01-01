@@ -351,7 +351,7 @@ DefaultAPL:AddSpell(spells.prayerOfMending
 	:CastableIf(function(self)
 		return Tank:Exists()
 			and self:IsKnownAndUsable()
-            and not Tank:GetAuras():FindMy(spells.prayerOfMendingAura):IsUp()
+			and not Tank:GetAuras():FindMy(spells.prayerOfMendingAura):IsUp()
 			and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(Tank))
@@ -451,7 +451,7 @@ DefaultAPL:AddSpell(spells.powerWordShield
 			and not PreShield:GetAuras():FindAny(spells.weakenedSoul):IsUp()
 			and not Player:IsCastingOrChanneling()
 	end)
-    :SetTarget(PreShield))
+	:SetTarget(PreShield))
 
 -- Flash Heal
 DefaultAPL:AddSpell(spells.flashHeal
