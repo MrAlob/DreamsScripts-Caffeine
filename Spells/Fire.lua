@@ -58,7 +58,8 @@ Rotation.Spells = {
 		18274
 	),
 	combustionAura = SpellBook:GetSpell(28682),
-	shroudOfTheOccult = SpellBook:GetSpell(70768),
+    shroudOfTheOccult = SpellBook:GetSpell(70768),
+    shroudOfSpellWarding = SpellBook:GetSpell(72066),
 	bloodBoilAura = SpellBook:GetSpell(72385),
 	luckOfTheDrawAura = SpellBook:GetSpell(72221),
 	refreshmentAuras = SpellBook:GetList(43183, 57073),

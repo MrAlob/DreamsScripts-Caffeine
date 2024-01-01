@@ -199,10 +199,6 @@ local ShadowWordPainRefresh = Caffeine.UnitManager:CreateCustomUnit("shadowWordP
 			return false
 		end
 
-		if blacklistUnitById[unit:GetID()] then
-			return false
-		end
-
 		if
 			Player:CanSee(unit)
 			and Player:IsFacing(unit)
@@ -247,8 +243,7 @@ local VampireTouchTarget = Caffeine.UnitManager:CreateCustomUnit("vampireTouch",
 			return false
 		end
 
-		-- Lady Deathwhisper
-		if unit:GetAuras():FindAny(spells.shroudOfTheOccult):IsUp() then
+		if unit:GetAuras():FindAny(spells.shroudOfTheOccult):IsUp() or unit:GetAuras():FindAny(spells.shroudOfSpellWarding):IsUp() then
 			return false
 		end
 
@@ -305,8 +300,7 @@ local ShadowWordPainTarget = Caffeine.UnitManager:CreateCustomUnit("shadowWordPa
 			return false
 		end
 
-		-- Lady Deathwhisper
-		if unit:GetAuras():FindAny(spells.shroudOfTheOccult):IsUp() then
+		if unit:GetAuras():FindAny(spells.shroudOfTheOccult):IsUp() or unit:GetAuras():FindAny(spells.shroudOfSpellWarding):IsUp() then
 			return false
 		end
 

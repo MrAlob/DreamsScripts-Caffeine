@@ -34,7 +34,8 @@ Rotation.Spells = {
 
 	-- Auras
 	shadowWeaving = SpellBook:GetSpell(15258),
-	shroudOfTheOccult = SpellBook:GetSpell(70768),
+    shroudOfTheOccult = SpellBook:GetSpell(70768),
+	shroudOfSpellWarding = SpellBook:GetSpell(72066),
 	replenishment = SpellBook:GetSpell(57669),
 	luckOfTheDrawAura = SpellBook:GetSpell(72221),
 	refreshmentAuras = SpellBook:GetList(43183, 57073),
