@@ -73,7 +73,7 @@ Hotbar:AddButton({
 Hotbar:AddButton({
 	name = "Toggle Auto Target",
 	texture = "Interface\\ICONS\\Ability_Hunter_MarkedForDeath",
-	tooltip = "Use Auto Target, it will automatically Auto Target the lowest enemy nearby",
+	tooltip = "Use Auto Target, it will automatically Auto Target the highest enemy nearby",
 	toggle = true,
 	onClick = function()
 		local getSetting = Rotation.Config:Read("autoTarget", false)

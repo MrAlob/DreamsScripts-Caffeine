@@ -84,6 +84,53 @@ local LowestEnemy = Caffeine.UnitManager:CreateCustomUnit("lowest", function(uni
 	return lowest
 end)
 
+local HighestEnemy = Caffeine.UnitManager:CreateCustomUnit("highest", function(unit)
+	local highest = nil
+	local highestHP = 0
+
+	Caffeine.UnitManager:EnumEnemies(function(unit)
+		if unit:IsDead() then
+			return false
+		end
+
+		if Player:GetDistance(unit) > 41 then
+			return false
+		end
+
+		if not Player:CanSee(unit) then
+			return false
+		end
+
+		if not unit:IsAffectingCombat() then
+			return false
+		end
+
+		if not unit:IsEnemy() then
+			return false
+		end
+
+		if not unit:IsHostile() then
+			return false
+		end
+
+		if unit:GetID() == 37695 or unit:GetID() == 37698 then
+			return false
+		end
+
+		local hp = unit:GetHP()
+		if hp > highestHP then -- Change this line to check for higher HP
+			highest = unit
+			highestHP = hp
+		end
+	end)
+
+	if not highest then
+		highest = None
+	end
+
+	return highest
+end)
+
 local DungeonLogic = Caffeine.UnitManager:CreateCustomUnit("dungeonLogic", function(unit)
 	local dungeonLogic = nil
 
@@ -676,7 +723,7 @@ Module:Sync(function()
 	-- Auto Target
 	local isAutoTargetEnabled = Rotation.Config:Read("autoTarget", true)
 	if isAutoTargetEnabled and (not Target:Exists() or Target:IsDead()) then
-		TargetUnit(LowestEnemy:GetGUID())
+		TargetUnit(HighestEnemy:GetGUID())
 	end
 
 	-- Boss Behaviors
