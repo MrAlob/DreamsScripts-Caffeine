@@ -1,3 +1,4 @@
+--[[ trunk-ignore-all(stylua) --]]
 local Unlocker, Caffeine, Rotation = ...
 
 -- Loader
@@ -21,5 +22,8 @@ Rotation.Items = {
 	invetorySlotBoots = Caffeine.Globals.ItemBook:GetItem(getItemID(8)),
 	manaGem = Caffeine.Globals.ItemBook:GetItem(33312),
 	saroniteBomb = Caffeine.Globals.ItemBook:GetItem(41119),
-	shardIfTheCrystalHeart = Caffeine.Globals.ItemBook:GetItem(48722),
+    shardIfTheCrystalHeart = Caffeine.Globals.ItemBook:GetItem(48722),
+    healthstone1 = Caffeine.Globals.ItemBook:GetItem(36892),
+    healthstone2 = Caffeine.Globals.ItemBook:GetItem(36893),
+    healthstone3 = Caffeine.Globals.ItemBook:GetItem(36894),
 }
