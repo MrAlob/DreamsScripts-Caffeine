@@ -46,10 +46,12 @@ local Lowest = Caffeine.UnitManager:CreateCustomUnit("lowest", function(unit)
 			return false
 		end
 
-		local hp = unit:GetHP()
-		if hp < lowestHP then
-			lowest = unit
-			lowestHP = hp
+		if not unit:IsDead() and Player:CanSee(unit) then
+			local hp = unit:GetHP()
+			if hp < lowestHP then
+				lowest = unit
+				lowestHP = hp
+			end
 		end
 	end)
 
@@ -75,6 +77,10 @@ local Tank = Caffeine.UnitManager:CreateCustomUnit("tank", function(unit)
 		end
 
 		if not Player:CanSee(unit) then
+			return false
+		end
+
+		if not unit:IsTank() then
 			return false
 		end
 
@@ -108,6 +114,14 @@ local PreShield = Caffeine.UnitManager:CreateCustomUnit("preShield", function(un
 		end
 
 		if not Player:CanSee(unit) then
+			return false
+		end
+
+		if unit:GetAuras():FindAny(spells.powerWordShield):IsUp() then
+			return false
+		end
+
+		if unit:GetAuras():FindAny(spells.weakenedSoul):IsUp() then
 			return false
 		end
 
@@ -236,9 +250,9 @@ PreCombatAPL:AddSpell(spells.innerFire
 DefaultAPL:AddSpell(spells.holyFire
 	:CastableIf(function(self)
 		local useDungeonLogic = Rotation.Config:Read("toggles_dungeonLogic", true)
-		return useDungeonLogic
-			and self:IsKnownAndUsable()
+		return self:IsKnownAndUsable()
 			and DungeonLogic:Exists()
+			and useDungeonLogic
 			and Player:IsFacing(DungeonLogic)
 			and not Player:IsMoving()
 	end)
@@ -248,9 +262,9 @@ DefaultAPL:AddSpell(spells.holyFire
 DefaultAPL:AddSpell(spells.mindBlast
 	:CastableIf(function(self)
 		local useDungeonLogic = Rotation.Config:Read("toggles_dungeonLogic", true)
-		return useDungeonLogic
-			and self:IsKnownAndUsable()
+		return self:IsKnownAndUsable()
 			and DungeonLogic:Exists()
+			and useDungeonLogic
 			and Player:IsFacing(DungeonLogic)
 			and not Player:IsMoving()
 	end)
@@ -271,12 +285,12 @@ DefaultAPL:AddSpell(spells.beserking
 DefaultAPL:AddItem(items.inventorySlotGloves
 	:UsableIf(function(self)
 		local useEngineeringGloves = Rotation.Config:Read("items_engineeringGloves", true)
-		return useEngineeringGloves
-			and self:IsUsable()
-			and not self:IsOnCooldown()
+		return self:IsUsable()
 			and Target:Exists()
+			and useEngineeringGloves
 			and Target:CustomIsBoss()
 			and Target:IsHostile()
+			and not self:IsOnCooldown()
 			and not Player:IsMoving()
 			and not Player:IsCastingOrChanneling()
 	end)
@@ -287,13 +301,13 @@ DefaultAPL:AddItem(items.saroniteBomb
 	:UsableIf(function(self)
 		local useSaroniteBomb = Rotation.Config:Read("items_saroniteBomb", true)
 		return self:IsUsable()
-			and not self:IsOnCooldown()
-			and useSaroniteBomb
 			and Target:Exists()
+			and useSaroniteBomb
 			and Target:IsHostile()
 			and Player:CanSee(Target)
 			and Target:CustomIsBoss()
 			and Player:GetDistance(Target) <= 29
+			and not self:IsOnCooldown()
 			and not Target:IsMoving()
 			and not Player:IsCastingOrChanneling()
 	end)
@@ -306,11 +320,12 @@ DefaultAPL:AddItem(items.saroniteBomb
 -- Shadowfiend
 DefaultAPL:AddSpell(spells.shadowfiend
 	:CastableIf(function(self)
-		return Target:Exists()
-			and self:IsKnownAndUsable()
+		local shadowfiendMP = Rotation.Config:Read("spells_shadowfiend", 40)
+		return self:IsKnownAndUsable()
+			and Target:Exists()
 			and Target:IsHostile()
 			and Target:CustomIsBoss()
-			and Player:GetPP() < Rotation.Config:Read("spells_shadowfiend", 40)
+			and Player:GetPP() < shadowfiendMP
 			and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(Target))
@@ -318,9 +333,10 @@ DefaultAPL:AddSpell(spells.shadowfiend
 -- Pain Supression
 DefaultAPL:AddSpell(spells.painSupression
 	:CastableIf(function(self)
-		return Tank:Exists()
-			and self:IsKnownAndUsable()
-			and Tank:GetHP() < Rotation.Config:Read("spells_painSupression", 40)
+		local painSupressionHP = Rotation.Config:Read("spells_painSupression", 40)
+		return self:IsKnownAndUsable()
+			and Tank:Exists()
+			and Tank:GetHP() < painSupressionHP
 			and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(Tank))
@@ -328,20 +344,20 @@ DefaultAPL:AddSpell(spells.painSupression
 -- Desprate Prayer
 DefaultAPL:AddSpell(spells.despratePrayer
 	:CastableIf(function(self)
-		return self:IsKnownAndUsable()
-			and Player:GetHP() < Rotation.Config:Read("spells_desperatePrayer", 40)
-			and not Player:IsCastingOrChanneling()
+		local despratePrayerHP = Rotation.Config:Read("spells_desperatePrayer", 40)
+		return self:IsKnownAndUsable() and Player:GetHP() < despratePrayerHP and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(None))
 
 -- Power Word: Shield (Tank - Safe)
 DefaultAPL:AddSpell(spells.powerWordShield
 	:CastableIf(function(self)
-		return Tank:Exists()
-			and self:IsKnownAndUsable()
+		local shieldTankSafeHP = Rotation.Config:Read("spells_powerWordShieldTankSafe", 40)
+		return not self:OnCooldown()
+			and Tank:Exists()
+			and Tank:GetHP() < shieldTankSafeHP
 			and not Tank:GetAuras():FindAny(spells.powerWordShield):IsUp()
 			and not Tank:GetAuras():FindAny(spells.weakenedSoul):IsUp()
-			and Tank:GetHP() < Rotation.Config:Read("spells_powerWordShieldTankSafe", 40)
 			and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(Tank))
@@ -349,8 +365,8 @@ DefaultAPL:AddSpell(spells.powerWordShield
 -- Prayer of Mending (Tank)
 DefaultAPL:AddSpell(spells.prayerOfMending
 	:CastableIf(function(self)
-		return Tank:Exists()
-			and self:IsKnownAndUsable()
+		return self:IsKnownAndUsable()
+			and Tank:Exists()
 			and not Tank:GetAuras():FindMy(spells.prayerOfMendingAura):IsUp()
 			and not Player:IsCastingOrChanneling()
 	end)
@@ -359,9 +375,10 @@ DefaultAPL:AddSpell(spells.prayerOfMending
 -- Penance (Tank)
 DefaultAPL:AddSpell(spells.penance
 	:CastableIf(function(self)
-		return Tank:Exists()
-			and self:IsKnownAndUsable()
-			and Tank:GetHP() < Rotation.Config:Read("spells_penanceTank", 80)
+		local penanceTankHP = Rotation.Config:Read("spells_penanceTank", 80)
+		return self:IsKnownAndUsable()
+			and Tank:Exists()
+			and Tank:GetHP() < penanceTankHP
 			and not Player:IsMoving()
 			and not Player:IsCastingOrChanneling()
 	end)
@@ -370,11 +387,12 @@ DefaultAPL:AddSpell(spells.penance
 -- Power Word: Shield (Safe)
 DefaultAPL:AddSpell(spells.powerWordShield
 	:CastableIf(function(self)
-		return Lowest:Exists()
-			and self:IsKnownAndUsable()
+		local shieldSafeHP = Rotation.Config:Read("spells_powerWordShieldSafe", 60)
+		return not self:OnCooldown()
+			and Lowest:Exists()
+			and Lowest:GetHP() < shieldSafeHP
 			and not Lowest:GetAuras():FindAny(spells.powerWordShield):IsUp()
 			and not Lowest:GetAuras():FindAny(spells.weakenedSoul):IsUp()
-			and Lowest:GetHP() < Rotation.Config:Read("spells_powerWordShieldSafe", 60)
 			and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(Lowest))
@@ -382,9 +400,10 @@ DefaultAPL:AddSpell(spells.powerWordShield
 -- Penance
 DefaultAPL:AddSpell(spells.penance
 	:CastableIf(function(self)
-		return Lowest:Exists()
-			and self:IsKnownAndUsable()
-			and Lowest:GetHP() < Rotation.Config:Read("spells_penance", 80)
+		local penanceHP = Rotation.Config:Read("spells_penance", 80)
+		return self:IsKnownAndUsable()
+			and Lowest:Exists()
+			and Lowest:GetHP() < penanceHP
 			and not Player:IsMoving()
 			and not Player:IsCastingOrChanneling()
 	end)
@@ -393,10 +412,10 @@ DefaultAPL:AddSpell(spells.penance
 -- Dispel Magic
 DefaultAPL:AddSpell(spells.dispelMagic
 	:CastableIf(function(self)
-		local isDispelEnabled = Rotation.Config:Read("dispel", true)
-		return isDispelEnabled
+		local useDispel = Rotation.Config:Read("dispel", true)
+		return self:IsKnownAndUsable()
 			and Dispel:Exists()
-			and self:IsKnownAndUsable()
+			and useDispel
 			and Dispel:GetAuras():HasAnyDispelableAura(spells.dispelMagic)
 			and not Player:IsCastingOrChanneling()
 	end)
@@ -405,10 +424,10 @@ DefaultAPL:AddSpell(spells.dispelMagic
 -- Cure Disease
 DefaultAPL:AddSpell(spells.cureDisease
 	:CastableIf(function(self)
-		local isDispelEnabled = Rotation.Config:Read("dispel", true)
-		return isDispelEnabled
+		local useDispel = Rotation.Config:Read("dispel", true)
+		return self:IsKnownAndUsable()
 			and Dispel:Exists()
-			and self:IsKnownAndUsable()
+			and useDispel
 			and Dispel:GetAuras():HasAnyDispelableAura(spells.cureDisease)
 			and not Player:IsCastingOrChanneling()
 	end)
@@ -418,9 +437,9 @@ DefaultAPL:AddSpell(spells.cureDisease
 DefaultAPL:AddSpell(spells.powerInfusion
 	:CastableIf(function(self)
 		local usePowerInfusion = Rotation.Config:Read("spells_powerInfusion", true)
-		return usePowerInfusion
+		return self:IsKnownAndUsable()
 			and Focus:Exists()
-			and self:IsKnownAndUsable()
+			and usePowerInfusion
 			and Focus:IsAffectingCombat()
 			and Target:CustomIsBoss()
 			and not Focus:IsMoving()
@@ -431,10 +450,25 @@ DefaultAPL:AddSpell(spells.powerInfusion
 -- Binding Heal
 DefaultAPL:AddSpell(spells.bindingHeal
 	:CastableIf(function(self)
-		return Lowest:Exists()
-			and self:IsKnownAndUsable()
-			and Lowest:GetHP() < Rotation.Config:Read("spells_bindingHeal", 60)
-			and Player:GetHP() < Rotation.Config:Read("spells_bindingHeal", 60)
+		local bindingHealHP = Rotation.Config:Read("spells_bindingHeal", 60)
+		return self:IsKnownAndUsable()
+			and Lowest:Exists()
+			and Lowest:GetHP() < bindingHealHP
+			and Player:GetHP() < bindingHealHP
+			and not Player:IsMoving()
+			and not Player:IsCastingOrChanneling()
+	end)
+	:SetTarget(Lowest))
+
+-- Flash Heal
+DefaultAPL:AddSpell(spells.flashHeal
+	:CastableIf(function(self)
+		local isFlashHealEnabled = Rotation.Config:Read("flashHeal", true)
+		return self:IsKnownAndUsable()
+			and Lowest:Exists()
+			and isFlashHealEnabled
+			and Lowest:GetHP() < Rotation.Config:Read("spells_flashHeal", 80)
+			and spells.penance:OnCooldown()
 			and not Player:IsMoving()
 			and not Player:IsCastingOrChanneling()
 	end)
@@ -443,29 +477,15 @@ DefaultAPL:AddSpell(spells.bindingHeal
 -- Power Word: Shield (Pre-Shield)
 DefaultAPL:AddSpell(spells.powerWordShield
 	:CastableIf(function(self)
-		local isPreShieldEnabled = Rotation.Config:Read("preShield", false)
-		return isPreShieldEnabled
+		local isPreShieldEnabled = Rotation.Config:Read("preShield", true)
+		return not self:OnCooldown()
 			and PreShield:Exists()
-			and self:IsKnownAndUsable()
+			and isPreShieldEnabled
+			and not Player:IsCastingOrChanneling()
 			and not PreShield:GetAuras():FindAny(spells.powerWordShield):IsUp()
 			and not PreShield:GetAuras():FindAny(spells.weakenedSoul):IsUp()
-			and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(PreShield))
-
--- Flash Heal
-DefaultAPL:AddSpell(spells.flashHeal
-	:CastableIf(function(self)
-		local isFlashHealEnabled = Rotation.Config:Read("flashHeal", true)
-		return isFlashHealEnabled
-			and Lowest:Exists()
-			and self:IsKnownAndUsable()
-			and Lowest:GetHP() < Rotation.Config:Read("spells_flashHeal", 80)
-			and spells.penance:OnCooldown()
-			and not Player:IsMoving()
-			and not Player:IsCastingOrChanneling()
-	end)
-	:SetTarget(Lowest))
 
 -- Sync
 Module:Sync(function()
