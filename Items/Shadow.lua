@@ -9,6 +9,8 @@ if Caffeine.GetClass() ~= "PRIEST" then
 	return
 end
 
+local ItemBook = Caffeine.Globals.ItemBook
+
 -- Get ItemID from Inventory Slot
 local function getItemID(slot)
 	local ItemID = GetInventoryItemID("player", slot)
@@ -17,9 +19,12 @@ end
 
 -- Items
 Rotation.Items = {
-	inventorySlotGloves = Caffeine.Globals.ItemBook:GetItem(getItemID(10)),
-	inventorySlotTrinket0 = Caffeine.Globals.ItemBook:GetItem(getItemID(13)),
-	inventorySlotTrinket1 = Caffeine.Globals.ItemBook:GetItem(getItemID(14)),
-	potionOfSpeed = Caffeine.Globals.ItemBook:GetItem(40211),
-	saroniteBomb = Caffeine.Globals.ItemBook:GetItem(41119),
+	inventorySlotGloves = ItemBook:GetItem(getItemID(10)),
+	inventorySlotTrinket0 = ItemBook:GetItem(getItemID(13)),
+	inventorySlotTrinket1 = ItemBook:GetItem(getItemID(14)),
+	potionOfSpeed = ItemBook:GetItem(40211),
+	saroniteBomb = ItemBook:GetItem(41119),
+	healthstone1 = ItemBook:GetItem(36892),
+	healthstone2 = ItemBook:GetItem(36893),
+	healthstone3 = ItemBook:GetItem(36894),
 }

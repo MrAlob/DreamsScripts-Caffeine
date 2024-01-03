@@ -1,4 +1,3 @@
---[[ trunk-ignore-all(stylua) --]]
 local Unlocker, Caffeine, Rotation = ...
 
 -- Loader
@@ -10,6 +9,8 @@ if Caffeine.GetClass() ~= "MAGE" then
 	return
 end
 
+local ItemBook = Caffeine.Globals.ItemBook
+
 -- Get ItemID from Inventory Slot
 local function getItemID(slot)
 	local ItemID = GetInventoryItemID("player", slot)
@@ -18,12 +19,12 @@ end
 
 -- Items
 Rotation.Items = {
-	inventorySlotGloves = Caffeine.Globals.ItemBook:GetItem(getItemID(10)),
-	invetorySlotBoots = Caffeine.Globals.ItemBook:GetItem(getItemID(8)),
-	manaGem = Caffeine.Globals.ItemBook:GetItem(33312),
-	saroniteBomb = Caffeine.Globals.ItemBook:GetItem(41119),
-    shardIfTheCrystalHeart = Caffeine.Globals.ItemBook:GetItem(48722),
-    healthstone1 = Caffeine.Globals.ItemBook:GetItem(36892),
-    healthstone2 = Caffeine.Globals.ItemBook:GetItem(36893),
-    healthstone3 = Caffeine.Globals.ItemBook:GetItem(36894),
+	inventorySlotGloves = ItemBook:GetItem(getItemID(10)),
+	invetorySlotBoots = ItemBook:GetItem(getItemID(8)),
+	manaGem = ItemBook:GetItem(33312),
+	saroniteBomb = ItemBook:GetItem(41119),
+	shardIfTheCrystalHeart = ItemBook:GetItem(48722),
+	healthstone1 = ItemBook:GetItem(36892),
+	healthstone2 = ItemBook:GetItem(36893),
+	healthstone3 = ItemBook:GetItem(36894),
 }

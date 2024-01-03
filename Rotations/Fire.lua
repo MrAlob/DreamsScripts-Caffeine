@@ -457,7 +457,7 @@ DefaultAPL:AddItem(items.healthstone3
 			and not Player:IsCastingOrChanneling()
 			and not Player:IsMoving()
 	end)
-    :SetTarget(None))
+	:SetTarget(None))
 
 -- Mana Gem
 DefaultAPL:AddItem(items.manaGem

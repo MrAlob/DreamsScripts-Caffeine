@@ -20,7 +20,7 @@ Rotation.Config:Write("aoe", false)
 Rotation.Config:Write("autoTarget", false)
 
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Hello! Rotation successfully initialized.")
-Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Version: 2.1.5")
+Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Version: 2.1.6")
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - If you need any help or have suggestions.")
 Caffeine:Print("Dreams|cff00B5FFScripts |cffFFFFFF - Discord: |cffeb6ee9https://discord.gg/Pm4wQpMDKh")
 
@@ -110,6 +110,17 @@ Rotation.Category:Checkbox({
 
 -- Items
 Rotation.Category:AddSubsection("|cffFFFFFFItems")
+Rotation.Category:Slider({
+	category = "items",
+	var = "healthStone",
+	name = "Healthstone",
+	tooltip = "Use Healthstone if you below Health Percentage",
+	default = 20,
+	min = 0,
+	max = 100,
+	step = 5,
+})
+
 Rotation.Category:Checkbox({
 	category = "items",
 	var = "engineeringGloves",

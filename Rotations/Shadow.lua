@@ -406,7 +406,7 @@ local function BossBehaviors()
 	end
 end
 
--- PreCombatAPL
+-- Shadowform
 PreCombatAPL:AddSpell(spells.shadowform
 	:CastableIf(function(self)
 		return self:IsKnownAndUsable()
@@ -415,6 +415,7 @@ PreCombatAPL:AddSpell(spells.shadowform
 	end)
 	:SetTarget(Player))
 
+-- Inner Fire
 PreCombatAPL:AddSpell(spells.innerFire
 	:CastableIf(function(self)
 		return self:IsKnownAndUsable()
@@ -423,6 +424,7 @@ PreCombatAPL:AddSpell(spells.innerFire
 	end)
 	:SetTarget(Player))
 
+-- Vampire Embrace
 PreCombatAPL:AddSpell(spells.vampiricEmbrace
 	:CastableIf(function(self)
 		return self:IsKnownAndUsable()
@@ -430,6 +432,40 @@ PreCombatAPL:AddSpell(spells.vampiricEmbrace
 			and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(Player))
+
+-- Healthstone
+DefaultAPL:AddItem(items.healthstone1
+	:UsableIf(function(self)
+		return self:IsUsable()
+			and not self:IsOnCooldown()
+			and Player:GetHP() < Rotation.Config:Read("items_healthStone", 20)
+			and Player:IsAffectingCombat()
+			and not Player:IsCastingOrChanneling()
+			and not Player:IsMoving()
+	end)
+	:SetTarget(None))
+
+DefaultAPL:AddItem(items.healthstone2
+	:UsableIf(function(self)
+		return self:IsUsable()
+			and not self:IsOnCooldown()
+			and Player:GetHP() < Rotation.Config:Read("items_healthStone", 20)
+			and Player:IsAffectingCombat()
+			and not Player:IsCastingOrChanneling()
+			and not Player:IsMoving()
+	end)
+	:SetTarget(None))
+
+DefaultAPL:AddItem(items.healthstone3
+	:UsableIf(function(self)
+		return self:IsUsable()
+			and not self:IsOnCooldown()
+			and Player:GetHP() < Rotation.Config:Read("items_healthStone", 20)
+			and Player:IsAffectingCombat()
+			and not Player:IsCastingOrChanneling()
+			and not Player:IsMoving()
+	end)
+	:SetTarget(None))
 
 -- DungeonLogic: Web Wrap and Mirror Images
 DefaultAPL:AddSpell(spells.mindFlay
