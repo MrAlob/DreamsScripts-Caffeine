@@ -305,16 +305,70 @@ end)
 -- Boss Behavior
 local function BossBehaviors()
 	-- Icecrown Citadel
-	if Player:GetInstanceInfoByParameter("instanceID") == 631 then
-		-- Professor Putricide (36678)
+	if
+		Player:GetAuras():FindAny(spells.successInvisibilityAura):IsUp()
+		and Player:GetAuras():FindAny(spells.successInvisibilityAura):GetRemainingTime() <= 17
+	then
+		local i = 1
+		repeat
+			local name = UnitBuff("player", i)
+			if name == "Invisibility" then
+				CancelUnitBuff("player", i)
+				break
+			end
+			i = i + 1
+		until not name
+	end
+
+	-- Professor Putricide (36678)
+	if Target:GetID() == 36678 then
+		-- Stop Casting if Target is casting Tear Gas
 		if
-			Player:GetAuras():FindAny(spells.successInvisibilityAura):IsUp()
-			and Player:GetAuras():FindAny(spells.successInvisibilityAura):GetRemainingTime() <= 17
+			Player:GetAuras():FindAny(spells.invisibilityAura):IsUp()
+			or Target:GetCastingOrChannelingSpell() == spells.tearGas
+		then
+			SpellStopCasting()
+		end
+	end
+
+	-- Festergut (36626)
+	if Target:GetID() == 36626 then
+		-- Canceling Ice Block if its active and when the target is not casting Pungent Blight
+		if
+			Player:GetAuras():FindAny(spells.iceBlock):IsUp()
+			and not Target:GetCastingOrChannelingSpell() == spells.pungentBlight
 		then
 			local i = 1
 			repeat
 				local name = UnitBuff("player", i)
-				if name == "Invisibility" then
+				if name == "Ice Block" then
+					CancelUnitBuff("player", i)
+					break
+				end
+				i = i + 1
+			until not name
+		end
+	end
+
+	-- Sindragosa Logic (36853)
+	if Target:GetID() == 36853 then
+		-- Stop Casting after 1 Stack of Instability
+		if
+			Player:GetAuras():FindAny(spells.unchainedMagicAura):IsUp()
+			and Player:GetAuras():FindAny(spells.instabilityAura):GetCount() >= 1
+		then
+			SpellStopCasting()
+		end
+		-- Phase 3: Canceling Ice Block if its active and Unchained Magic is not active
+		if
+			Target:GetHP() <= 35
+			and not Player:GetAuras():FindAny(spells.unchainedMagicAura):IsUp()
+			and Player:GetAuras():FindAny(spells.iceBlock):IsUp()
+		then
+			local i = 1
+			repeat
+				local name = UnitBuff("player", i)
+				if name == "Ice Block" then
 					CancelUnitBuff("player", i)
 					break
 				end
@@ -322,70 +376,14 @@ local function BossBehaviors()
 			until not name
 		end
 
-		if Target:GetID() == 36678 then
-			-- Stop Casting if Target is casting Tear Gas
-			if
-				Player:GetAuras():FindAny(spells.invisibilityAura):IsUp()
-				or Target:GetCastingOrChannelingSpell() == spells.tearGas
-			then
-				SpellStopCasting()
-			end
-		end
-
-		-- Festergut (36626)
-		if Target:GetID() == 36626 then
-			-- Canceling Ice Block if its active and when the target is not casting Pungent Blight
-			if
-				Player:GetAuras():FindAny(spells.iceBlock):IsUp()
-				and not Target:GetCastingOrChannelingSpell() == spells.pungentBlight
-			then
-				local i = 1
-				repeat
-					local name = UnitBuff("player", i)
-					if name == "Ice Block" then
-						CancelUnitBuff("player", i)
-						break
-					end
-					i = i + 1
-				until not name
-			end
-		end
-
-		-- Sindragosa Logic (36853)
-		if Target:GetID() == 36853 then
-			-- Stop Casting after 1 Stack of Instability
-			if
-				Player:GetAuras():FindAny(spells.unchainedMagicAura):IsUp()
-				and Player:GetAuras():FindAny(spells.instabilityAura):GetCount() >= 1
-			then
-				SpellStopCasting()
-			end
-			-- Phase 3: Canceling Ice Block if its active and Unchained Magic is not active
-			if
-				Target:GetHP() <= 35
-				and not Player:GetAuras():FindAny(spells.unchainedMagicAura):IsUp()
-				and Player:GetAuras():FindAny(spells.iceBlock):IsUp()
-			then
-				local i = 1
-				repeat
-					local name = UnitBuff("player", i)
-					if name == "Ice Block" then
-						CancelUnitBuff("player", i)
-						break
-					end
-					i = i + 1
-				until not name
-			end
-
-			-- Phase 3: if Unchained Debuff we Cancel Cast and Casting Iceblock
-			if
-				Target:GetHP() <= 35
-				and Player:GetAuras():FindAny(spells.unchainedMagicAura):IsUp()
-				and not Player:GetAuras():FindAny(spells.invisibilityAura)
-			then
-				SpellStopCasting()
-				spells.iceBlock:ForceCast(None)
-			end
+		-- Phase 3: if Unchained Debuff we Cancel Cast and Casting Iceblock
+		if
+			Target:GetHP() <= 35
+			and Player:GetAuras():FindAny(spells.unchainedMagicAura):IsUp()
+			and not Player:GetAuras():FindAny(spells.invisibilityAura)
+		then
+			SpellStopCasting()
+			spells.iceBlock:ForceCast(None)
 		end
 	end
 
