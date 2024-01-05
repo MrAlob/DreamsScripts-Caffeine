@@ -197,7 +197,11 @@ local LivingBomb = Caffeine.UnitManager:CreateCustomUnit("livingBomb", function(
 			return false
 		end
 
-		if not unit:IsAffectingCombat() then
+        if not unit:IsAffectingCombat() then
+            return false
+        end
+
+		if not unit:IsHostile() then
 			return false
 		end
 
@@ -226,7 +230,8 @@ local LivingBomb = Caffeine.UnitManager:CreateCustomUnit("livingBomb", function(
 
 		if
 			not unit:IsDead()
-			and unit:IsEnemy()
+            and unit:IsEnemy()
+			and unit:IsHostile()
 			and Player:CanSee(unit)
 			and not unit:GetAuras():FindMy(spells.livingBomb):IsUp()
 		then
