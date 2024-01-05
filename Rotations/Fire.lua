@@ -721,7 +721,7 @@ DefaultAPL:AddSpell(spells.flamestrike
 			and Target:Exists()
 			and Target:GetDistance(Player) <= 36
 			and spells.flamestrike:GetTimeSinceLastCast() > 8
-			and Target:GetEnemies(10) >= 2
+			and Target:GetEnemies(10) >= 4
 			and not Player:IsMoving()
 			and not Player:IsCastingOrChanneling()
 	end)
