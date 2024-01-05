@@ -38,7 +38,8 @@ local blacklistUnitById = {
 	[37799] = true, -- Vile Spirit: 37799
 	[38104] = true, -- Plagued Zombie: 38104
 	[37907] = true, -- Rot Worm: 37907
-	[36633] = true, -- Ice Sphere: 36734
+    [36633] = true, -- Ice Sphere: 36734
+	[39190] = true, -- Wicked Spirit: 39190
 }
 
 local LowestEnemy = Caffeine.UnitManager:CreateCustomUnit("lowest", function(unit)
@@ -113,7 +114,7 @@ local HighestEnemy = Caffeine.UnitManager:CreateCustomUnit("highest", function(u
 			return false
 		end
 
-		if unit:GetID() == 37695 or unit:GetID() == 37698 then
+		if blacklistUnitById[unit:GetID()] then
 			return false
 		end
 
@@ -367,41 +368,38 @@ function WasCastingCheck()
 end
 
 local function BossBehaviors()
-	-- Icecrown Citadel
-	if Player:GetInstanceInfoByParameter("instanceID") == 631 then
-		-- Festergut (36626)
-		if Target:GetID() == 36626 then
-			-- Stop Casting if Pungent Blight is being casted
-			if Target:GetCastingOrChannelingSpell() == spells.pungentBlight then
-				SpellStopCasting()
-			end
-
-			-- Canceling Dispersion and target not casting Pungent Blight
-			if
-				Player:GetAuras():FindAny(spells.dispersion):IsUp()
-				and not Target:GetCastingOrChannelingSpell() == spells.pungentBlight
-			then
-				local i = 1
-				repeat
-					local name = UnitBuff("player", i)
-					if name == "Dispersion" then
-						CancelUnitBuff("player", i)
-						break
-					end
-					i = i + 1
-				until not name
-			end
+	-- Festergut (36626)
+	if Target:GetID() == 36626 then
+		-- Stop Casting if Pungent Blight is being casted
+		if Target:GetCastingOrChannelingSpell() == spells.pungentBlight then
+			SpellStopCasting()
 		end
 
-		-- Sindragosa (36853)
-		if Target:GetID() == 36853 then
-			-- Stop Casting if we have more than 8 stacks of Instability and less than 2 seconds remaining
-			if
-				Player:GetAuras():FindAny(spells.instabilityAura):GetRemainingTime() <= 2.0
-				and Player:GetAuras():FindAny(spells.instabilityAura):GetCount() >= 8
-			then
-				SpellStopCasting()
-			end
+		-- Canceling Dispersion and target not casting Pungent Blight
+		if
+			Player:GetAuras():FindAny(spells.dispersion):IsUp()
+			and not Target:GetCastingOrChannelingSpell() == spells.pungentBlight
+		then
+			local i = 1
+			repeat
+				local name = UnitBuff("player", i)
+				if name == "Dispersion" then
+					CancelUnitBuff("player", i)
+					break
+				end
+				i = i + 1
+			until not name
+		end
+	end
+
+	-- Sindragosa (36853)
+	if Target:GetID() == 36853 then
+		-- Stop Casting if we have more than 8 stacks of Instability and less than 2 seconds remaining
+		if
+			Player:GetAuras():FindAny(spells.instabilityAura):GetRemainingTime() <= 2.0
+			and Player:GetAuras():FindAny(spells.instabilityAura):GetCount() >= 8
+		then
+			SpellStopCasting()
 		end
 	end
 end

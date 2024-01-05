@@ -39,7 +39,8 @@ local blacklistUnitById = {
 	[37799] = true, -- Vile Spirit: 37799
 	[38104] = true, -- Plagued Zombie: 38104
 	[37907] = true, -- Rot Worm: 37907
-	[36633] = true, -- Ice Sphere: 36734
+    [36633] = true, -- Ice Sphere: 36734
+	[39190] = true, -- Wicked Spirit: 39190
 }
 
 local LowestEnemy = Caffeine.UnitManager:CreateCustomUnit("lowest", function(unit)
