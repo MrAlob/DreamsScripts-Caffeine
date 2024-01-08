@@ -11,7 +11,7 @@ end
 
 local ItemBook = Caffeine.Globals.ItemBook
 
--- Get ItemID from Inventory Slot
+-- Get ItemID from Inventory Slot 
 local function getItemID(slot)
 	local ItemID = GetInventoryItemID("player", slot)
 	return ItemID

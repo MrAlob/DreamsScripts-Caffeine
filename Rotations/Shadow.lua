@@ -408,7 +408,7 @@ DefaultAPL:AddItem(items.healthstone3
 	end)
 	:SetTarget(None))
 
--- DungeonLogic: Web Wrap and Mirror Images
+-- DungeonLogic: Web Wrap and Mirror Images 
 DefaultAPL:AddSpell(spells.mindFlay
 	:CastableIf(function(self)
 		return DungeonLogic:Exists() and self:IsKnownAndUsable() and self:IsInRange(DungeonLogic) and Player:IsFacing(DungeonLogic) and not Player:IsMoving()

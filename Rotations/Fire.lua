@@ -290,7 +290,7 @@ local function BossBehaviors()
 		end
 	end
 
-	-- Sindragosa Logic (36853)
+	-- Sindragosa Logic (36853) 
 	if Target:GetID() == 36853 then
 		-- Stop Casting after 1 Stack of Instability
 		if Player:GetAuras():FindAny(spells.unchainedMagicAura):IsUp() and Player:GetAuras():FindAny(spells.instabilityAura):GetCount() >= 1 then

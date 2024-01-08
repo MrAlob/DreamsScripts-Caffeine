@@ -15,7 +15,7 @@ Rotation.Spells = {
 	-- Buffs
 	moltenFire = SpellBook:GetSpell(43046),
 
-	-- Fire Spells
+	-- Fire Spells 
 	fireBlast = SpellBook:GetSpell(42873),
 	fireball = SpellBook:GetSpell(42833),
 	pyroblast = SpellBook:GetSpell(42891),

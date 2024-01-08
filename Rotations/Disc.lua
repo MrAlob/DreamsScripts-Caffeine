@@ -9,7 +9,7 @@ if Caffeine.GetClass() ~= "PRIEST" then
 	return
 end
 
--- Module
+-- Module 
 local Module = Caffeine.Module:New("disc")
 
 -- Units
