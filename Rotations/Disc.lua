@@ -168,10 +168,7 @@ local Dispel = Caffeine.UnitManager:CreateCustomUnit("dispel", function(unit)
 		if
 			not unit:IsDead()
 			and Player:CanSee(unit)
-			and (
-				unit:GetAuras():HasAnyDispelableAura(spells.dispelMagic)
-				or unit:GetAuras():HasAnyDispelableAura(spells.cureDisease)
-			)
+			and (unit:GetAuras():HasAnyDispelableAura(spells.dispelMagic) or unit:GetAuras():HasAnyDispelableAura(spells.cureDisease))
 		then
 			local hp = unit:GetHP()
 			if hp < dispelHP then
@@ -221,11 +218,7 @@ local DungeonLogic = Caffeine.UnitManager:CreateCustomUnit("dungeonLogic", funct
 			return false
 		end
 
-		if
-			Player:CanSee(unit)
-			and Player:IsFacing(unit)
-			and (unit:GetID() == 28619 or unit:GetName() == "Mirror Image")
-		then
+		if Player:CanSee(unit) and Player:IsFacing(unit) and (unit:GetID() == 28619 or unit:GetName() == "Mirror Image") then
 			dungeonLogic = unit
 		end
 	end)
@@ -240,9 +233,7 @@ end)
 -- Inner Fire
 PreCombatAPL:AddSpell(spells.innerFire
 	:CastableIf(function(self)
-		return self:IsKnownAndUsable()
-			and not Player:GetAuras():FindMy(spells.innerFire):IsUp()
-			and not Player:IsCastingOrChanneling()
+		return self:IsKnownAndUsable() and not Player:GetAuras():FindMy(spells.innerFire):IsUp() and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(Player))
 
@@ -284,11 +275,7 @@ DefaultAPL:AddItem(items.healthstone3
 DefaultAPL:AddSpell(spells.holyFire
 	:CastableIf(function(self)
 		local useDungeonLogic = Rotation.Config:Read("toggles_dungeonLogic", true)
-		return self:IsKnownAndUsable()
-			and DungeonLogic:Exists()
-			and useDungeonLogic
-			and Player:IsFacing(DungeonLogic)
-			and not Player:IsMoving()
+		return self:IsKnownAndUsable() and DungeonLogic:Exists() and useDungeonLogic and Player:IsFacing(DungeonLogic) and not Player:IsMoving()
 	end)
 	:SetTarget(DungeonLogic))
 
@@ -296,22 +283,14 @@ DefaultAPL:AddSpell(spells.holyFire
 DefaultAPL:AddSpell(spells.mindBlast
 	:CastableIf(function(self)
 		local useDungeonLogic = Rotation.Config:Read("toggles_dungeonLogic", true)
-		return self:IsKnownAndUsable()
-			and DungeonLogic:Exists()
-			and useDungeonLogic
-			and Player:IsFacing(DungeonLogic)
-			and not Player:IsMoving()
+		return self:IsKnownAndUsable() and DungeonLogic:Exists() and useDungeonLogic and Player:IsFacing(DungeonLogic) and not Player:IsMoving()
 	end)
 	:SetTarget(DungeonLogic))
 
 -- Beserking
 DefaultAPL:AddSpell(spells.beserking
 	:CastableIf(function(self)
-		return self:IsKnownAndUsable()
-			and Target:Exists()
-			and Target:IsHostile()
-			and Target:CustomIsBoss()
-			and not Player:IsCastingOrChanneling()
+		return self:IsKnownAndUsable() and Target:Exists() and Target:IsHostile() and Target:CustomIsBoss() and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(None))
 
@@ -368,10 +347,7 @@ DefaultAPL:AddSpell(spells.shadowfiend
 DefaultAPL:AddSpell(spells.painSupression
 	:CastableIf(function(self)
 		local painSupressionHP = Rotation.Config:Read("spells_painSupression", 40)
-		return self:IsKnownAndUsable()
-			and Tank:Exists()
-			and Tank:GetHP() < painSupressionHP
-			and not Player:IsCastingOrChanneling()
+		return self:IsKnownAndUsable() and Tank:Exists() and Tank:GetHP() < painSupressionHP and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(Tank))
 
@@ -410,11 +386,7 @@ DefaultAPL:AddSpell(spells.prayerOfMending
 DefaultAPL:AddSpell(spells.penance
 	:CastableIf(function(self)
 		local penanceTankHP = Rotation.Config:Read("spells_penanceTank", 80)
-		return self:IsKnownAndUsable()
-			and Tank:Exists()
-			and Tank:GetHP() < penanceTankHP
-			and not Player:IsMoving()
-			and not Player:IsCastingOrChanneling()
+		return self:IsKnownAndUsable() and Tank:Exists() and Tank:GetHP() < penanceTankHP and not Player:IsMoving() and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(Tank))
 
@@ -435,11 +407,7 @@ DefaultAPL:AddSpell(spells.powerWordShield
 DefaultAPL:AddSpell(spells.penance
 	:CastableIf(function(self)
 		local penanceHP = Rotation.Config:Read("spells_penance", 80)
-		return self:IsKnownAndUsable()
-			and Lowest:Exists()
-			and Lowest:GetHP() < penanceHP
-			and not Player:IsMoving()
-			and not Player:IsCastingOrChanneling()
+		return self:IsKnownAndUsable() and Lowest:Exists() and Lowest:GetHP() < penanceHP and not Player:IsMoving() and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(Lowest))
 

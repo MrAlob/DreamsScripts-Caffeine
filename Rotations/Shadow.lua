@@ -38,52 +38,9 @@ local blacklistUnitById = {
 	[37799] = true, -- Vile Spirit: 37799
 	[38104] = true, -- Plagued Zombie: 38104
 	[37907] = true, -- Rot Worm: 37907
-    [36633] = true, -- Ice Sphere: 36734
+	[36633] = true, -- Ice Sphere: 36734
 	[39190] = true, -- Wicked Spirit: 39190
 }
-
-local LowestEnemy = Caffeine.UnitManager:CreateCustomUnit("lowest", function(unit)
-	local lowest = nil
-	local lowestHP = math.huge
-
-	Caffeine.UnitManager:EnumEnemies(function(unit)
-		if unit:IsDead() then
-			return false
-		end
-
-		if Player:GetDistance(unit) > 36 then
-			return false
-		end
-
-		if not Player:CanSee(unit) then
-			return false
-		end
-
-		if not unit:IsAffectingCombat() then
-			return false
-		end
-
-		if not unit:IsEnemy() then
-			return false
-		end
-
-		if blacklistUnitById[unit:GetID()] then
-			return false
-		end
-
-		local hp = unit:GetHP()
-		if hp < lowestHP then
-			lowest = unit
-			lowestHP = hp
-		end
-	end)
-
-	if not lowest then
-		lowest = None
-	end
-
-	return lowest
-end)
 
 local HighestEnemy = Caffeine.UnitManager:CreateCustomUnit("highest", function(unit)
 	local highest = nil
@@ -156,11 +113,7 @@ local DungeonLogic = Caffeine.UnitManager:CreateCustomUnit("dungeonLogic", funct
 			return false
 		end
 
-		if
-			Player:CanSee(unit)
-			and Player:IsFacing(unit)
-			and (unit:GetID() == 28619 or unit:GetName() == "Mirror Image")
-		then
+		if Player:CanSee(unit) and Player:IsFacing(unit) and (unit:GetID() == 28619 or unit:GetName() == "Mirror Image") then
 			dungeonLogic = unit
 		end
 	end)
@@ -192,6 +145,10 @@ local ShadowWordPainRefresh = Caffeine.UnitManager:CreateCustomUnit("shadowWordP
 			return false
 		end
 
+		if not unit:IsHostile() then
+			return false
+		end
+
 		if not unit:CustomIsBoss() then
 			return false
 		end
@@ -200,11 +157,7 @@ local ShadowWordPainRefresh = Caffeine.UnitManager:CreateCustomUnit("shadowWordP
 			return false
 		end
 
-		if
-			Player:CanSee(unit)
-			and Player:IsFacing(unit)
-			and unit:GetAuras():FindMy(spells.shadowWordPain):GetRemainingTime() < 4
-		then
+		if Player:CanSee(unit) and Player:IsFacing(unit) and unit:GetAuras():FindMy(spells.shadowWordPain):GetRemainingTime() < 4 then
 			shadowWordPainRefresh = unit
 		end
 	end)
@@ -236,6 +189,10 @@ local VampireTouchTarget = Caffeine.UnitManager:CreateCustomUnit("vampireTouch",
 			return false
 		end
 
+		if not unit:IsHostile() then
+			return false
+		end
+
 		if unit:CustomTimeToDie() < 10 then
 			return false
 		end
@@ -244,10 +201,7 @@ local VampireTouchTarget = Caffeine.UnitManager:CreateCustomUnit("vampireTouch",
 			return false
 		end
 
-		if
-			unit:GetAuras():FindAny(spells.shroudOfTheOccult):IsUp()
-			or unit:GetAuras():FindAny(spells.shroudOfSpellWarding):IsUp()
-		then
+		if unit:GetAuras():FindAny(spells.shroudOfTheOccult):IsUp() or unit:GetAuras():FindAny(spells.shroudOfSpellWarding):IsUp() then
 			return false
 		end
 
@@ -259,12 +213,7 @@ local VampireTouchTarget = Caffeine.UnitManager:CreateCustomUnit("vampireTouch",
 			return false
 		end
 
-		if
-			not unit:IsDead()
-			and unit:IsEnemy()
-			and Player:CanSee(unit)
-			and not unit:GetAuras():FindMy(spells.vampiricTouch):IsUp()
-		then
+		if not unit:IsDead() and unit:IsEnemy() and Player:CanSee(unit) and not unit:GetAuras():FindMy(spells.vampiricTouch):IsUp() then
 			vampiricTouch = unit
 		end
 	end)
@@ -296,6 +245,10 @@ local ShadowWordPainTarget = Caffeine.UnitManager:CreateCustomUnit("shadowWordPa
 			return false
 		end
 
+		if not unit:IsHostile() then
+			return false
+		end
+
 		if unit:CustomTimeToDie() < 10 then
 			return false
 		end
@@ -304,10 +257,7 @@ local ShadowWordPainTarget = Caffeine.UnitManager:CreateCustomUnit("shadowWordPa
 			return false
 		end
 
-		if
-			unit:GetAuras():FindAny(spells.shroudOfTheOccult):IsUp()
-			or unit:GetAuras():FindAny(spells.shroudOfSpellWarding):IsUp()
-		then
+		if unit:GetAuras():FindAny(spells.shroudOfTheOccult):IsUp() or unit:GetAuras():FindAny(spells.shroudOfSpellWarding):IsUp() then
 			return false
 		end
 
@@ -376,10 +326,7 @@ local function BossBehaviors()
 		end
 
 		-- Canceling Dispersion and target not casting Pungent Blight
-		if
-			Player:GetAuras():FindAny(spells.dispersion):IsUp()
-			and not Target:GetCastingOrChannelingSpell() == spells.pungentBlight
-		then
+		if Player:GetAuras():FindAny(spells.dispersion):IsUp() and not Target:GetCastingOrChannelingSpell() == spells.pungentBlight then
 			local i = 1
 			repeat
 				local name = UnitBuff("player", i)
@@ -394,6 +341,9 @@ local function BossBehaviors()
 
 	-- Sindragosa (36853)
 	if Target:GetID() == 36853 then
+		if spells.dispersion:OnCooldown() then
+			return false
+		end
 		-- Stop Casting if we have more than 8 stacks of Instability and less than 2 seconds remaining
 		if
 			Player:GetAuras():FindAny(spells.instabilityAura):GetRemainingTime() <= 2.0
@@ -402,32 +352,28 @@ local function BossBehaviors()
 			SpellStopCasting()
 		end
 	end
+
+	return false
 end
 
 -- Shadowform
 PreCombatAPL:AddSpell(spells.shadowform
 	:CastableIf(function(self)
-		return self:IsKnownAndUsable()
-			and not Player:GetAuras():FindMy(spells.shadowform):IsUp()
-			and not Player:IsCastingOrChanneling()
+		return self:IsKnownAndUsable() and not Player:GetAuras():FindMy(spells.shadowform):IsUp() and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(Player))
 
 -- Inner Fire
 PreCombatAPL:AddSpell(spells.innerFire
 	:CastableIf(function(self)
-		return self:IsKnownAndUsable()
-			and not Player:GetAuras():FindMy(spells.innerFire):IsUp()
-			and not Player:IsCastingOrChanneling()
+		return self:IsKnownAndUsable() and not Player:GetAuras():FindMy(spells.innerFire):IsUp() and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(Player))
 
 -- Vampire Embrace
 PreCombatAPL:AddSpell(spells.vampiricEmbrace
 	:CastableIf(function(self)
-		return self:IsKnownAndUsable()
-			and not Player:GetAuras():FindMy(spells.vampiricEmbrace):IsUp()
-			and not Player:IsCastingOrChanneling()
+		return self:IsKnownAndUsable() and not Player:GetAuras():FindMy(spells.vampiricEmbrace):IsUp() and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(Player))
 
@@ -439,7 +385,6 @@ DefaultAPL:AddItem(items.healthstone1
 			and Player:GetHP() < Rotation.Config:Read("items_healthStone", 20)
 			and Player:IsAffectingCombat()
 			and not Player:IsCastingOrChanneling()
-			and not Player:IsMoving()
 	end)
 	:SetTarget(None))
 
@@ -450,7 +395,6 @@ DefaultAPL:AddItem(items.healthstone2
 			and Player:GetHP() < Rotation.Config:Read("items_healthStone", 20)
 			and Player:IsAffectingCombat()
 			and not Player:IsCastingOrChanneling()
-			and not Player:IsMoving()
 	end)
 	:SetTarget(None))
 
@@ -461,18 +405,13 @@ DefaultAPL:AddItem(items.healthstone3
 			and Player:GetHP() < Rotation.Config:Read("items_healthStone", 20)
 			and Player:IsAffectingCombat()
 			and not Player:IsCastingOrChanneling()
-			and not Player:IsMoving()
 	end)
 	:SetTarget(None))
 
 -- DungeonLogic: Web Wrap and Mirror Images
 DefaultAPL:AddSpell(spells.mindFlay
 	:CastableIf(function(self)
-		return DungeonLogic:Exists()
-			and self:IsKnownAndUsable()
-			and self:IsInRange(DungeonLogic)
-			and Player:IsFacing(DungeonLogic)
-			and not Player:IsMoving()
+		return DungeonLogic:Exists() and self:IsKnownAndUsable() and self:IsInRange(DungeonLogic) and Player:IsFacing(DungeonLogic) and not Player:IsMoving()
 	end)
 	:SetTarget(DungeonLogic))
 
@@ -491,10 +430,7 @@ DefaultAPL:AddSpell(spells.mindFlay
 -- Dispersion - Fetsergut
 DefaultAPL:AddSpell(spells.dispersion
 	:CastableIf(function(self)
-		return self:IsKnownAndUsable()
-			and Target:GetID() == 36626
-			and Target:Exists()
-			and Target:GetCastingOrChannelingSpell() == spells.pungentBlight
+		return self:IsKnownAndUsable() and Target:GetID() == 36626 and Target:Exists() and Target:GetCastingOrChannelingSpell() == spells.pungentBlight
 	end)
 	:SetTarget(Player)
 	:OnCast(function(self)
@@ -576,6 +512,19 @@ DefaultAPL:AddItem(items.inventorySlotGloves
 	end)
 	:SetTarget(None))
 
+-- Beserking
+DefaultAPL:AddSpell(spells.beserking
+	:CastableIf(function(self)
+		return self:IsKnownAndUsable()
+			and Target:Exists()
+			and Target:IsHostile()
+			and Player:CanSee(Target)
+			and Target:CustomIsBoss()
+			and not Player:IsMoving()
+			and not Player:IsCastingOrChanneling()
+	end)
+	:SetTarget(None))
+
 -- Vampiric Touch
 DefaultAPL:AddSpell(spells.vampiricTouch
 	:CastableIf(function(self)
@@ -588,8 +537,7 @@ DefaultAPL:AddSpell(spells.vampiricTouch
 			and Target:IsHostile()
 			and Player:CanSee(Target)
 			and Target:CustomTimeToDie() > 10
-			and (Target:GetAuras():FindMy(spells.vampiricTouch):GetRemainingTime() < spells.vampiricTouch:GetCastLength() / 1000 or not Target
-				:GetAuras()
+			and (Target:GetAuras():FindMy(spells.vampiricTouch):GetRemainingTime() < spells.vampiricTouch:GetCastLength() / 1000 or not Target:GetAuras()
 				:FindMy(spells.vampiricTouch)
 				:IsUp())
 			and not Player:IsMoving()
@@ -609,19 +557,6 @@ DefaultAPL:AddSpell(spells.shadowfiend
 			and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(Target))
-
--- Beserking
-DefaultAPL:AddSpell(spells.beserking
-	:CastableIf(function(self)
-		return self:IsKnownAndUsable()
-			and Target:Exists()
-			and Target:IsHostile()
-			and Player:CanSee(Target)
-			and Target:CustomIsBoss()
-			and not Player:IsMoving()
-			and not Player:IsCastingOrChanneling()
-	end)
-	:SetTarget(None))
 
 -- Saronite Bomb
 DefaultAPL:AddItem(items.saroniteBomb
@@ -653,9 +588,7 @@ DefaultAPL:AddSpell(spells.devouringPlague
 			and Target:IsHostile()
 			and Player:CanSee(Target)
 			and Target:CustomTimeToDie() > 10
-			and (Target:GetAuras():FindMy(spells.devouringPlague):GetRemainingTime() < 1.75 or not Target:GetAuras()
-				:FindMy(spells.devouringPlague)
-				:IsUp())
+			and (Target:GetAuras():FindMy(spells.devouringPlague):GetRemainingTime() < 1.75 or not Target:GetAuras():FindMy(spells.devouringPlague):IsUp())
 			and not Player:IsCastingOrChanneling()
 	end)
 	:SetTarget(Target))
@@ -734,23 +667,14 @@ DefaultAPL:AddSpell(spells.mindFlay
 	end)
 	:SetTarget(Target)
 	:PreCast(function()
-		if
-			spells.innerFocus:IsKnownAndUsable()
-			and Player:GetAuras():FindMy(spells.shadowWeaving):GetCount() == 5
-			and Target:CustomIsBoss()
-		then
+		if spells.innerFocus:IsKnownAndUsable() and Player:GetAuras():FindMy(spells.shadowWeaving):GetCount() == 5 and Target:CustomIsBoss() then
 			spells.innerFocus:ForceCast(None)
 		end
 	end))
 
 -- Sync
 Module:Sync(function()
-	if
-		Player:IsDead()
-		or IsMounted()
-		or UnitInVehicle("player")
-		or Player:GetAuras():FindAnyOfMy(spells.refreshmentAuras):IsUp()
-	then
+	if Player:IsDead() or IsMounted() or UnitInVehicle("player") or Player:GetAuras():FindAnyOfMy(spells.refreshmentAuras):IsUp() then
 		return false
 	end
 
