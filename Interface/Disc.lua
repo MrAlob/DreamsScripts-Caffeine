@@ -15,7 +15,7 @@ Rotation.Category = Caffeine.Interface.Category:New("|cffffffffDreams|cff00B5FFS
 -- Config
 Rotation.Config = Rotation.Category.config
 
--- Initialize the Hotbar Toggle too false 
+-- Initialize the Hotbar Toggle too false
 Rotation.Config:Write("preShield", false)
 Rotation.Config:Write("flashHeal", false)
 Rotation.Config:Write("dispel", false)

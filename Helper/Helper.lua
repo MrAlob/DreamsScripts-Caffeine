@@ -158,22 +158,22 @@ Eventmanager:RegisterWoWEvent("COMBAT_LOG_EVENT_UNFILTERED", function()
 		return
 	end
 
-    if subEvent == "SPELL_CAST_START" and spellID == 72762 then
+	if subEvent == "SPELL_CAST_START" and spellID == 72762 then
 		local currentTargetGUID = UnitGUID("target")
-        if currentTargetGUID == Player:GetGUID() then
-            print("|cffffffffDreams|cff00B5FFScripts|cffffffff: Defile on you! Using Nitro Boosts")
+		if currentTargetGUID == Player:GetGUID() then
+			print("|cffffffffDreams|cff00B5FFScripts|cffffffff: Defile on you! Using Nitro Boosts")
 			SpellStopCasting()
 			UseInventoryItem(8)
 		end
-    elseif subEvent == "SPELL_CAST_SUCCESS" and spellID == 72040 then
+	elseif subEvent == "SPELL_CAST_SUCCESS" and spellID == 72040 then
 		if destGUID == Player:GetGUID() then
-            print("|cffffffffDreams|cff00B5FFScripts|cffffffff: Orb on you! Using Nitro Boosts")
+			print("|cffffffffDreams|cff00B5FFScripts|cffffffff: Orb on you! Using Nitro Boosts")
 			SpellStopCasting()
 			UseInventoryItem(8)
 		end
-    elseif subEvent == "SPELL_AURA_APPLIED" and spellID == 70126 then
+	elseif subEvent == "SPELL_AURA_APPLIED" and spellID == 70126 then
 		if destGUID == Player:GetGUID() then
-            print("|cffffffffDreams|cff00B5FFScripts|cffffffff: Beacon on you! Using Nitro Boosts")
+			print("|cffffffffDreams|cff00B5FFScripts|cffffffff: Beacon on you! Using Nitro Boosts")
 			SpellStopCasting()
 			UseInventoryItem(8)
 		end

@@ -15,7 +15,7 @@ Rotation.Spells = {
 	-- Buffs
 	moltenFire = SpellBook:GetSpell(43046),
 
-	-- Fire Spells 
+	-- Fire Spells
 	fireBlast = SpellBook:GetSpell(42873),
 	fireball = SpellBook:GetSpell(42833),
 	pyroblast = SpellBook:GetSpell(42891),
@@ -42,21 +42,7 @@ Rotation.Spells = {
 
 	-- Auras
 	hotStreakAura = SpellBook:GetSpell(48108),
-	critDebuffAuras = SpellBook:GetList(
-		22959,
-		12873,
-		12872,
-		11095,
-		22959,
-		17794,
-		17798,
-		17799,
-		17800,
-		18271,
-		18272,
-		18273,
-		18274
-	),
+	critDebuffAuras = SpellBook:GetList(22959, 12873, 12872, 11095, 22959, 17794, 17798, 17799, 17800, 18271, 18272, 18273, 18274),
 	combustionAura = SpellBook:GetSpell(28682),
 	shroudOfTheOccult = SpellBook:GetSpell(70768),
 	shroudOfSpellWarding = SpellBook:GetSpell(72066),

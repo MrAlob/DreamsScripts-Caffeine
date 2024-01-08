@@ -12,7 +12,7 @@ end
 local SpellBook = Caffeine.Globals.SpellBook
 
 Rotation.Spells = {
-	-- Buffs 
+	-- Buffs
 	innerFire = SpellBook:GetSpell(48168),
 	innerFocus = SpellBook:GetSpell(14751),
 	fearWard = SpellBook:GetSpell(6346),
