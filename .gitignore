@@ -3,3 +3,7 @@ Bastion Source
 Prompts
 .vscode/settings.json
 Helper/DebugFrame.lua
+Interface/Holy.lua
+Items/Holy.lua
+Rotations/Holy.lua
+Spells/Holy.lua
