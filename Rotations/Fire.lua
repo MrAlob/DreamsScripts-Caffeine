@@ -72,7 +72,7 @@ local HighestEnemy = Caffeine.UnitManager:CreateCustomUnit("highest", function(u
 			return false
 		end
 
-		if unit:GetID() == 37695 or unit:GetID() == 37698 then
+		if blacklistUnitById[unit:GetID()] then
 			return false
 		end
 
@@ -162,7 +162,11 @@ local LivingBomb = Caffeine.UnitManager:CreateCustomUnit("livingBomb", function(
 			return false
 		end
 
-		if blacklistUnitById[unit:GetID()] then
+        if blacklistUnitById[unit:GetID()] then
+            return false
+        end
+
+		if unit:GetID() == 36609 and unit:GetHP() < 70 then
 			return false
 		end
 
@@ -292,10 +296,6 @@ local function BossBehaviors()
 
 	-- Sindragosa Logic (36853)
 	if Target:GetID() == 36853 then
-		-- Stop Casting after 1 Stack of Instability
-		if Player:GetAuras():FindAny(spells.unchainedMagicAura):IsUp() and Player:GetAuras():FindAny(spells.instabilityAura):GetCount() >= 1 then
-			SpellStopCasting()
-		end
 		-- Phase 3: Canceling Ice Block if its active and Unchained Magic is not active
 		if Target:GetHP() <= 35 and not Player:GetAuras():FindAny(spells.unchainedMagicAura):IsUp() and Player:GetAuras():FindAny(spells.iceBlock):IsUp() then
 			local i = 1
@@ -310,9 +310,14 @@ local function BossBehaviors()
 		end
 
 		-- Phase 3: if Unchained Debuff we Cancel Cast and Casting Iceblock
-		if Target:GetHP() <= 35 and Player:GetAuras():FindAny(spells.unchainedMagicAura):IsUp() and not Player:GetAuras():FindAny(spells.invisibilityAura) then
+        if Target:GetHP() <= 35 and Player:GetAuras():FindAny(spells.unchainedMagicAura):IsUp() and not Player:GetAuras():FindAny(spells.invisibilityAura) then
+            SpellStopCasting()
+            spells.iceBlock:ForceCast(None)
+        end
+
+		-- Stop Casting after 1 Stack of Instability
+		if Player:GetAuras():FindAny(spells.unchainedMagicAura):IsUp() then
 			SpellStopCasting()
-			spells.iceBlock:ForceCast(None)
 		end
 	end
 
