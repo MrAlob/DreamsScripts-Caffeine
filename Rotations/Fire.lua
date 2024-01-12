@@ -166,7 +166,7 @@ local LivingBomb = Caffeine.UnitManager:CreateCustomUnit("livingBomb", function(
             return false
         end
 
-		if unit:GetID() == 36609 and unit:GetHP() < 90 then
+		if unit:GetID() == 36609 and unit:GetHP() < 99 then
 			return false
 		end
 
