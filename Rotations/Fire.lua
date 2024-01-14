@@ -162,9 +162,9 @@ local LivingBomb = Caffeine.UnitManager:CreateCustomUnit("livingBomb", function(
 			return false
 		end
 
-        if blacklistUnitById[unit:GetID()] then
-            return false
-        end
+		if blacklistUnitById[unit:GetID()] then
+			return false
+		end
 
 		if unit:GetID() == 36609 and unit:GetHP() < 99 then
 			return false
@@ -310,10 +310,10 @@ local function BossBehaviors()
 		end
 
 		-- Phase 3: if Unchained Debuff we Cancel Cast and Casting Iceblock
-        if Target:GetHP() <= 35 and Player:GetAuras():FindAny(spells.unchainedMagicAura):IsUp() and not Player:GetAuras():FindAny(spells.invisibilityAura) then
-            SpellStopCasting()
-            spells.iceBlock:ForceCast(None)
-        end
+		if Target:GetHP() <= 35 and Player:GetAuras():FindAny(spells.unchainedMagicAura):IsUp() and not Player:GetAuras():FindAny(spells.invisibilityAura) then
+			SpellStopCasting()
+			spells.iceBlock:ForceCast(None)
+		end
 
 		-- Stop Casting after 1 Stack of Instability
 		if Player:GetAuras():FindAny(spells.unchainedMagicAura):IsUp() then

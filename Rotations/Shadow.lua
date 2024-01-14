@@ -213,6 +213,10 @@ local VampireTouchTarget = Caffeine.UnitManager:CreateCustomUnit("vampireTouch",
 			return false
 		end
 
+		if unit:GetID() == 36609 and unit:GetHP() < 99 then
+			return false
+		end
+
 		if not unit:IsDead() and unit:IsEnemy() and Player:CanSee(unit) and not unit:GetAuras():FindMy(spells.vampiricTouch):IsUp() then
 			vampiricTouch = unit
 		end
@@ -266,6 +270,10 @@ local ShadowWordPainTarget = Caffeine.UnitManager:CreateCustomUnit("shadowWordPa
 		end
 
 		if unit:GetAuras():FindMy(spells.shadowWordPain):IsUp() then
+			return false
+		end
+
+		if unit:GetID() == 36609 and unit:GetHP() < 99 then
 			return false
 		end
 

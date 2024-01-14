@@ -69,6 +69,21 @@ function Caffeine.Unit:CustomIsBoss()
 		return true
 	end
 
+	-- Savalana Ragefire
+	if id == 39747 then
+		return true
+	end
+
+	-- Baltharus the Warborn
+	if id == 39751 then
+		return true
+	end
+
+	-- General Zarithrian
+	if id == 39746 then
+		return true
+	end
+
 	-- Raid Boss
 	if self:IsBoss() then
 		return true
